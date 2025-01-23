@@ -1,0 +1,10 @@
+FROM fedora:latest
+
+RUN dnf update -y && dnf install -y clang make gcc-c++ valgrind && dnf clean all
+
+WORKDIR /usr/src/aboutme
+
+COPY . .
+RUN make -f makefiles/Makefile.linux DEBUG="on"
+
+RUN valgrind ./releases/aboutme 1

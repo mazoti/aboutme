@@ -1,0 +1,10 @@
+FROM ubuntu:latest
+
+RUN apt-get update && apt-get install -y valgrind build-essential clang libc++-dev libc++abi-dev && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /usr/src/aboutme
+
+COPY . .
+RUN make -f makefiles/Makefile.linux DEBUG="on"
+
+RUN valgrind ./releases/aboutme 1

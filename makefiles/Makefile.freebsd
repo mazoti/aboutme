@@ -1,0 +1,207 @@
+#==================================================== Configuration ====================================================
+
+#TRANSLATION = portuguese
+
+#ENABLE_ENVIRONMENT_VARIABLES =
+ENABLE_SYSTEM_CLOCK =
+
+ENABLE_CPU =
+ENABLE_GPU =
+#ENABLE_HARD_DISKS =
+#ENABLE_MEMORY =
+ENABLE_OPERATING_SYSTEM =
+#ENABLE_PROCESSES =
+#ENABLE_SERVICES =
+#ENABLE_STARTUP =
+ENABLE_USB =
+
+#============================================== Compiler and linker flags ==============================================
+
+CXXFLAGS = -std=c++23 -Weverything -pipe
+
+.if defined(DEBUG)
+CXXFLAGS+=-fsafe-buffer-usage-suggestions -g
+.else
+CXXFLAGS+=-DNDEBUG -O3 -march=native
+.endif
+
+CC = clang++
+MODFLAGS = -fmodule-file=common=common.pcm common.pcm \
+	-fmodule-file=i18n=i18n.pcm i18n.pcm \
+	-fmodule-file=i18n_system=i18n_system.pcm i18n_system.pcm
+
+TARGET = releases/aboutme
+
+#==================================================== Common section ===================================================
+
+COMMON_OBJS =
+
+.if defined(ENABLE_ENVIRONMENT_VARIABLES)
+COMMON_OBJS+=objs/environment_variables.o
+CXXFLAGS+=-DENABLE_ENVIRONMENT_VARIABLES
+.endif
+
+.if defined(ENABLE_SYSTEM_CLOCK)
+COMMON_OBJS+=objs/system_clock.o
+CXXFLAGS+=-DENABLE_SYSTEM_CLOCK
+.endif
+
+#===================================================== Core section ====================================================
+
+CORE_OBJS =
+
+.if defined(ENABLE_CPU)
+CORE_OBJS+=objs/cpu.o
+CXXFLAGS+=-DENABLE_CPU
+.endif
+
+.if defined(ENABLE_GPU)
+CORE_OBJS+=objs/gpu.o
+CXXFLAGS+=-DENABLE_GPU
+.endif
+
+.if defined(ENABLE_HARD_DISKS)
+CORE_OBJS+=objs/hard_disks.o
+CXXFLAGS+=-DENABLE_HARD_DISKS
+.endif
+
+.if defined(ENABLE_MEMORY)
+CORE_OBJS+=objs/memory.o
+CXXFLAGS+=-DENABLE_MEMORY
+.endif
+
+.if defined(ENABLE_OPERATING_SYSTEM)
+CORE_OBJS+=objs/operating_system.o
+CXXFLAGS+=-DENABLE_OPERATING_SYSTEM
+.endif
+
+.if defined(ENABLE_PROCESSES)
+CORE_OBJS+=objs/processes.o
+CXXFLAGS+=-DENABLE_PROCESSES
+.endif
+
+.if defined(ENABLE_SERVICES)
+CORE_OBJS+=objs/services.o
+CXXFLAGS+=-DENABLE_SERVICES
+.endif
+
+.if defined(ENABLE_STARTUP)
+CORE_OBJS+=objs/startup.o
+CXXFLAGS+=-DENABLE_STARTUP
+.endif
+
+.if defined(ENABLE_USB)
+CORE_OBJS+=objs/usb.o
+CXXFLAGS+=-DENABLE_USB
+.endif
+
+#===================================================== I18n section ====================================================
+
+.if !defined(TRANSLATION)
+TRANSLATION=english
+.endif
+
+#===================================================== Link section ====================================================
+
+MODULE_OBJS = objs/common.o objs/core.o objs/i18n.o objs/i18n_system.o
+
+# Links target
+$(TARGET): objs objs/main_freebsd.o
+	$(CC) $(CXXFLAGS) -o $(TARGET) objs/main_freebsd.o objs/main.o $(MODULE_OBJS) $(COMMON_OBJS) $(CORE_OBJS)
+
+objs:
+	mkdir -p objs
+
+#================================================ Common objects section ===============================================
+
+objs/common.o: src/common/common.cppm
+	$(CC) $(CXXFLAGS) src/common/common.cppm --precompile -o objs/common.pcm
+
+objs/environment_variables.o: objs/common.pcm objs/i18n_system.o objs/i18n.o
+	cd objs && $(CC) $(CXXFLAGS) -c ../src/common/environment_variables.cpp $(MODFLAGS) && cd ..
+
+objs/system_clock.o: objs/common.pcm objs/i18n_system.o objs/i18n.o
+	cd objs && $(CC) $(CXXFLAGS) -c ../src/common/system_clock.cpp $(MODFLAGS) && cd ..
+
+#================================================ Core objects section =================================================
+
+objs/cpu.o: objs/common.o objs/i18n_system.o objs/i18n.o
+	cd objs && \
+	$(CC) $(CXXFLAGS) -c ../src/core/freebsd/cpu.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
+	cd ..
+
+objs/gpu.o: objs/common.o objs/i18n_system.o objs/i18n.o
+	cd objs && \
+	$(CC) $(CXXFLAGS) -c ../src/core/freebsd/gpu.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
+	cd ..
+
+objs/hard_disks.o: objs/common.o objs/i18n_system.o objs/i18n.o
+	cd objs && \
+	$(CC) $(CXXFLAGS) -c ../src/core/freebsd/hard_disks.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
+	cd ..
+
+objs/memory.o: objs/common.o objs/i18n_system.o objs/i18n.o
+	cd objs && \
+	$(CC) $(CXXFLAGS) -c ../src/core/freebsd/memory.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
+	cd ..
+
+objs/operating_system.o: objs/common.o objs/i18n_system.o objs/i18n.o
+	cd objs && \
+	$(CC) $(CXXFLAGS) -c ../src/core/freebsd/operating_system.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
+	cd ..
+
+objs/processes.o: objs/common.o objs/i18n_system.o objs/i18n.o
+	cd objs && \
+	$(CC) $(CXXFLAGS) -c ../src/core/freebsd/processes.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
+	cd ..
+
+objs/services.o: objs/common.o objs/i18n_system.o objs/i18n.o
+	cd objs && \
+	$(CC) $(CXXFLAGS) -c ../src/core/freebsd/services.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
+	cd ..
+
+objs/startup.o: objs/common.o objs/i18n_system.o objs/i18n.o
+	cd objs && \
+	$(CC) $(CXXFLAGS) -c ../src/core/freebsd/startup.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
+	cd ..
+
+objs/usb.o: objs/common.o objs/i18n_system.o objs/i18n.o
+	cd objs && \
+	$(CC) $(CXXFLAGS) -c ../src/core/freebsd/usb.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
+	cd ..
+
+objs/core.o: src/core/core.cppm objs/common.o
+	cd objs && \
+	$(CC) $(CXXFLAGS) ../src/core/core.cppm --precompile -o core.pcm -fmodule-file=common=common.pcm common.pcm && \
+	cd ..
+
+#================================================= I18n objects section ================================================
+
+objs/i18n.o: src/i18n/$(TRANSLATION)/all.cppm
+	$(CC) $(CXXFLAGS) src/i18n/$(TRANSLATION)/all.cppm --precompile -o objs/i18n.pcm
+
+objs/i18n_system.o: src/i18n/$(TRANSLATION)/freebsd.cppm
+	$(CC) $(CXXFLAGS) src/i18n/$(TRANSLATION)/freebsd.cppm --precompile -o objs/i18n_system.pcm
+
+#================================================= Main object section =================================================
+objs/main.o: $(MODULE_OBJS) $(COMMON_OBJS) $(CORE_OBJS) src/core/main.cpp
+	cd objs && \
+	$(CC) $(CXXFLAGS) -c ../src/core/main.cpp $(MODFLAGS) \
+	-fmodule-file=core=core.pcm core.pcm && \
+	cd ..
+
+objs/main_freebsd.o: $(MODULE_OBJS) $(COMMON_OBJS) $(CORE_OBJS) objs/main.o src/main_freebsd.cpp
+	cd objs && \
+	$(CC) $(CXXFLAGS) -c ../src/main_freebsd.cpp \
+	-fmodule-file=i18n=i18n.pcm i18n.pcm \
+	$(MODFLAGS) \
+	-fmodule-file=core=core.pcm core.pcm && \
+	cd ..
+
+#==================================================== Clean section ====================================================
+
+clean:
+	rm -rf $(TARGET)
+	rm -rf objs
+
+.PHONY: clean

@@ -1,0 +1,10 @@
+FROM alpine:latest as builder
+
+RUN apk add --no-cache clang make valgrind
+
+WORKDIR /usr/src/aboutme
+
+COPY . .
+RUN make -f makefiles/Makefile.linux DEBUG="on"
+
+RUN valgrind ./releases/aboutme 1
