@@ -68,14 +68,18 @@ std::wostream& memory() noexcept{
 		std::unique_ptr<IWbemClassObject, releaser<IWbemClassObject> > class_object_ptr(clsobj_pointer);
 
 		if(SUCCEEDED(clsobj_pointer->Get(L"Manufacturer", 0, &variant_property, nullptr, nullptr))){
-			std::wcout << L'\t' << MEMORY_MANUFACTURER << L' ' << variant_property.bstrVal << std::endl;
-			VariantClear(&variant_property);
+			if(variant_property.vt == VT_BSTR){
+				std::wcout << L'\t' << MEMORY_MANUFACTURER << L' ' << variant_property.bstrVal << std::endl;
+				VariantClear(&variant_property);
+			}
 		}
 
 		if(SUCCEEDED(clsobj_pointer->Get(L"Capacity", 0, &variant_property, nullptr, nullptr))){
-			std::wcout << L'\t' << MEMORY_CAPACITY << L' ' << std::stoull(variant_property.bstrVal) / 1048576
-			<< " MB" << std::endl;
-			VariantClear(&variant_property);
+			if(variant_property.vt == VT_BSTR){
+				std::wcout << L'\t' << MEMORY_CAPACITY << L' ' << std::stoull(variant_property.bstrVal) / 1048576
+				<< " MB" << std::endl;
+				VariantClear(&variant_property);
+			}
 		}
 
 		if(SUCCEEDED(clsobj_pointer->Get(L"Speed", 0, &variant_property, nullptr, nullptr))){
