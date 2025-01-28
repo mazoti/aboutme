@@ -32,6 +32,11 @@ export module i18n_system;
 	                                                            "information of the drive ";
 #endif
 
+// src/core/windows/installed.cpp
+#if defined(ENABLE_INSTALLED)
+	export constexpr wchar_t ERROR_INSTALLED_REG_OPENKEYEX[] = L"\U0000274C Error on RegOpenKeyEx";
+#endif
+
 // src/core/windows/memory.cpp
 #if defined(ENABLE_MEMORY)
 	export constexpr wchar_t ERROR_MEMORY_COM_INIT[]         = L"\U0000274C Failed to initialize COM library";

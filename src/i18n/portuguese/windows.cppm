@@ -36,6 +36,12 @@ export module i18n_system;
 	                                                           "de espa\U000000E7o de disco do drive ";
 #endif
 
+// src/core/windows/installed.cpp
+#if defined(ENABLE_INSTALLED)
+	export constexpr wchar_t ERROR_INSTALLED_REG_OPENKEYEX[] = L"\U0000274C Erro na fun\U000000E7\U000000E3o "
+	                                                           "RegOpenKeyEx";
+#endif
+
 // src/core/windows/memory.cpp
 #if defined(ENABLE_MEMORY)
 	export constexpr wchar_t ERROR_MEMORY_COM_INIT[]         = L"\U0000274C Falha inicializando biblioteca COM";

@@ -66,7 +66,7 @@ std::wostream& cpu() noexcept{
 	std::wcout << CPU << std::endl 
 		<< L'\t' << &cpu_brand[start] << std::endl
 		<< L'\t' << ARCHITECTURE << L' ' << arch(sys_info.wProcessorArchitecture) << std::endl
-		<< L'\t' << CORES << L' ' << sys_info.dwNumberOfProcessors << std::endl
+		<< L'\t' << THREADS << L' ' << sys_info.dwNumberOfProcessors << std::endl
 		<< L'\t' << INSTRUCTIONS_SUPPORTED << L' ';
 
 	if(features_ecx[25]) std::wcout << "AES ";

@@ -42,7 +42,7 @@ export constexpr wchar_t HEADER[] = L"\U00002699 AboutMe 0.5 - https://github.co
 #if defined(ENABLE_CPU)
 	export constexpr wchar_t ARCHITECTURE[]                  = L"Arquitetura:";
 	export constexpr wchar_t INSTRUCTIONS_SUPPORTED[]        = L"Instru\U000000E7\U000000F5es suportadas:";
-	export constexpr wchar_t CORES[]                         = L"N\U000000FAcleos:";
+	export constexpr wchar_t THREADS[]                       = L"Threads:";
 	export constexpr wchar_t CPU[]                           = L"\U0001F9EE Processador:";
 #endif
 
@@ -60,6 +60,11 @@ export constexpr wchar_t HEADER[] = L"\U00002699 AboutMe 0.5 - https://github.co
 	export constexpr wchar_t HARD_DISKS[]                    = L"\U0001F4BF Discos r\U000000EDgidos:";
 	export constexpr wchar_t TOTAL[]                         = L"Total:";
 	export constexpr wchar_t USED[]                          = L"Em uso:";
+#endif
+
+// src/core/$(SYSTEM)/installed.cpp
+#if defined(ENABLE_INSTALLED)
+	export constexpr wchar_t INSTALLED_PROGRAMS[]            = L"\U0001F4BE Programas instalados:";
 #endif
 
 // src/core/$(SYSTEM)/memory.cpp

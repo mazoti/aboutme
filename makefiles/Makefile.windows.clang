@@ -10,7 +10,8 @@
 #ENABLE_CPU =
 #ENABLE_GPU =
 #ENABLE_HARD_DISKS =
-ENABLE_MEMORY =
+ENABLE_INSTALLED =
+#ENABLE_MEMORY =
 #ENABLE_OPERATING_SYSTEM =
 #ENABLE_PROCESSES =
 #ENABLE_SERVICES =
@@ -78,6 +79,11 @@ CXXFLAGS  = $(CXXFLAGS) -DENABLE_GPU
 !IFDEF ENABLE_HARD_DISKS
 CORE_OBJS = $(CORE_OBJS) objs\hard_disks.o
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_HARD_DISKS
+!ENDIF
+
+!IFDEF ENABLE_INSTALLED
+CORE_OBJS = $(CORE_OBJS) objs\installed.o
+CXXFLAGS  = $(CXXFLAGS) -DENABLE_INSTALLED
 !ENDIF
 
 !IFDEF ENABLE_MEMORY
@@ -175,6 +181,11 @@ objs\gpu.o: objs\common.o objs\i18n_system.o objs\i18n.o
 objs\hard_disks.o: objs\common.o objs\i18n_system.o objs\i18n.o
 	cd objs && \
 	$(CC) $(CXXFLAGS) -c ..\src\core\windows\hard_disks.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
+	cd ..
+
+objs\installed.o: objs\common.o objs\i18n_system.o objs\i18n.o
+	cd objs && \
+	$(CC) $(CXXFLAGS) -c ..\src\core\windows\installed.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
 	cd ..
 
 objs\memory.o: objs\common.o objs\i18n_system.o objs\i18n.o

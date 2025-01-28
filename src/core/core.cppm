@@ -24,6 +24,10 @@ export module core;
 	export std::wostream& hard_disks() noexcept;
 #endif
 
+#if defined(ENABLE_INSTALLED)
+	export std::wostream& installed() noexcept;
+#endif
+
 #if defined(ENABLE_MEMORY)
 	export std::wostream& memory() noexcept;
 #endif

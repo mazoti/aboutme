@@ -10,6 +10,7 @@ ENABLE_BLUETOOTH =
 ENABLE_CPU =
 ENABLE_GPU =
 ENABLE_HARD_DISKS =
+ENABLE_INSTALLED =
 ENABLE_MEMORY =
 ENABLE_OPERATING_SYSTEM =
 ENABLE_PROCESSES =
@@ -75,6 +76,11 @@ CXXFLAGS  = $(CXXFLAGS) /DENABLE_GPU
 !IFDEF ENABLE_HARD_DISKS
 CORE_OBJS = $(CORE_OBJS) objs\hard_disks.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_HARD_DISKS
+!ENDIF
+
+!IFDEF ENABLE_INSTALLED
+CORE_OBJS = $(CORE_OBJS) objs\installed.obj
+CXXFLAGS  = $(CXXFLAGS) /DENABLE_INSTALLED
 !ENDIF
 
 !IFDEF ENABLE_MEMORY
@@ -164,6 +170,9 @@ objs\gpu.obj: objs\core.obj
 
 objs\hard_disks.obj: objs\core.obj
 	$(CC) $(CXXFLAGS) /c src\core\windows\hard_disks.cpp /Foobjs\hard_disks.obj
+
+objs\installed.obj: objs\core.obj
+	$(CC) $(CXXFLAGS) /c src\core\windows\installed.cpp /Foobjs\installed.obj
 
 objs\memory.obj: objs\core.obj
 	$(CC) $(CXXFLAGS) /c src\core\windows\memory.cpp /Foobjs\memory.obj
