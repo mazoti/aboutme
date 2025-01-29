@@ -69,6 +69,11 @@ export module i18n_system;
 	export constexpr wchar_t ERROR_REG_OPENKEYEX[]           = L"\U0000274C Error on RegOpenKeyEx";
 #endif
 
+// src/core/windows/tasks.cpp
+#if defined(ENABLE_TASKS)
+	export constexpr wchar_t ERROR_TASKS[]                   = L"\U0000274C Error on";
+#endif
+
 // src/core/windows/usb.cpp
 #if defined(ENABLE_USB)
 	export constexpr wchar_t ERROR_USB_DEVICE_INIT[]         = L"\U0000274C Error initializing USB "

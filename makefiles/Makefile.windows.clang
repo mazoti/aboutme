@@ -10,12 +10,13 @@
 #ENABLE_CPU =
 #ENABLE_GPU =
 #ENABLE_HARD_DISKS =
-ENABLE_INSTALLED =
+#ENABLE_INSTALLED =
 #ENABLE_MEMORY =
 #ENABLE_OPERATING_SYSTEM =
 #ENABLE_PROCESSES =
 #ENABLE_SERVICES =
 #ENABLE_STARTUP =
+ENABLE_TASKS =
 #ENABLE_USB =
 #ENABLE_WIFI =
 
@@ -109,6 +110,11 @@ CXXFLAGS  = $(CXXFLAGS) -DENABLE_SERVICES
 !IFDEF ENABLE_STARTUP
 CORE_OBJS = $(CORE_OBJS) objs\startup.o
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_STARTUP
+!ENDIF
+
+!IFDEF ENABLE_TASKS
+CORE_OBJS = $(CORE_OBJS) objs\tasks.o
+CXXFLAGS  = $(CXXFLAGS) -DENABLE_TASKS
 !ENDIF
 
 !IFDEF ENABLE_USB
@@ -211,6 +217,11 @@ objs\services.o: objs\common.o objs\i18n_system.o objs\i18n.o
 objs\startup.o: objs\common.o objs\i18n_system.o objs\i18n.o
 	cd objs && \
 	$(CC) $(CXXFLAGS) -c ..\src\core\windows\startup.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
+	cd ..
+
+objs\tasks.o: objs\common.o objs\i18n_system.o objs\i18n.o
+	cd objs && \
+	$(CC) $(CXXFLAGS) -c ..\src\core\windows\tasks.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
 	cd ..
 
 objs\usb.o: objs\common.o objs\i18n_system.o objs\i18n.o

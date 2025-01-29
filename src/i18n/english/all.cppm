@@ -4,7 +4,6 @@ export module i18n;
 
 // src/main_$(SYSTEM).cpp
 export constexpr wchar_t ANY_KEY_TO_CLOSE[] = L"Press any key to close...";
-export constexpr wchar_t HEADER[] = L"\U00002699 AboutMe 0.5 - https://github.com/mazoti/aboutme\n\tby Marcos Mazoti";
 
 // src/common/environment_variables.cpp
 #if defined(ENABLE_ENVIRONMENT_VARIABLES)
@@ -106,6 +105,11 @@ export constexpr wchar_t HEADER[] = L"\U00002699 AboutMe 0.5 - https://github.co
 // src/core/$(SYSTEM)/startup.cpp
 #if defined(ENABLE_STARTUP)
 	export constexpr wchar_t STARTUP[]                       = L"\U0001F680 Startup programs:";
+#endif
+
+// src/core/$(SYSTEM)/tasks.cpp
+#if defined(ENABLE_TASKS)
+	export constexpr wchar_t TASKS[]                         = L"\U00002705 Tasks:";
 #endif
 
 // src/core/$(SYSTEM)/usb.cpp

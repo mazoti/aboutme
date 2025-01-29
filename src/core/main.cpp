@@ -60,6 +60,10 @@ void run(char* envp[], char separator) noexcept{
 		services();
 	#endif
 
+	#if defined(ENABLE_TASKS)
+		tasks();
+	#endif
+
 	#if defined(ENABLE_STARTUP)
 		startup();
 	#endif

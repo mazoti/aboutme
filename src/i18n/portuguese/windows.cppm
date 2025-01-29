@@ -78,6 +78,11 @@ export module i18n_system;
 	                                                           "RegOpenKeyEx";
 #endif
 
+// src/core/windows/tasks.cpp
+#if defined(ENABLE_TASKS)
+	export constexpr wchar_t ERROR_TASKS[]                   = L"\U0000274C Erro em";
+#endif
+
 // src/core/windows/usb.cpp
 #if defined(ENABLE_USB)
 	export constexpr wchar_t ERROR_USB_DEVICE_INIT[]         = L"\U0000274C Erro inicializando conjunto de informa"

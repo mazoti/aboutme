@@ -4,6 +4,8 @@ module;
 
 export module core;
 
+export constexpr wchar_t HEADER[] = L"\U00002699 AboutMe 0.5\n\thttps://github.com/mazoti/aboutme\n\tby Marcos Mazoti";
+
 #if defined(ENABLE_BATTERY)
 	export std::wostream& battery() noexcept;
 #endif
@@ -46,6 +48,10 @@ export module core;
 
 #if defined(ENABLE_STARTUP)
 	export std::wostream& startup() noexcept;
+#endif
+
+#if defined(ENABLE_TASKS)
+	export std::wostream& tasks() noexcept;
 #endif
 
 #if defined(ENABLE_USB)
