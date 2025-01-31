@@ -17,6 +17,17 @@ export module i18n_system;
 	export constexpr wchar_t ERROR_NO_BLUETOOTH_ADAPTERS[]   = L"\U0000274C Nenhum adaptador Bluetooth encontrado";
 #endif
 
+// src/core/windows/features.cpp
+#if defined(ENABLE_FEATURES)
+	export constexpr wchar_t ERROR_FEATURES_COM_INIT[]       = L"\U0000274C Falha inicializando biblioteca COM";
+	export constexpr wchar_t ERROR_FEATURES_QUERY[]          = L"\U0000274C Falha na query";
+	export constexpr wchar_t ERROR_FEATURES_SECURITY_LEVEL[] = L"\U0000274C N\U000000E3o foi poss\U000000EDvel "
+	                                                           "ativar n\U000000EDvel de seguran\U000000E7a";
+	export constexpr wchar_t ERROR_FEATURES_WMI_CONNECT[]    = L"\U0000274C N\U000000E3o foi poss\U000000EDvel "
+	                                                           "conectar ao WMI";
+	export constexpr wchar_t ERROR_FEATURES_WMI_INIT[]       = L"\U0000274C Falha criando objeto IWbemLocator";
+#endif
+
 // src/core/windows/gpu.cpp
 #if defined(ENABLE_GPU)
 	export constexpr wchar_t ERROR_COM_INIT[]                = L"\U0000274C Falha inicializando biblioteca COM";

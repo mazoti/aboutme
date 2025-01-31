@@ -8,6 +8,7 @@
 #ENABLE_BATTERY =
 #ENABLE_BLUETOOTH =
 #ENABLE_CPU =
+ENABLE_FEATURES =
 #ENABLE_GPU =
 #ENABLE_HARD_DISKS =
 #ENABLE_INSTALLED =
@@ -16,7 +17,7 @@
 #ENABLE_PROCESSES =
 #ENABLE_SERVICES =
 #ENABLE_STARTUP =
-ENABLE_TASKS =
+#ENABLE_TASKS =
 #ENABLE_USB =
 #ENABLE_WIFI =
 
@@ -70,6 +71,11 @@ CXXFLAGS  = $(CXXFLAGS) -DENABLE_BLUETOOTH
 !IFDEF ENABLE_CPU
 CORE_OBJS = $(CORE_OBJS) objs\cpu.o
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_CPU
+!ENDIF
+
+!IFDEF ENABLE_FEATURES
+CORE_OBJS = $(CORE_OBJS) objs\features.o
+CXXFLAGS  = $(CXXFLAGS) -DENABLE_FEATURES
 !ENDIF
 
 !IFDEF ENABLE_GPU
@@ -177,6 +183,11 @@ objs\bluetooth.o: objs\common.o objs\i18n_system.o objs\i18n.o
 objs\cpu.o: objs\common.o objs\i18n_system.o objs\i18n.o
 	cd objs && \
 	$(CC) $(CXXFLAGS) -c ..\src\core\windows\cpu.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
+	cd ..
+
+objs\features.o: objs\common.o objs\i18n_system.o objs\i18n.o
+	cd objs && \
+	$(CC) $(CXXFLAGS) -c ..\src\core\windows\features.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
 	cd ..
 
 objs\gpu.o: objs\common.o objs\i18n_system.o objs\i18n.o

@@ -1,4 +1,5 @@
 *.ifc
+*.ilk
 *.pdb
 
 # OS generated files

@@ -45,15 +45,15 @@ std::wostream& tasks() noexcept{
 		return std::wcerr << ERROR_TASKS << " ITASKSERVICE" << std::endl << std::endl;
 
 	if(FAILED(service_pointer->GetFolder(_bstr_t(L"\\"), &root_folder_pointer)))
-		return std::wcerr << ERROR_TASKS << " GetFolder" << std::endl << std::endl;	
+		return std::wcerr << ERROR_TASKS << " GetFolder" << std::endl << std::endl;
 	std::unique_ptr<ITaskFolder, releaser<ITaskFolder> > root_folder_ptr_releaser(root_folder_pointer);
 
 	if(FAILED(root_folder_pointer->GetFolders(0, &folders_pointer)))
-		return std::wcerr << ERROR_TASKS << " GetFolders" << std::endl << std::endl;	
+		return std::wcerr << ERROR_TASKS << " GetFolders" << std::endl << std::endl;
 	std::unique_ptr<ITaskFolderCollection, releaser<ITaskFolderCollection> > folders_ptr_release(folders_pointer);
 
 	if(FAILED(root_folder_pointer->GetTasks(TASK_ENUM_HIDDEN, &tasks_pointer)))
-		return std::wcerr << ERROR_TASKS << " GetTasks" << std::endl << std::endl;	
+		return std::wcerr << ERROR_TASKS << " GetTasks" << std::endl << std::endl;
 	std::unique_ptr<IRegisteredTaskCollection, releaser<IRegisteredTaskCollection> > tasks_ptr_releaser(tasks_pointer);
 
 

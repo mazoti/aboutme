@@ -8,6 +8,7 @@ ENABLE_SYSTEM_CLOCK =
 ENABLE_BATTERY =
 ENABLE_BLUETOOTH =
 ENABLE_CPU =
+ENABLE_FEATURES =
 ENABLE_GPU =
 ENABLE_HARD_DISKS =
 ENABLE_INSTALLED =
@@ -67,6 +68,11 @@ CXXFLAGS  = $(CXXFLAGS) /DENABLE_BLUETOOTH
 !IFDEF ENABLE_CPU
 CORE_OBJS = $(CORE_OBJS) objs\cpu.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_CPU
+!ENDIF
+
+!IFDEF ENABLE_FEATURES
+CORE_OBJS = $(CORE_OBJS) objs\features.obj
+CXXFLAGS  = $(CXXFLAGS) /DENABLE_FEATURES
 !ENDIF
 
 !IFDEF ENABLE_GPU
@@ -170,6 +176,9 @@ objs\bluetooth.obj: objs\core.obj
 
 objs\cpu.obj: objs\core.obj
 	$(CC) $(CXXFLAGS) /c src\core\windows\cpu.cpp /Foobjs\cpu.obj
+
+objs\features.obj: objs\core.obj
+	$(CC) $(CXXFLAGS) /c src\core\windows\features.cpp /Foobjs\features.obj
 
 objs\gpu.obj: objs\core.obj
 	$(CC) $(CXXFLAGS) /c src\core\windows\gpu.cpp /Foobjs\gpu.obj

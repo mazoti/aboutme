@@ -44,6 +44,11 @@ export constexpr wchar_t ANY_KEY_TO_CLOSE[] = L"Press any key to close...";
 	export constexpr wchar_t CPU[]                           = L"\U0001F9EE CPU:";
 #endif
 
+// src/core/$(SYSTEM)/features.cpp
+#if defined(ENABLE_FEATURES)
+	export constexpr wchar_t FEATURES[]                      = L"\U0001F527 Features:";
+#endif
+
 // src/core/$(SYSTEM)/gpu.cpp
 #if defined(ENABLE_GPU)
 	export constexpr wchar_t GPU[]                           = L"\U0001F31F GPU:";

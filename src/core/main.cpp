@@ -48,6 +48,10 @@ void run(char* envp[], char separator) noexcept{
 		operating_system();
 	#endif
 
+	#if defined(ENABLE_FEATURES)
+		features();
+	#endif
+
 	#if defined(ENABLE_INSTALLED)
 		installed();
 	#endif
