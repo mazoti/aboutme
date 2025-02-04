@@ -15,8 +15,8 @@ std::wostream& battery() noexcept{
 
 	std::chrono::seconds duration;
 	std::chrono::duration<int, std::ratio<86400> > total_days;
-	std::chrono::duration<int, std::ratio<3600> > total_hours;
-	std::chrono::duration<int, std::ratio<60> > total_minutes;
+	std::chrono::duration<int, std::ratio<3600>  > total_hours;
+	std::chrono::duration<int, std::ratio<60>    > total_minutes;
 
 	SYSTEM_POWER_STATUS power_status;
 

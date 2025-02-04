@@ -5,8 +5,8 @@ module;
 #include <memory>
 
 #include <Windows.h>
-#include <comdef.h>
 #include <WbemIdl.h>
+#include <comdef.h>
 
 #pragma comment(lib, "wbemuuid.lib")
 
@@ -19,7 +19,15 @@ import i18n_system;
 
 template <typename T> struct releaser{ void operator()(T* ptr) const{if(ptr){ptr->Release();}}};
 
-struct couninitializer{ void operator()(void*) const{CoUninitialize();}};
+static bool couninitialize_released = false;
+
+struct couninitializer{
+	void operator()(void*) const{
+		if(couninitialize_released) return;
+		couninitialize_released = true;
+		CoUninitialize();
+	}
+};
 
 std::wostream& memory() noexcept{
 	MEMORYSTATUSEX memory_state;
@@ -55,7 +63,7 @@ std::wostream& memory() noexcept{
 		RPC_C_IMP_LEVEL_IMPERSONATE, nullptr, EOAC_NONE)))
 			return std::wcerr << ERROR_MEMORY_SECURITY_LEVEL << std::endl << std::endl;
 
-	// Query video details and creates a smart pointer to Release
+	// Query data and creates a smart pointer to Release
 	if(FAILED(svc_pointer->ExecQuery(bstr_t("WQL"), bstr_t(L"SELECT * FROM Win32_PhysicalMemory"),
 		WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, nullptr, &enumerator_pointer)))
 			return std::wcerr << ERROR_MEMORY_QUERY << std::endl << std::endl;

@@ -11,10 +11,10 @@ module;
 
 module core;
 
+import common;
+
 import i18n;
 import i18n_system;
-
-import common;
 
 struct handle_closer{ void operator()(HANDLE handle) const{ CloseHandle(handle); }};
 

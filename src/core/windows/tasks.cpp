@@ -15,7 +15,15 @@ module core;
 import i18n;
 import i18n_system;
 
-struct co_uninitialize{ void operator()(void*) const{ CoUninitialize(); }};
+static bool couninitialize_released = false;
+
+struct co_uninitialize{
+	void operator()(void*) const{
+		if(couninitialize_released) return;
+		couninitialize_released = true;
+		CoUninitialize();
+	}
+};
 
 struct sys_free_string{ void operator()(BSTR bstr) const{ if(bstr) SysFreeString(bstr); }};
 

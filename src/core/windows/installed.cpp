@@ -10,10 +10,10 @@ module;
 
 module core;
 
+import common;
+
 import i18n;
 import i18n_system;
-
-import common;
 
 struct reg_closer{ void operator()(HKEY handle) const { if(handle != nullptr) RegCloseKey(handle); }};
 

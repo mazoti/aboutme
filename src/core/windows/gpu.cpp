@@ -19,7 +19,15 @@ import i18n_system;
 
 template <typename T> struct releaser{ void operator()(T* ptr) const{if(ptr){ptr->Release();}}};
 
-struct couninitializer{ void operator()(void*) const{CoUninitialize();}};
+static bool couninitialize_released = false;
+
+struct couninitializer{
+	void operator()(void*) const{
+		if(couninitialize_released) return;
+		couninitialize_released = true;
+		CoUninitialize();
+	}
+};
 
 // Displays GPU details
 std::wostream& gpu() noexcept{

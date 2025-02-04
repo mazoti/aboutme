@@ -13,8 +13,10 @@ ENABLE_GPU =
 ENABLE_HARD_DISKS =
 ENABLE_INSTALLED =
 ENABLE_MEMORY =
+#ENABLE_NETWORK =
 ENABLE_OPERATING_SYSTEM =
 ENABLE_PROCESSES =
+ENABLE_RESTORE =
 ENABLE_SERVICES =
 ENABLE_STARTUP =
 ENABLE_TASKS =
@@ -95,6 +97,11 @@ CORE_OBJS = $(CORE_OBJS) objs\memory.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_MEMORY
 !ENDIF
 
+!IFDEF ENABLE_NETWORK
+CORE_OBJS = $(CORE_OBJS) objs\network.obj
+CXXFLAGS  = $(CXXFLAGS) /DENABLE_NETWORK
+!ENDIF
+
 !IFDEF ENABLE_OPERATING_SYSTEM
 CORE_OBJS = $(CORE_OBJS) objs\operating_system.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_OPERATING_SYSTEM
@@ -103,6 +110,11 @@ CXXFLAGS  = $(CXXFLAGS) /DENABLE_OPERATING_SYSTEM
 !IFDEF ENABLE_PROCESSES
 CORE_OBJS = $(CORE_OBJS) objs\processes.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_PROCESSES
+!ENDIF
+
+!IFDEF ENABLE_RESTORE
+CORE_OBJS = $(CORE_OBJS) objs\restore.obj
+CXXFLAGS  = $(CXXFLAGS) /DENABLE_RESTORE
 !ENDIF
 
 !IFDEF ENABLE_SERVICES
@@ -192,11 +204,17 @@ objs\installed.obj: objs\core.obj
 objs\memory.obj: objs\core.obj
 	$(CC) $(CXXFLAGS) /c src\core\windows\memory.cpp /Foobjs\memory.obj
 
+objs\network.obj: objs\core.obj
+	$(CC) $(CXXFLAGS) /c src\core\windows\network.cpp /Foobjs\network.obj
+
 objs\operating_system.obj: objs\core.obj
 	$(CC) $(CXXFLAGS) /c src\core\windows\operating_system.cpp /Foobjs\operating_system.obj
 
 objs\processes.obj: objs\core.obj
 	$(CC) $(CXXFLAGS) /c src\core\windows\processes.cpp /Foobjs\processes.obj
+
+objs\restore.obj: objs\core.obj
+	$(CC) $(CXXFLAGS) /c src\core\windows\restore.cpp /Foobjs\restore.obj
 
 objs\services.obj: objs\core.obj
 	$(CC) $(CXXFLAGS) /c src\core\windows\services.cpp /Foobjs\services.obj

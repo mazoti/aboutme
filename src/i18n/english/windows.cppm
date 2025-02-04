@@ -65,6 +65,15 @@ export module i18n_system;
 	export constexpr wchar_t ERROR_PROCESSES_ENUM[]          = L"\U0000274C Failed to enumerate processes";
 #endif
 
+// src/core/windows/restore.cpp
+#if defined(ENABLE_RESTORE)
+	export constexpr wchar_t ERROR_RESTORE_COM_INIT[]        = L"\U0000274C Failed to initialize COM library";
+	export constexpr wchar_t ERROR_RESTORE_QUERY[]           = L"\U0000274C Query failed";
+	export constexpr wchar_t ERROR_RESTORE_SECURITY_LEVEL[]  = L"\U0000274C Could not set security level";
+	export constexpr wchar_t ERROR_RESTORE_WMI_CONNECT[]     = L"\U0000274C Could not connect to WMI";
+	export constexpr wchar_t ERROR_RESTORE_WMI_INIT[]        = L"\U0000274C Failed to create IWbemLocator object";
+#endif
+
 // src/core/windows/services.cpp
 #if defined(ENABLE_SERVICES)
 	export constexpr wchar_t ERROR_SERVICES[]                = L"\U0000274C Failed to open Service "

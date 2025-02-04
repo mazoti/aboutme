@@ -74,6 +74,17 @@ export module i18n_system;
 	export constexpr wchar_t ERROR_PROCESSES_ENUM[]          = L"\U0000274C Erro enumerando processos";
 #endif
 
+// src/core/windows/restore.cpp
+#if defined(ENABLE_RESTORE)
+	export constexpr wchar_t ERROR_RESTORE_COM_INIT[]         = L"\U0000274C Falha inicializando biblioteca COM";
+	export constexpr wchar_t ERROR_RESTORE_QUERY[]            = L"\U0000274C Falha na query";
+	export constexpr wchar_t ERROR_RESTORE_SECURITY_LEVEL[]   = L"\U0000274C N\U000000E3o foi poss\U000000EDvel "
+	                                                           "ativar n\U000000EDvel de seguran\U000000E7a";
+	export constexpr wchar_t ERROR_RESTORE_WMI_CONNECT[]      = L"\U0000274C N\U000000E3o foi poss\U000000EDvel "
+	                                                           "conectar ao WMI";
+	export constexpr wchar_t ERROR_RESTORE_WMI_INIT[]         = L"\U0000274C Falha criando objeto IWbemLocator";
+#endif
+
 // src/core/windows/services.cpp
 #if defined(ENABLE_SERVICES)
 	export constexpr wchar_t ERROR_SERVICES[]                = L"\U0000274C N\U000000E3o foi poss\U000000EDvel abrir "

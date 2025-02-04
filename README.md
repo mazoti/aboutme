@@ -38,7 +38,7 @@ aboutme/
 ├── releases              # Folder with binary releases
 ├── resources             # Folder with resources like logos and icons
 ├── src                   # Source code folder
-│   ├── common            # Folder with interfaces and common source code for all operating systems
+│    ├── common           # Folder with interfaces and common source code for all operating systems
 │    ├── core             # System core modules for each operating system
 │    │   ├── freebsd      # FreeBSD implementation of the core modules
 │    │   ├── linux        # Linux implementation of the core modules

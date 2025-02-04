@@ -33,7 +33,13 @@ export template<typename DATA>
 std::wostream& operator<<(std::wostream& wos, const std::set<DATA>& dataset){
 	for(typename std::set<DATA>::const_iterator it = dataset.begin(); it != dataset.end(); ++it)
 		std::wcout << L'\t' << std::wstring(it->begin(), it->end()) << std::endl;
+	return wos << std::endl;
+}
 
+export template<typename DATA>
+std::wostream& operator<<(std::wostream& wos, const std::vector<DATA>& dataset){
+	for(typename std::vector<DATA>::const_iterator it = dataset.begin(); it != dataset.end(); ++it)
+		std::wcout << L'\t' << std::wstring(it->begin(), it->end()) << std::endl;
 	return wos << std::endl;
 }
 

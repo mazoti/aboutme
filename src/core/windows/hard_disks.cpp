@@ -7,14 +7,16 @@ module;
 
 module core;
 
+import common;
+
 import i18n;
 import i18n_system;
-import common;
 
 // Displays all hard disks sizes and usages
 std::wostream& hard_disks() noexcept{
 	std::wostringstream woss;
 	size_t total_tmp, used_tmp, available_tmp, largest = 0, total_drivers = 0;
+
 	ULONGLONG all_total, all_used, all_available;
 	ULARGE_INTEGER free_bytes, total_bytes, total_free_bytes;
 

@@ -11,10 +11,10 @@ module;
 
 module core;
 
+import common;
+
 import i18n;
 import i18n_system;
-
-import common;
 
 struct service_handle_closer{ void operator()(SC_HANDLE handle) const{ CloseServiceHandle(handle); }};
 
@@ -54,6 +54,5 @@ std::wostream& services() noexcept{
 	}
 
 	if(services_running_ordered.size() > 0) return std::wcout << SERVICES << std::endl << services_running_ordered;
-
 	return std::wcout;
 }

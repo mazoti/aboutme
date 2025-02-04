@@ -38,12 +38,20 @@ export constexpr wchar_t HEADER[] = L"\U00002699 AboutMe v0.5:\n\thttps://github
 	export std::wostream& memory() noexcept;
 #endif
 
+#if defined(ENABLE_NETWORK)
+	export std::wostream& network() noexcept;
+#endif
+
 #if defined(ENABLE_OPERATING_SYSTEM)
 	export std::wostream& operating_system() noexcept;
 #endif
 
 #if defined(ENABLE_PROCESSES)
 	export std::wostream& processes() noexcept;
+#endif
+
+#if defined(ENABLE_RESTORE)
+	export std::wostream& restore() noexcept;
 #endif
 
 #if defined(ENABLE_SERVICES)

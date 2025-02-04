@@ -8,13 +8,15 @@
 #ENABLE_BATTERY =
 #ENABLE_BLUETOOTH =
 #ENABLE_CPU =
-ENABLE_FEATURES =
+#ENABLE_FEATURES =
 #ENABLE_GPU =
 #ENABLE_HARD_DISKS =
 #ENABLE_INSTALLED =
 #ENABLE_MEMORY =
+#ENABLE_NETWORK =
 #ENABLE_OPERATING_SYSTEM =
 #ENABLE_PROCESSES =
+ENABLE_RESTORE =
 #ENABLE_SERVICES =
 #ENABLE_STARTUP =
 #ENABLE_TASKS =
@@ -98,6 +100,11 @@ CORE_OBJS = $(CORE_OBJS) objs\memory.o
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_MEMORY
 !ENDIF
 
+!IFDEF ENABLE_NETWORK
+CORE_OBJS = $(CORE_OBJS) objs\network.o
+CXXFLAGS  = $(CXXFLAGS) -DENABLE_NETWORK
+!ENDIF
+
 !IFDEF ENABLE_OPERATING_SYSTEM
 CORE_OBJS = $(CORE_OBJS) objs\operating_system.o
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_OPERATING_SYSTEM
@@ -106,6 +113,11 @@ CXXFLAGS  = $(CXXFLAGS) -DENABLE_OPERATING_SYSTEM
 !IFDEF ENABLE_PROCESSES
 CORE_OBJS = $(CORE_OBJS) objs\processes.o
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_PROCESSES
+!ENDIF
+
+!IFDEF ENABLE_RESTORE
+CORE_OBJS = $(CORE_OBJS) objs\restore.o
+CXXFLAGS  = $(CXXFLAGS) -DENABLE_RESTORE
 !ENDIF
 
 !IFDEF ENABLE_SERVICES
@@ -210,6 +222,11 @@ objs\memory.o: objs\common.o objs\i18n_system.o objs\i18n.o
 	$(CC) $(CXXFLAGS) -c ..\src\core\windows\memory.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
 	cd ..
 
+objs\network.o: objs\common.o objs\i18n_system.o objs\i18n.o
+	cd objs && \
+	$(CC) $(CXXFLAGS) -c ..\src\core\windows\network.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
+	cd ..
+
 objs\operating_system.o: objs\common.o objs\i18n_system.o objs\i18n.o
 	cd objs && \
 	$(CC) $(CXXFLAGS) -c ..\src\core\windows\operating_system.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
@@ -218,6 +235,11 @@ objs\operating_system.o: objs\common.o objs\i18n_system.o objs\i18n.o
 objs\processes.o: objs\common.o objs\i18n_system.o objs\i18n.o
 	cd objs && \
 	$(CC) $(CXXFLAGS) -c ..\src\core\windows\processes.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
+	cd ..
+
+objs\restore.o: objs\common.o objs\i18n_system.o objs\i18n.o
+	cd objs && \
+	$(CC) $(CXXFLAGS) -c ..\src\core\windows\restore.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
 	cd ..
 
 objs\services.o: objs\common.o objs\i18n_system.o objs\i18n.o

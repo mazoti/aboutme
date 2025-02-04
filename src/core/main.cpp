@@ -32,8 +32,8 @@ void run(char* envp[], char separator) noexcept{
 		system_clock();
 	#endif
 
-	#if defined(ENABLE_BATTERY)
-		battery();
+	#if defined(ENABLE_NETWORK)
+		network();
 	#endif
 
 	#if defined(ENABLE_WIFI)
@@ -42,6 +42,10 @@ void run(char* envp[], char separator) noexcept{
 
 	#if defined(ENABLE_BLUETOOTH)
 		bluetooth();
+	#endif
+
+	#if defined(ENABLE_BATTERY)
+		battery();
 	#endif
 
 	#if defined(ENABLE_OPERATING_SYSTEM)
@@ -54,6 +58,10 @@ void run(char* envp[], char separator) noexcept{
 
 	#if defined(ENABLE_INSTALLED)
 		installed();
+	#endif
+
+	#if defined(ENABLE_RESTORE)
+		restore();
 	#endif
 
 	#if defined(ENABLE_PROCESSES)

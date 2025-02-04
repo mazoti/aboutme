@@ -102,6 +102,13 @@ export constexpr wchar_t ANY_KEY_TO_CLOSE[] = L"Press any key to close...";
 	export constexpr wchar_t TOTAL_PROCESSES[]               = L"Total:";
 #endif
 
+// src/core/$(SYSTEM)/restore.cpp
+#if defined(ENABLE_RESTORE)
+	export constexpr wchar_t RESTORE_POINTS[]                = L"\U0001F504 Restore points:";
+	export constexpr wchar_t NO_RESTORE_POINTS[]             = L"\U0000274C No restore points found\n"
+	                                                            "\t(Admin privileges needed)";
+#endif
+
 // src/core/$(SYSTEM)/services.cpp
 #if defined(ENABLE_SERVICES)
 	export constexpr wchar_t SERVICES[]                      = L"\U0001F3E2 Services:";

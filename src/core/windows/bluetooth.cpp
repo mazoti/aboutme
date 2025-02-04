@@ -12,10 +12,10 @@ module;
 
 module core;
 
+import common;
+
 import i18n;
 import i18n_system;
-
-import common;
 
 struct bluetooth_find_device_close{
 	void operator()(HBLUETOOTH_DEVICE_FIND handle) const{ if(handle) BluetoothFindDeviceClose(handle);}
