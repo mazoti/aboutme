@@ -55,6 +55,14 @@ export module i18n_system;
 	export constexpr wchar_t ERROR_MEMORY_WMI_INIT[]         = L"\U0000274C Failed to create IWbemLocator object";
 #endif
 
+// src/core/windows/network.cpp
+#if defined(ENABLE_NETWORK)
+	export constexpr wchar_t ERROR_HOST_NAME[]               = L"\U0000274C Failed get host name";
+	export constexpr wchar_t ERROR_MEMORY_ALLOCATION[]       = L"\U0000274C Memory allocation failed";
+	export constexpr wchar_t ERROR_ADAPTERS_ADDRESS[]        = L"\U0000274C GetAdaptersAddresses failed";
+	export constexpr wchar_t ERROR_ADAPTERS_INFO[]           = L"\U0000274C GetAdaptersInfo failed";
+#endif
+
 // src/core/windows/operating_system.cpp
 #if defined(ENABLE_OPERATING_SYSTEM)
 	export constexpr wchar_t ERROR_LOCALE_NAME[]             = L"\U0000274C Failed to get locale name";

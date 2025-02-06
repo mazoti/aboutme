@@ -64,6 +64,14 @@ export module i18n_system;
 	export constexpr wchar_t ERROR_MEMORY_WMI_INIT[]         = L"\U0000274C Falha criando objeto IWbemLocator";
 #endif
 
+// src/core/windows/network.cpp
+#if defined(ENABLE_NETWORK)
+	export constexpr wchar_t ERROR_HOST_NAME[]               = L"\U0000274C Falha lendo nome do host";
+	export constexpr wchar_t ERROR_MEMORY_ALLOCATION[]       = L"\U0000274C Falha alocando mem\U000000F3ria";
+	export constexpr wchar_t ERROR_ADAPTERS_ADDRESS[]        = L"\U0000274C Falha em GetAdaptersAddresses";
+	export constexpr wchar_t ERROR_ADAPTERS_INFO[]           = L"\U0000274C Falha em GetAdaptersInfo";
+#endif
+
 // src/core/windows/operating_system.cpp
 #if defined(ENABLE_OPERATING_SYSTEM)
 	export constexpr wchar_t ERROR_LOCALE_NAME[]             = L"\U0000274C Falha ao obter nome do local";

@@ -22,7 +22,7 @@ template <typename T> struct releaser{ void operator()(T* ptr) const{if(ptr){ptr
 
 static bool couninitialize_released = false;
 
-struct couninitializer{
+struct couninitializer_features{
 	void operator()(void*) const{
 		if(couninitialize_released) return;
 		couninitialize_released = true;
@@ -44,7 +44,7 @@ std::wostream& features() noexcept{
 	// Initialize COM and creates a smart pointer to CoUninitialize
 	if(FAILED(CoInitializeEx(nullptr, COINIT_MULTITHREADED)))
 		return std::wcerr << ERROR_FEATURES_COM_INIT << std::endl << std::endl;
-	std::unique_ptr<void, couninitializer> result_handle_ptr(reinterpret_cast<void*>(1));
+	std::unique_ptr<void, couninitializer_features> result_handle_ptr(reinterpret_cast<void*>(1));
 
 	// Initialize WMI and creates a smart pointer to Release
 	if(FAILED(CoCreateInstance(CLSID_WbemLocator, nullptr, CLSCTX_INPROC_SERVER, IID_IWbemLocator,
@@ -63,7 +63,8 @@ std::wostream& features() noexcept{
 		return std::wcerr << ERROR_FEATURES_SECURITY_LEVEL << std::endl << std::endl;
 
 	// Query video details and creates a smart pointer to Release
-	if(FAILED(svc_pointer->ExecQuery(bstr_t("WQL"), bstr_t(L"SELECT * FROM Win32_OptionalFeature WHERE InstallState = 1"),
+	if(FAILED(svc_pointer->ExecQuery(bstr_t("WQL"),
+		bstr_t(L"SELECT * FROM Win32_OptionalFeature WHERE InstallState = 1"),
 		WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, nullptr, &enumerator_pointer)))
 		return std::wcerr << ERROR_FEATURES_QUERY << std::endl << std::endl;
 	std::unique_ptr<IEnumWbemClassObject, releaser<IEnumWbemClassObject> > enumerator_pointer_ptr(enumerator_pointer);

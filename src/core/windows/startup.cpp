@@ -15,7 +15,7 @@ import common;
 import i18n;
 import i18n_system;
 
-struct reg_closer{ void operator()(HKEY handle) const { if(handle != nullptr) RegCloseKey(handle); }};
+struct reg_closer_startup{ void operator()(HKEY handle) const { if(handle != nullptr) RegCloseKey(handle); }};
 
 static void startup_programs(HKEY key_root, const char* sub_key, std::multimap<std::string, std::string>&
 startup_programs_ordered){
@@ -24,7 +24,7 @@ startup_programs_ordered){
 	HKEY app_key = nullptr;
 	DWORD name_size = sizeof(value_name), data_size = sizeof(value_data), index = 0;
 
-	std::unique_ptr<std::remove_pointer_t<HKEY>, reg_closer> app_key_ptr(app_key);
+	std::unique_ptr<std::remove_pointer_t<HKEY>, reg_closer_startup> app_key_ptr(app_key);
 	if(RegOpenKeyEx(key_root, sub_key, 0, KEY_READ, &app_key) != ERROR_SUCCESS){
 		std::wcerr << ERROR_REG_OPENKEYEX << std::endl;
 		return;

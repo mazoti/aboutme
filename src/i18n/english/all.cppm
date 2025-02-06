@@ -83,6 +83,15 @@ export constexpr wchar_t ANY_KEY_TO_CLOSE[] = L"Press any key to close...";
 	export constexpr wchar_t MEMORY_USED[]                   = L"Used:";
 #endif
 
+// src/core/$(SYSTEM)/network.cpp
+#if defined(ENABLE_NETWORK)
+	export constexpr wchar_t DESCRIPTION[]                   = L"Description:";
+	export constexpr wchar_t DNS_SERVERS[]                   = L"DNS servers:";
+	export constexpr wchar_t GATEWAY[]                       = L"Gateway:";
+	export constexpr wchar_t HOST_NAME[]                     = L"Host:";
+	export constexpr wchar_t NETWORK[]                       = L"\U0001F310 Network:";
+#endif
+
 // src/core/$(SYSTEM)/operating_system.cpp
 #if defined(ENABLE_OPERATING_SYSTEM)
 	export constexpr wchar_t COUNTRY_REGION[]                = L"Country/Region:";

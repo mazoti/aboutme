@@ -22,7 +22,7 @@ template <typename T> struct releaser{ void operator()(T* ptr) const{if(ptr){ptr
 
 static bool couninitialize_released = false;
 
-struct couninitializer{
+struct couninitializer_restore{
 	void operator()(void*) const{
 		if(couninitialize_released) return;
 		couninitialize_released = true;
@@ -47,7 +47,7 @@ std::wostream& restore() noexcept{
 	// Initialize COM and creates a smart pointer to CoUninitialize
 	if(FAILED(CoInitializeEx(nullptr, COINIT_MULTITHREADED)))
 		return std::wcerr << ERROR_RESTORE_COM_INIT << std::endl << std::endl;
-	std::unique_ptr<void, couninitializer> result_handle_ptr(reinterpret_cast<void*>(1));
+	std::unique_ptr<void, couninitializer_restore> result_handle_ptr(reinterpret_cast<void*>(1));
 
 	// Initialize WMI and creates a smart pointer to Release
 	if(FAILED(CoCreateInstance(CLSID_WbemLocator, nullptr, CLSCTX_INPROC_SERVER, IID_IWbemLocator,
