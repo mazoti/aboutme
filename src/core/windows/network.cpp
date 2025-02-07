@@ -34,7 +34,8 @@ std::wostream& network() noexcept{
 	PIP_ADAPTER_INFO adapter_pointer;
 	IP_ADAPTER_DNS_SERVER_ADDRESS* dns_server_pointer;
 
-	std::wostringstream mac_address;
+	std::wostringstream woss;
+	std::wstring key, value;
 	std::set<std::string> dns_servers_ordered;
 	std::multimap<std::wstring, std::wstring> network_devices_ordered;
 
@@ -59,10 +60,22 @@ std::wostream& network() noexcept{
 		return std::wcerr << ERROR_ADAPTERS_INFO << std::endl << std::endl;
 
 	for(;adapter_pointer;adapter_pointer = adapter_pointer->Next){
-		if(adapter_pointer->GatewayList.IpAddress.String[0] != '0')
-			std::wcout << L'\t' << GATEWAY << std::endl << L"\t\t"
-			<< adapter_pointer->GatewayList.IpAddress.String
-			<< std::endl << std::endl;
+		woss << adapter_pointer->Description;
+		key = woss.str();
+		woss.str(L"");
+
+		woss << L"IP: " << adapter_pointer->IpAddressList.IpAddress.String;
+		value = woss.str();
+		woss.str(L"");
+
+		network_devices_ordered.insert({key, value});
+
+		if(adapter_pointer->GatewayList.IpAddress.String[0] != '0'){
+			woss << GATEWAY << " " << adapter_pointer->GatewayList.IpAddress.String;
+			value = woss.str();
+			woss.str(L"");
+			network_devices_ordered.insert({key, value});	
+		}
 	}
 
 	// Lists all Ethernet adapters and their MAC addresses
@@ -87,17 +100,20 @@ std::wostream& network() noexcept{
 		adapter_address = adapter_address->Next){
 
 		if(adapter_address->IfType == IF_TYPE_ETHERNET_CSMACD || adapter_address->IfType == IF_TYPE_IEEE80211){
-			mac_address	<< L"MAC: ";
-			for(i=0; i < adapter_address->PhysicalAddressLength; ++i){
-				mac_address	<< std::hex << std::setw(2) << std::setfill(L'0')
+			woss << L"MAC: ";
+			for(i = 0; i < adapter_address->PhysicalAddressLength; ++i){
+				woss << std::hex << std::setw(2) << std::setfill(L'0')
 					<< static_cast<int>(adapter_address->PhysicalAddress[i]);
-				if(i < adapter_address->PhysicalAddressLength - 1) mac_address << L':';
+				if(i < adapter_address->PhysicalAddressLength - 1) woss << L':';
 			}
-			network_devices_ordered.insert({adapter_address->FriendlyName, std::wstring(DESCRIPTION)
-				+ std::wstring(L" ") + std::wstring(adapter_address->Description)});
-			network_devices_ordered.insert({adapter_address->FriendlyName, mac_address.str()});
+			
+			value = woss.str();
+			woss.str(L"");
 
-			mac_address.str(L"");
+			woss << adapter_address->Description;
+			key = woss.str();
+			woss.str(L"");
+			network_devices_ordered.insert({key, value});
 		}
 
 		// Gets all DNS servers
