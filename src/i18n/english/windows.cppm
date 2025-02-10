@@ -61,6 +61,11 @@ export module i18n_system;
 	export constexpr wchar_t ERROR_MEMORY_ALLOCATION[]       = L"\U0000274C Memory allocation failed";
 	export constexpr wchar_t ERROR_ADAPTERS_ADDRESS[]        = L"\U0000274C GetAdaptersAddresses failed";
 	export constexpr wchar_t ERROR_ADAPTERS_INFO[]           = L"\U0000274C GetAdaptersInfo failed";
+	export constexpr wchar_t ERROR_WSA_STARTUP[]             = L"\U0000274C WSAStartup failed";
+	export constexpr wchar_t ERROR_TCP_MALLOC[]              = L"\U0000274C Memory allocation failed for TCP table";
+	export constexpr wchar_t ERROR_UDP_MALLOC[]              = L"\U0000274C Memory allocation failed for UDP table";
+	export constexpr wchar_t ERROR_EXTENDED_TCP_TABLE[]      = L"\U0000274C GetExtendedTcpTable failed";
+	export constexpr wchar_t ERROR_EXTENDED_UDP_TABLE[]      = L"\U0000274C GetExtendedUdpTable failed";
 #endif
 
 // src/core/windows/operating_system.cpp

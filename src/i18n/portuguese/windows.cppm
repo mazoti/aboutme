@@ -70,6 +70,13 @@ export module i18n_system;
 	export constexpr wchar_t ERROR_MEMORY_ALLOCATION[]       = L"\U0000274C Falha alocando mem\U000000F3ria";
 	export constexpr wchar_t ERROR_ADAPTERS_ADDRESS[]        = L"\U0000274C Falha em GetAdaptersAddresses";
 	export constexpr wchar_t ERROR_ADAPTERS_INFO[]           = L"\U0000274C Falha em GetAdaptersInfo";
+	export constexpr wchar_t ERROR_WSA_STARTUP[]             = L"\U0000274C Falha em WSAStartup";
+	export constexpr wchar_t ERROR_TCP_MALLOC[]              = L"\U0000274C Falha alocando mem\U000000F3ria "
+	                                                            "para a tabela TCP";
+	export constexpr wchar_t ERROR_UDP_MALLOC[]              = L"\U0000274C Falha alocando mem\U000000F3ria "
+	                                                            "para a tabela UDP";
+	export constexpr wchar_t ERROR_EXTENDED_TCP_TABLE[]      = L"\U0000274C Falha em GetExtendedTcpTable";
+	export constexpr wchar_t ERROR_EXTENDED_UDP_TABLE[]      = L"\U0000274C Falha em GetExtendedUdpTable";
 #endif
 
 // src/core/windows/operating_system.cpp

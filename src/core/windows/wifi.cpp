@@ -25,9 +25,7 @@ struct wlan_handle_closer{
 };
 
 std::wostream& wifi() noexcept{
-	wchar_t guid_string[40];
-	std::wstring guid, ssid;
-
+	std::wstring ssid;
 	std::multimap<std::wstring, std::wstring> wifi_ordered;
 
 	HANDLE client_handle = nullptr;
@@ -47,13 +45,10 @@ std::wostream& wifi() noexcept{
 	std::unique_ptr<PWLAN_INTERFACE_INFO_LIST, wlan_free_memory<PWLAN_INTERFACE_INFO_LIST> >
 		wlan_ifinfo_lptr(&wlan_interface_info_list_ptr);
 
+	// Retrieve the list of available networks
 	for(size_t i = 0; i < wlan_interface_info_list_ptr->dwNumberOfItems; ++i){
 		interface_info_ptr = &wlan_interface_info_list_ptr->InterfaceInfo[i];
-		StringFromGUID2(interface_info_ptr->InterfaceGuid, guid_string, sizeof(guid_string) / sizeof(guid_string[0]));
-		guid = guid_string;
-		guid = L"Adapter GUID " + guid.substr(1, guid.length() - 2);
 
-		// Retrieve the list of available networks
 		if(WlanGetAvailableNetworkList(client_handle, &interface_info_ptr->InterfaceGuid, 0, nullptr,
 			&wlan_available_network_list_ptr) != ERROR_SUCCESS) continue;
 		std::unique_ptr<PWLAN_AVAILABLE_NETWORK_LIST, wlan_free_memory<PWLAN_AVAILABLE_NETWORK_LIST> >
@@ -65,10 +60,9 @@ std::wostream& wifi() noexcept{
 				wlan_available_network->dot11Ssid.uSSIDLength);
 			ssid += L" (" + std::to_wstring(wlan_available_network->wlanSignalQuality) + L"%)";
 
-			wifi_ordered.insert({guid, ssid});
+			wifi_ordered.insert({interface_info_ptr->strInterfaceDescription, ssid});
 		}
 	}
 	if(wifi_ordered.empty()) return std::wcerr << ERROR_WIFI << std::endl << std::endl;
-
 	return std::wcout << WIFI << std::endl << wifi_ordered;
 }

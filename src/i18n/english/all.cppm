@@ -90,6 +90,8 @@ export constexpr wchar_t ANY_KEY_TO_CLOSE[] = L"Press any key to close...";
 	export constexpr wchar_t GATEWAY[]                       = L"Gateway:";
 	export constexpr wchar_t HOST_NAME[]                     = L"Host:";
 	export constexpr wchar_t NETWORK[]                       = L"\U0001F310 Network:";
+	export constexpr wchar_t TCP_ENDPOINTS[]                 = L"TCP endpoints:";
+	export constexpr wchar_t UDP_ENDPOINTS[]                 = L"UDP endpoints:";
 #endif
 
 // src/core/$(SYSTEM)/operating_system.cpp
