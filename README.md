@@ -33,7 +33,7 @@ Just run: if you don't want to press a key to exit, pass any argument:
 ```
 aboutme 1
 ```
-If you have problems with emojis, try it with [Windows Terminal](https://https://github.com/microsoft/terminal).
+If you have problems with emojis, try it with [Windows Terminal](https://github.com/microsoft/terminal).
 
 ### Source code
 
