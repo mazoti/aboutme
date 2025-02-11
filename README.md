@@ -1,20 +1,26 @@
 <div align="center"><img src="resources/logo.webp"></div>
 
-This program displays detailed information about the user's hardware and software in a very fast, easy, and safe way. It's open-source and works in command line. The current release displays:
+This program displays detailed information about the user's hardware and software in a very fast, easy, and safe way. It's open-source and works in command line. In a few seconds, the current release displays:
 
-- CPU
-- GPU
-- Memory (RAM)
-- Hard disks
-- USB devices
-- System clock
 - Battery
-- WiFi
 - Bluetooth
+- CPU
+- Environment variables
+- Features
+- GPU
+- Hard disks
+- Installed applications
+- Memory (RAM)
+- Network
 - Operating system
 - Processes
+- Restore points
 - Services
 - Startup applications
+- System clock
+- Tasks
+- USB devices
+- WiFi
 
 ### Download
 
@@ -27,6 +33,7 @@ Just run: if you don't want to press a key to exit, pass any argument:
 ```
 aboutme 1
 ```
+If you have problems with emojis, try it with [Windows Terminal](https://https://github.com/microsoft/terminal).
 
 ### Source code
 
