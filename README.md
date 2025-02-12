@@ -1,6 +1,7 @@
 <div align="center"><img src="resources/logo.webp"></div>
 
-This program displays detailed information about the user's hardware and software in a very fast, easy, and safe way. It's open-source and works in command line. In a few seconds, the current release displays:
+This program displays detailed information about the user's hardware and software in a very fast, easy, and safe way.
+It's open-source and works in the command line. In a few seconds, the current release provides information on:
 
 - Battery
 - Bluetooth
@@ -20,20 +21,36 @@ This program displays detailed information about the user's hardware and softwar
 - System clock
 - Tasks
 - USB devices
-- WiFi
+- Wi-Fi
+
+### Features
+
+ - BSD 3-Clause License
+ - No telemetry
+ - No installation needed
+ - No external libraries
+ - Very small (< 500 KB)
+ - Modular
 
 ### Download
 
-Binaries for Windows are available [here](https://github.com/mazoti/aboutme/tree/main/releases). Some antivirus programs like BitDefender may flag these files as false positives, but this program does not modify any file on any hard disks or sends information over a network (no telemetry).
+Binaries for Windows are available [here](https://github.com/mazoti/aboutme/tree/main/releases).
+Some antivirus programs like BitDefender may flag these files as false positives, but this program 
+does not modify any file on any hard disks or sends information over a network.
 
 ### Usage
 
-Just run: if you don't want to press a key to exit, pass any argument:
+Just run:
+
+```
+aboutme
+```
+If you don't want to press a key to exit, pass any argument:
 
 ```
 aboutme 1
 ```
-If you have problems with emojis, try it with [Windows Terminal](https://github.com/microsoft/terminal).
+Problems with emojis? Try it with [Windows Terminal](https://github.com/microsoft/terminal).
 
 ### Source code
 
