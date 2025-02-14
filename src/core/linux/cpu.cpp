@@ -19,7 +19,7 @@ static std::string arch(const std::string& line){
 }
 
 // Displays CPU details
-std::wostream& cpu(){
+std::wostream& cpu() noexcept{
 	int cores = 0;
 	std::string model="", architecture = "";
 
@@ -35,8 +35,8 @@ std::wostream& cpu(){
 	}
 
 	return std::wcout << CPU << std::endl
-		<< L'\t' << MODEL << L' ' << std::wstring(model.begin(), model.end()) << std::endl
+		<< L'\t' << std::wstring(model.begin(), model.end()) << std::endl
 		<< L'\t' << ARCHITECTURE << L' ' << std::wstring(architecture.begin(), architecture.end()) << std::endl
-		<< L'\t' << CORES << L' ' << cores << std::endl
+		<< L'\t' << THREADS << L' ' << cores << std::endl
 		<< std::endl;
 }

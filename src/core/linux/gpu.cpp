@@ -10,7 +10,7 @@ import i18n;
 import i18n_system;
 
 // Displays GPU details
-std::wostream& gpu(){
+std::wostream& gpu() noexcept{
 	if(!std::filesystem::exists("/sys/bus/pci/devices")){
 //TODO
 		return std::wcerr << L"PCI sysfs path not found\n";

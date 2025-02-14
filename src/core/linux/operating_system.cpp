@@ -52,7 +52,7 @@ static std::wstring uptime(){
 	return L"";
 }
 
-std::wostream& operating_system(){
+std::wostream& operating_system() noexcept{
 	struct utsname buffer;
 	std::wstring line, version_info;
 	std::wifstream file("/etc/os-release");

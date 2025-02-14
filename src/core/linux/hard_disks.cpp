@@ -15,7 +15,7 @@ import i18n_system;
 
 import common;
 
-std::wostream& hard_disks(){
+std::wostream& hard_disks() noexcept{
 	size_t all_total, all_used, all_available, total_tmp, used_tmp, available_tmp;
 
 	struct mntent *mnt;

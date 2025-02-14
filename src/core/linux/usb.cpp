@@ -12,7 +12,7 @@ import i18n_system;
 
 import common;
 
-std::wostream& usb(){
+std::wostream& usb() noexcept{
 	std::fstream file;
 	std::string path, value, data;
 	std::multimap<std::wstring, std::wstring> mmap_devices;

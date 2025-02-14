@@ -14,7 +14,7 @@ module core;
 import i18n;
 import common;
 
-std::wostream& processes(){
+std::wostream& processes() noexcept{
 	int value;
 	long stime, utime;
 	size_t vmsize, total_ms, ram_total, cpu_total, count;

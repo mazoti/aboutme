@@ -13,7 +13,7 @@ import i18n;
 import i18n_system;
 import common;
 
-std::wostream& services(){
+std::wostream& services() noexcept{
 	std::string result, line, service;
 
 	std::array<char, 128> buffer;

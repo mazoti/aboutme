@@ -11,7 +11,7 @@ module core;
 import i18n;
 import common;
 
-std::wostream& memory(){
+std::wostream& memory() noexcept{
 	struct sysinfo system_info;
 
 	if(sysinfo(&system_info)) return std::wcerr << ERROR_MEMORY << std::endl << std::endl;
