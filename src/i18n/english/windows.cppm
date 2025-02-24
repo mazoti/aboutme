@@ -105,6 +105,15 @@ export module i18n_system;
 	export constexpr wchar_t ERROR_TASKS[]                   = L"\U0000274C Error on";
 #endif
 
+// src/core/windows/trash.cpp
+#if defined(ENABLE_TRASH)
+	export constexpr wchar_t ERROR_TRASH_BIND[]             = L"\U0000274C Failed to bind to Recycle Bin";
+	export constexpr wchar_t ERROR_TRASH_COM_INIT[]         = L"\U0000274C Failed to initialize COM library";
+	export constexpr wchar_t ERROR_TRASH_DESKTOP_FOLDER[]   = L"\U0000274C Failed to get desktop folder";
+	export constexpr wchar_t ERROR_TRASH_ENUM[]             = L"\U0000274C Failed to enumerate objects";
+	export constexpr wchar_t ERROR_TRASH_LOCATION[]         = L"\U0000274C Failed to get Recycle Bin location";
+#endif
+
 // src/core/windows/usb.cpp
 #if defined(ENABLE_USB)
 	export constexpr wchar_t ERROR_USB_DEVICE_INIT[]         = L"\U0000274C Error initializing USB "

@@ -66,6 +66,10 @@ export constexpr wchar_t HEADER[] = L"\U00002699 AboutMe v0.5:\n\thttps://github
 	export std::wostream& tasks() noexcept;
 #endif
 
+#if defined(ENABLE_TRASH)
+	export std::wostream& trash() noexcept;
+#endif
+
 #if defined(ENABLE_USB)
 	export std::wostream& usb() noexcept;
 #endif

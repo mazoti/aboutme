@@ -20,6 +20,7 @@ ENABLE_RESTORE =
 ENABLE_SERVICES =
 ENABLE_STARTUP =
 ENABLE_TASKS =
+ENABLE_TRASH =
 ENABLE_USB =
 ENABLE_WIFI =
 
@@ -132,6 +133,11 @@ CORE_OBJS = $(CORE_OBJS) objs\tasks.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_TASKS
 !ENDIF
 
+!IFDEF ENABLE_TRASH
+CORE_OBJS = $(CORE_OBJS) objs\trash.obj
+CXXFLAGS  = $(CXXFLAGS) /DENABLE_TRASH
+!ENDIF
+
 !IFDEF ENABLE_USB
 CORE_OBJS = $(CORE_OBJS) objs\usb.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_USB
@@ -224,6 +230,9 @@ objs\startup.obj: objs\core.obj
 
 objs\tasks.obj: objs\core.obj
 	$(CC) $(CXXFLAGS) /c src\core\windows\tasks.cpp /Foobjs\tasks.obj
+
+objs\trash.obj: objs\core.obj
+	$(CC) $(CXXFLAGS) /c src\core\windows\trash.cpp /Foobjs\trash.obj
 
 objs\usb.obj: objs\core.obj
 	$(CC) $(CXXFLAGS) /c src\core\windows\usb.cpp /Foobjs\usb.obj

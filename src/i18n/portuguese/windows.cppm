@@ -120,6 +120,15 @@ export module i18n_system;
 	export constexpr wchar_t ERROR_TASKS[]                   = L"\U0000274C Erro em";
 #endif
 
+// src/core/windows/trash.cpp
+#if defined(ENABLE_TRASH)
+	export constexpr wchar_t ERROR_TRASH_BIND[]             = L"\U0000274C Falha lendo a lixeira";
+	export constexpr wchar_t ERROR_TRASH_COM_INIT[]         = L"\U0000274C Falha inicializando biblioteca COM";
+	export constexpr wchar_t ERROR_TRASH_DESKTOP_FOLDER[]   = L"\U0000274C Falha lendo pasta do desktop";
+	export constexpr wchar_t ERROR_TRASH_ENUM[]             = L"\U0000274C Falha enumerando objetos";
+	export constexpr wchar_t ERROR_TRASH_LOCATION[]         = L"\U0000274C Falha lendo local da lixeira";
+#endif
+
 // src/core/windows/usb.cpp
 #if defined(ENABLE_USB)
 	export constexpr wchar_t ERROR_USB_DEVICE_INIT[]         = L"\U0000274C Erro inicializando conjunto de informa"

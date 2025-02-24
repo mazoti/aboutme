@@ -139,6 +139,12 @@ export constexpr wchar_t ANY_KEY_TO_CLOSE[] = L"Pressione qualquer tecla para fe
 	export constexpr wchar_t TASKS[]                         = L"\U00002705 Tarefas:";
 #endif
 
+// src/core/windows/trash.cpp
+#if defined(ENABLE_TRASH)
+	export constexpr wchar_t TRASH[]                         = L"\U0001F5D1 Lixeira:";
+	export constexpr wchar_t TRASH_EMPY[]                    = L"\U0000274C Lixeira vazia";
+#endif
+
 // src/core/$(SYSTEM)/usb.cpp
 #if defined(ENABLE_USB)
 	export constexpr wchar_t USB[]                           = L"\U0001F50C Dispositivos USB:";

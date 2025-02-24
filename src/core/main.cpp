@@ -60,6 +60,10 @@ void run(char* envp[], char separator) noexcept{
 		installed();
 	#endif
 
+	#if defined(ENABLE_TRASH)
+		trash();
+	#endif
+
 	#if defined(ENABLE_RESTORE)
 		restore();
 	#endif

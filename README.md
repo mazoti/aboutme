@@ -20,6 +20,7 @@ It's open-source and works in the command line. In a few seconds, the current re
 - Startup applications
 - System clock
 - Tasks
+- Trash
 - USB devices
 - Wi-Fi
 
