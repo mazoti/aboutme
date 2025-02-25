@@ -1,7 +1,9 @@
-<div align="center"><img src="resources/logo.webp"></div>
+<div align="center"><img src="resources/logo.webp" alt="AboutMe Logo"></div>
 
-This program displays detailed information about the user's hardware and software in a very fast, easy, and safe way.
-It's open-source and works in the command line. In a few seconds, the current release provides information on:
+**AboutMe** is a lightweight, open-source command-line tool that quickly and securely displays detailed information about your hardware and software.
+With no installation required and a tiny footprint, it provides a comprehensive system overview in just a few seconds.
+
+Currently, it supports the following system details:
 
 - Battery
 - Bluetooth
@@ -26,12 +28,12 @@ It's open-source and works in the command line. In a few seconds, the current re
 
 ### Features
 
- - BSD 3-Clause License
- - No telemetry
- - No installation needed
- - No external libraries
- - Very small (< 500 KB)
- - Modular
+- Licensed under the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause)
+- No telemetry or data collection
+- No installation — just run the binary
+- No external dependencies
+- Tiny size (< 500 KB)
+- Modular design for easy customization
 
 ### Download
 
