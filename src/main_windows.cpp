@@ -1,6 +1,5 @@
 #include <iostream>
 
-// Windows API
 #include <Windows.h>
 #include <conio.h>
 #include <fcntl.h>
@@ -16,6 +15,12 @@ import i18n;
 import core;
 
 int main(int argc, char* argv[], char* envp[]){
+	DWORD mode;
+	HANDLE std_handle = nullptr;
+
+	// Saves the console state
+	GetConsoleMode(std_handle, &mode);
+
 	// Memory leaks check in debug mode
 	#ifndef NDEBUG
 		_CrtMemState start_state, end_state, diff_state;
@@ -45,6 +50,9 @@ int main(int argc, char* argv[], char* envp[]){
 		}
 		std::wcout << L"*** No leak found ***" << std::endl;
 	#endif
+
+	// Restores the console
+	SetConsoleMode(std_handle, ENABLE_PROCESSED_OUTPUT | ENABLE_WRAP_AT_EOL_OUTPUT);
 
 	return 0;
 }
