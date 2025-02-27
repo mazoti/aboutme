@@ -104,6 +104,7 @@ std::wostream& restore() noexcept{
 		restore_points_ordered.emplace(restore_points_ordered.begin(), tmp);
 	}
 
-	if(restore_points_ordered.size() > 0) return std::wcout << RESTORE_POINTS << std::endl << restore_points_ordered;
-	return std::wcout << NO_RESTORE_POINTS << std::endl << std::endl;
+	if(restore_points_ordered.size() > 0)
+		return std::wcout << i18n::RESTORE_POINTS << std::endl << restore_points_ordered;
+	return std::wcout << i18n::NO_RESTORE_POINTS << std::endl << std::endl;
 }

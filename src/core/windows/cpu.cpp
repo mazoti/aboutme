@@ -63,11 +63,11 @@ std::wostream& cpu() noexcept{
 	// EBX flags for extended features
 	std::bitset<32> features_ebx(static_cast<unsigned int>(cpu_information_extended[1]));
 
-	std::wcout << CPU << std::endl 
+	std::wcout << i18n::CPU << std::endl 
 		<< L'\t' << &cpu_brand[start] << std::endl
-		<< L'\t' << ARCHITECTURE << L' ' << arch(sys_info.wProcessorArchitecture) << std::endl
-		<< L'\t' << THREADS << L' ' << sys_info.dwNumberOfProcessors << std::endl
-		<< L'\t' << INSTRUCTIONS_SUPPORTED << L' ';
+		<< L'\t' << i18n::ARCHITECTURE << L' ' << arch(sys_info.wProcessorArchitecture) << std::endl
+		<< L'\t' << i18n::THREADS << L' ' << sys_info.dwNumberOfProcessors << std::endl
+		<< L'\t' << i18n::INSTRUCTIONS_SUPPORTED << L' ';
 
 	if(features_ecx[25]) std::wcout << "AES ";
 	if(features_ecx[28]) std::wcout << "AVX ";

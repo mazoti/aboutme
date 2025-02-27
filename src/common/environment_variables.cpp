@@ -103,7 +103,7 @@ void environment_variables(std::span<char*>& env_vars, char path_separator) noex
 	std::string environment_variable;
 	std::string_view data_view, variable_name, temp;
 
-	std::wcout << ENVIRONMENT_VARIABLES << std::endl;
+	std::wcout << i18n::ENVIRONMENT_VARIABLES << std::endl;
 
 	for(auto& environment : env_vars){
 		environment_variable = std::string(environment);
@@ -129,7 +129,7 @@ void environment_variables(std::span<char*>& env_vars, char path_separator) noex
 				std::wcout << L"\t\t" << std::wstring(variable_name.begin(), variable_name.end()) << std::endl;
 
 				if(!std::filesystem::exists(variable_name))
-					std::wcout << L"\t\t\t" << ENVIRONMENT_VARIABLES_WARNING << std::endl;
+					std::wcout << L"\t\t\t" << i18n::ENVIRONMENT_VARIABLES_WARNING << std::endl;
 
 				data_view.remove_prefix(position + 1);
 			}
@@ -137,7 +137,7 @@ void environment_variables(std::span<char*>& env_vars, char path_separator) noex
 			// Last path
 			if(!std::filesystem::exists(data_view)){
 				std::wcout << L"\t\t" << std::wstring(data_view.begin(), data_view.end()) << std::endl
-					<< L"\t\t\t" << ENVIRONMENT_VARIABLES_WARNING << std::endl << std::endl;
+					<< L"\t\t\t" << i18n::ENVIRONMENT_VARIABLES_WARNING << std::endl << std::endl;
 				continue;
 			}
 

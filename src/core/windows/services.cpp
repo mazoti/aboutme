@@ -53,6 +53,7 @@ std::wostream& services() noexcept{
 		}
 	}
 
-	if(services_running_ordered.size() > 0) return std::wcout << SERVICES << std::endl << services_running_ordered;
+	if(services_running_ordered.size() > 0)
+		return std::wcout << i18n::SERVICES << std::endl << services_running_ordered;
 	return std::wcout;
 }

@@ -54,5 +54,5 @@ std::wostream& usb() noexcept{
 		mmap_devices.insert({key, value});
 	}
 
-	return std::wcout << USB << std::endl << mmap_devices;
+	return std::wcout << i18n::USB << std::endl << mmap_devices;
 }

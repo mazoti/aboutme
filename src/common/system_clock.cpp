@@ -28,7 +28,8 @@ std::wostream& system_clock() noexcept{
 	local_tm  = *std::localtime(&time);
 	utc_tm    = *std::gmtime(&time);
 	gmt_tm    = *std::gmtime(&time);
-	gmt_value = std::to_wstring(static_cast<int>(difftime(mktime(&local_tm), mktime(&gmt_tm)) / 3600)) + L" " + HOURS;
+	gmt_value = std::to_wstring(static_cast<int>(difftime(mktime(&local_tm), mktime(&gmt_tm)) / 3600))
+		+ L" " + i18n::HOURS;
 
 	// Determine if the system is using local time or UTC
 	static_cast<int>(std::difftime(std::mktime(&local_tm), std::mktime(&utc_tm))) ?
@@ -42,15 +43,15 @@ std::wostream& system_clock() noexcept{
 
 	// Check daylight saving time
 	if(local_tm.tm_isdst > 0){
-		return print_title(0, 1, L' ', SYSTEM_CLOCK,
-			DATE, date_value,
-			TIME, time_value,
-			GMT, gmt_value,
-			DAYLIGHT_SAVING_TIME, L"");
+		return print_title(0, 1, L' ', i18n::SYSTEM_CLOCK,
+			i18n::DATE, date_value,
+			i18n::TIME, time_value,
+			i18n::GMT, gmt_value,
+			i18n::DAYLIGHT_SAVING_TIME, L"");
 	}
 
-	return print_title(0, 1, L' ', SYSTEM_CLOCK,
-		DATE, date_value,
-		TIME, time_value,
-		GMT, gmt_value);
+	return print_title(0, 1, L' ', i18n::SYSTEM_CLOCK,
+		i18n::DATE, date_value,
+		i18n::TIME, time_value,
+		i18n::GMT, gmt_value);
 }

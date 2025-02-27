@@ -85,6 +85,6 @@ std::wostream& features() noexcept{
 		}
 	}
 
-	if(features_ordered.size() > 0) return std::wcout << FEATURES << std::endl << features_ordered;
+	if(features_ordered.size() > 0) return std::wcout << i18n::FEATURES << std::endl << features_ordered;
 	return std::wcout;
 }

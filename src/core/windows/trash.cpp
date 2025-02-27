@@ -81,6 +81,6 @@ std::wostream& trash() noexcept{
 		trash_data_ordered.emplace(display_name);
 	}
 
-	if(trash_data_ordered.empty()) return std::wcout << TRASH_EMPY << std::endl << std::endl;
-	return std::wcout << TRASH << std::endl << trash_data_ordered;
+	if(trash_data_ordered.empty()) return std::wcout << i18n::TRASH_EMPTY << std::endl << std::endl;
+	return std::wcout << i18n::TRASH << std::endl << trash_data_ordered;
 }

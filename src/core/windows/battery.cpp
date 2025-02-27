@@ -40,14 +40,14 @@ std::wostream& battery() noexcept{
 	total_minutes = std::chrono::duration_cast<std::chrono::minutes>(duration);
 	duration -= total_minutes;
 
-	std::wcout << BATTERY_STATUS << std::endl << L'\t' << AC_LINE_STATUS << L' ';
+	std::wcout << i18n::BATTERY_STATUS << std::endl << L'\t' << AC_LINE_STATUS << L' ';
 
-	if(power_status.ACLineStatus == 1) std::wcout << BATTERY_AC_POWER;
+	if(power_status.ACLineStatus == 1) std::wcout << i18n::BATTERY_AC_POWER;
 	else {
-		std::wcout << BATTERY_AC_NOT_CONNECTED << std::endl	<< L'\t' << BATTERY_LIFE_TIME;
-		if(total_days.count())    std::wcout << L' ' << total_days.count()    << L' ' << BATTERY_DAYS;
-		if(total_hours.count())   std::wcout << L' ' << total_hours.count()   << L' ' << BATTERY_HOURS;
-		if(total_minutes.count()) std::wcout << L' ' << total_minutes.count() << L' ' << BATTERY_MINUTES;
+		std::wcout << i18n::BATTERY_AC_NOT_CONNECTED << std::endl	<< L'\t' << BATTERY_LIFE_TIME;
+		if(total_days.count())    std::wcout << L' ' << total_days.count()    << L' ' << i18n::BATTERY_DAYS;
+		if(total_hours.count())   std::wcout << L' ' << total_hours.count()   << L' ' << i18n::BATTERY_HOURS;
+		if(total_minutes.count()) std::wcout << L' ' << total_minutes.count() << L' ' << i18n::BATTERY_MINUTES;
 	}
 
 	return std::wcout << L" (" << status_percent << L"%)" << std::endl << std::endl;

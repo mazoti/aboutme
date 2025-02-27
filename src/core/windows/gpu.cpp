@@ -66,7 +66,7 @@ std::wostream& gpu() noexcept{
 			return std::wcerr << ERROR_QUERY << std::endl << std::endl;
 	std::unique_ptr<IEnumWbemClassObject, releaser<IEnumWbemClassObject> > enumerator_pointer_ptr(enumerator_pointer);
 
-	for(std::wcout << GPU << std::endl; enumerator_pointer;){
+	for(std::wcout << i18n::GPU << std::endl; enumerator_pointer;){
 		// Initialize class object and creates a smart pointer to Release
 		enumerator_pointer->Next(WBEM_INFINITE, 1, &clsobj_pointer, &return_result);
 		if(!return_result) break;
@@ -87,14 +87,14 @@ std::wostream& gpu() noexcept{
 			VariantClear(&variant_property);
 
 			if(SUCCEEDED(clsobj_pointer->Get(L"CurrentVerticalResolution", 0, &variant_property, nullptr, nullptr))){
-				std::wcout << L'\t' << VIDEO_RESOLUTION << L' ' << width
+				std::wcout << L'\t' << i18n::VIDEO_RESOLUTION << L' ' << width
 				<< "x" << variant_property.uintVal << std::endl;
 				VariantClear(&variant_property);
 			}
 		}
 
 		if(SUCCEEDED(clsobj_pointer->Get(L"AdapterRAM", 0, &variant_property, nullptr, nullptr))){
-			std::wcout << L'\t' << GPU_MEMORY << L' ' << (variant_property.ullVal / 1048576) << L" MB" << std::endl;
+			std::wcout << L'\t' << i18n::GPU_MEMORY << L' ' << (variant_property.ullVal / 1048576) << L" MB" << std::endl;
 			VariantClear(&variant_property);
 		}
 	}

@@ -64,5 +64,5 @@ std::wostream& wifi() noexcept{
 		}
 	}
 	if(wifi_ordered.empty()) return std::wcerr << ERROR_WIFI << std::endl << std::endl;
-	return std::wcout << WIFI << std::endl << wifi_ordered;
+	return std::wcout << i18n::WIFI << std::endl << wifi_ordered;
 }

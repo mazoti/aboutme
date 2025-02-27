@@ -65,7 +65,7 @@ std::wostream& tasks() noexcept{
 	std::unique_ptr<IRegisteredTaskCollection, releaser<IRegisteredTaskCollection> > tasks_ptr_releaser(tasks_pointer);
 
 
-	std::wcout << TASKS << std::endl;
+	std::wcout << i18n::TASKS << std::endl;
 
 	tasks_pointer->get_Count(&tasks_count);
 

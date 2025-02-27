@@ -49,7 +49,7 @@ std::wostream& network() noexcept{
 	std::set<std::string> dns_servers_ordered;
 	std::multimap<std::wstring, std::wstring> network_devices_ordered;
 
-	std::wcout << NETWORK << std::endl;
+	std::wcout << i18n::NETWORK << std::endl;
 
 	// Displays gateway
 	GetAdaptersInfo(nullptr, &buffer_length);
@@ -74,7 +74,7 @@ std::wostream& network() noexcept{
 		network_devices_ordered.insert({key, value});
 
 		if(adapter_pointer->GatewayList.IpAddress.String[0] != '0'){
-			woss << GATEWAY << " " << adapter_pointer->GatewayList.IpAddress.String;
+			woss << i18n::GATEWAY << " " << adapter_pointer->GatewayList.IpAddress.String;
 			value = woss.str();
 			woss.str(L"");
 			network_devices_ordered.insert({key, value});	
@@ -212,20 +212,20 @@ std::wostream& network() noexcept{
 	if(!GetComputerName(host_name, &host_name_size))
 		return std::wcerr << L'\t' << ERROR_HOST_NAME << std::endl << std::endl;
 
-	std::wcout << L'\t' << HOST_NAME << std::endl << L"\t\t" << host_name << std::endl << std::endl;
+	std::wcout << L'\t' << i18n::HOST_NAME << std::endl << L"\t\t" << host_name << std::endl << std::endl;
 
 	// Prints DNS servers
-	std::wcout << L'\t' << DNS_SERVERS << std::endl;
+	std::wcout << L'\t' << i18n::DNS_SERVERS << std::endl;
 	for(const std::string& dns_server : dns_servers_ordered)
 		std::wcout << L"\t\t" << std::wstring(dns_server.begin(), dns_server.end()) << std::endl;
 
 	// Prints UDP endpoints
-	std::wcout << std::endl << L'\t' << UDP_ENDPOINTS << std::endl;
+	std::wcout << std::endl << L'\t' << i18n::UDP_ENDPOINTS << std::endl;
 	for(const std::wstring& udp_endpoint : udp_ordered)
 		std::wcout << L"\t\t" << udp_endpoint << std::endl;
 
 	// Prints TCP endpoints
-	std::wcout << std::endl << L'\t' << TCP_ENDPOINTS << std::endl;
+	std::wcout << std::endl << L'\t' << i18n::TCP_ENDPOINTS << std::endl;
 
 	if(!tcp_established_ordered.empty()){
 		std::wcout << L"\t\t" << "ESTABLISHED:" << std::endl;

@@ -112,7 +112,7 @@ std::wostream& processes() noexcept{
 		}
 	}
 
-	std::wcout << RUNNING_PROCESSES << std::endl;
+	std::wcout << i18n::RUNNING_PROCESSES << std::endl;
 
 	for(typename std::multimap<std::string, triple<std::string, size_t,
 		size_t> >::const_iterator it = ordered_processes.begin();
@@ -141,7 +141,7 @@ std::wostream& processes() noexcept{
 			}
 
 			if(count > 1){
-				print_largest(2, 1, largest, L' ', TOTAL_PROCESSES, L"",
+				print_largest(2, 1, largest, L' ', i18n::TOTAL_PROCESSES, L"",
 					L"RAM:", std::to_wstring(ram_total) + L" KB",
 					L"CPU:", std::to_wstring(cpu_total) + L" ms");
 			}

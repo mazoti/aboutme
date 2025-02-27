@@ -38,7 +38,7 @@ int main(int argc, char* argv[], char* envp[]){
 
 	// Waits for any key to close if no additional arguments are provided
 	if(argc == 1){
-		std::wcout << ANY_KEY_TO_CLOSE << std::endl;
+		std::wcout << i18n::ANY_KEY_TO_CLOSE << std::endl;
 		_getch();
 	}
 

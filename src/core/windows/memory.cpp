@@ -40,7 +40,7 @@ std::wostream& memory() noexcept{
 	IWbemServices* svc_pointer = nullptr;
 
 	memory_state.dwLength = sizeof(memory_state);
-	if(!GlobalMemoryStatusEx(&memory_state)) return std::wcerr << ERROR_MEMORY << std::endl << std::endl;
+	if(!GlobalMemoryStatusEx(&memory_state)) return std::wcerr << i18n::ERROR_MEMORY << std::endl << std::endl;
 
 	// Initialize COM and creates a smart pointer to CoUninitialize
 	if(FAILED(CoInitializeEx(nullptr, COINIT_MULTITHREADED)))
@@ -69,7 +69,7 @@ std::wostream& memory() noexcept{
 			return std::wcerr << ERROR_MEMORY_QUERY << std::endl << std::endl;
 	std::unique_ptr<IEnumWbemClassObject, releaser<IEnumWbemClassObject> > enumerator_pointer_ptr(enumerator_pointer);
 
-	for(std::wcout << MEMORY << std::endl; enumerator_pointer;){
+	for(std::wcout << i18n::MEMORY << std::endl; enumerator_pointer;){
 		// Initialize class object and creates a smart pointer to Release
 		enumerator_pointer->Next(WBEM_INFINITE, 1, &clsobj_pointer, &return_result);
 		if(!return_result) break;
@@ -77,26 +77,26 @@ std::wostream& memory() noexcept{
 
 		if(SUCCEEDED(clsobj_pointer->Get(L"Manufacturer", 0, &variant_property, nullptr, nullptr))){
 			if(variant_property.vt == VT_BSTR){
-				std::wcout << L'\t' << MEMORY_MANUFACTURER << L' ' << variant_property.bstrVal << std::endl;
+				std::wcout << L'\t' << i18n::MEMORY_MANUFACTURER << L' ' << variant_property.bstrVal << std::endl;
 				VariantClear(&variant_property);
 			}
 		}
 
 		if(SUCCEEDED(clsobj_pointer->Get(L"Capacity", 0, &variant_property, nullptr, nullptr))){
 			if(variant_property.vt == VT_BSTR){
-				std::wcout << L'\t' << MEMORY_CAPACITY << L' ' << std::stoull(variant_property.bstrVal) / 1048576
+				std::wcout << L'\t' << i18n::MEMORY_CAPACITY << L' ' << std::stoull(variant_property.bstrVal) / 1048576
 				<< " MB" << std::endl;
 				VariantClear(&variant_property);
 			}
 		}
 
 		if(SUCCEEDED(clsobj_pointer->Get(L"Speed", 0, &variant_property, nullptr, nullptr))){
-			std::wcout << L'\t' << MEMORY_SPEED << L' ' << variant_property.uintVal << " MHz"<< std::endl;
+			std::wcout << L'\t' << i18n::MEMORY_SPEED << L' ' << variant_property.uintVal << " MHz"<< std::endl;
 			VariantClear(&variant_property);
 		}
 
 		if(SUCCEEDED(clsobj_pointer->Get(L"MemoryType", 0, &variant_property, nullptr, nullptr))){
-			std::wcout << L'\t' << MEMORY_TYPE << L' ';
+			std::wcout << L'\t' << i18n::MEMORY_TYPE << L' ';
 			switch(static_cast<unsigned int>(variant_property.uintVal)){
 				case 20: std::wcout << "DDR"  << std::endl; break;
 				case 21: std::wcout << "DDR2" << std::endl; break;
@@ -111,7 +111,8 @@ std::wostream& memory() noexcept{
 	}
 
 	return print(1, 1, L' ',
-		MEMORY_TOTAL,     std::to_wstring( memory_state.ullTotalPhys / 1048576) + L" MB",
-		MEMORY_USED,      std::to_wstring((memory_state.ullTotalPhys - memory_state.ullAvailPhys) / 1048576) + L" MB",
-		MEMORY_AVAILABLE, std::to_wstring( memory_state.ullAvailPhys / 1048576) + L" MB");
+		i18n::MEMORY_TOTAL,     std::to_wstring( memory_state.ullTotalPhys / 1048576) + L" MB",
+		i18n::MEMORY_USED,      std::to_wstring((memory_state.ullTotalPhys - memory_state.ullAvailPhys)/1048576) +
+			L" MB",
+		i18n::MEMORY_AVAILABLE, std::to_wstring( memory_state.ullAvailPhys / 1048576) + L" MB");
 }

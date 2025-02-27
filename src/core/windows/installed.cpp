@@ -41,5 +41,5 @@ std::wostream& installed() noexcept{
 		size = 1024;
 	}
 
-	return std::wcout << INSTALLED_PROGRAMS << std::endl << installed_programs_ordered;
+	return std::wcout << i18n::INSTALLED_PROGRAMS << std::endl << installed_programs_ordered;
 }

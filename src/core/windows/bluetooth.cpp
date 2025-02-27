@@ -91,5 +91,5 @@ std::wostream& bluetooth() noexcept{
 		bluetooth_address.clear();
 	}while(BluetoothFindNextDevice(device_find_handle, &device_info));
 
-	return std::wcout << BLUETOOTH << std::endl << bluetooth_devices_ordered;
+	return std::wcout << i18n::BLUETOOTH << std::endl << bluetooth_devices_ordered;
 }

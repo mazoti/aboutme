@@ -45,6 +45,7 @@ std::wostream& startup() noexcept{
 	startup_programs(HKEY_CURRENT_USER,  "Software\\Microsoft\\Windows\\CurrentVersion\\Run", startup_programs_ordered);
 	startup_programs(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", startup_programs_ordered);
 
-	if(startup_programs_ordered.size() > 0) return std::wcout << STARTUP << std::endl << startup_programs_ordered;
+	if(startup_programs_ordered.size() > 0)
+		return std::wcout << i18n::STARTUP << std::endl << startup_programs_ordered;
 	return std::wcout;
 }
