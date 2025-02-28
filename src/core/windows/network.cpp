@@ -56,11 +56,12 @@ std::wostream& network() noexcept{
 	std::unique_ptr<IP_ADAPTER_INFO, void(*)(void*)> adapter_pointer_info(static_cast<IP_ADAPTER_INFO*>
 		(std::malloc(buffer_length)), std::free);
 
-	if(!adapter_pointer_info) return std::wcerr << L'\t' << ERROR_MEMORY_ALLOCATION << std::endl << std::endl;
+	if(!adapter_pointer_info)
+		return std::wcerr << L'\t' << i18n_system::ERROR_MEMORY_ALLOCATION << std::endl << std::endl;
 
 	adapter_pointer = adapter_pointer_info.get();
 	if(GetAdaptersInfo(adapter_pointer, &buffer_length) != NO_ERROR)
-		return std::wcerr << L'\t' << ERROR_ADAPTERS_INFO << std::endl << std::endl;
+		return std::wcerr << L'\t' << i18n_system::ERROR_ADAPTERS_INFO << std::endl << std::endl;
 
 	for(;adapter_pointer;adapter_pointer = adapter_pointer->Next){
 		woss << adapter_pointer->Description;
@@ -85,18 +86,20 @@ std::wostream& network() noexcept{
 	output_buffer_length = sizeof(IP_ADAPTER_ADDRESSES);
 	std::unique_ptr<IP_ADAPTER_ADDRESSES, free_adapter> adapter_addresses_ptr(static_cast<IP_ADAPTER_ADDRESSES*>
 		(malloc(output_buffer_length)));
-	if(!adapter_addresses_ptr) return std::wcerr << L'\t' << ERROR_MEMORY_ALLOCATION << std::endl << std::endl;
+	if(!adapter_addresses_ptr)
+		return std::wcerr << L'\t' << i18n_system::ERROR_MEMORY_ALLOCATION << std::endl << std::endl;
 
 	return_value = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_ALL_COMPARTMENTS, nullptr,
 		adapter_addresses_ptr.get(), &output_buffer_length);
 	if(return_value == ERROR_BUFFER_OVERFLOW){
         adapter_addresses_ptr.reset(static_cast<IP_ADAPTER_ADDRESSES*>(malloc(output_buffer_length)));
-		if(!adapter_addresses_ptr) return std::wcerr << ERROR_MEMORY_ALLOCATION << std::endl << std::endl;
+		if(!adapter_addresses_ptr) return std::wcerr << i18n_system::ERROR_MEMORY_ALLOCATION << std::endl << std::endl;
 		return_value = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_ALL_COMPARTMENTS, nullptr,
 			adapter_addresses_ptr.get(), &output_buffer_length);
 	}
 
-	if(return_value != ERROR_SUCCESS) return std::wcerr << L'\t' << ERROR_ADAPTERS_ADDRESS << std::endl << std::endl;
+	if(return_value != ERROR_SUCCESS)
+		return std::wcerr << L'\t' << i18n_system::ERROR_ADAPTERS_ADDRESS << std::endl << std::endl;
 
 	for(adapter_address = adapter_addresses_ptr.get();
 		adapter_address != nullptr;
@@ -138,7 +141,8 @@ std::wostream& network() noexcept{
 	}
 
 	// Initialize Winsock with RAII
-	if(WSAStartup(MAKEWORD(2, 2), &wsa_data)) return std::wcerr << L'\t'<< ERROR_WSA_STARTUP << std::endl << std::endl;
+	if(WSAStartup(MAKEWORD(2, 2), &wsa_data))
+		return std::wcerr << L'\t'<< i18n_system::ERROR_WSA_STARTUP << std::endl << std::endl;
 	std::unique_ptr<void, wsa_cleanup> wsa_cleanup_ptr(reinterpret_cast<void*>(1));
 
 	// First call to get required size
@@ -146,11 +150,11 @@ std::wostream& network() noexcept{
 
 	std::unique_ptr<MIB_UDPTABLE_OWNER_PID, free_table> udp_table_ptr(static_cast<PMIB_UDPTABLE_OWNER_PID>
 		(malloc(dword_size)));
-	if(!udp_table_ptr) return std::wcerr << L'\t' << ERROR_UDP_MALLOC << std::endl << std::endl;
+	if(!udp_table_ptr) return std::wcerr << L'\t' << i18n_system::ERROR_UDP_MALLOC << std::endl << std::endl;
 
 	// Get the UDP table
 	if(GetExtendedUdpTable(udp_table_ptr.get(), &dword_size, TRUE, AF_INET, UDP_TABLE_OWNER_PID, 0) != NO_ERROR)
-		return std::wcerr << L'\t' << ERROR_EXTENDED_UDP_TABLE << std::endl << std::endl;
+		return std::wcerr << L'\t' << i18n_system::ERROR_EXTENDED_UDP_TABLE << std::endl << std::endl;
 
 	// Create span over the table entries
 	std::span<MIB_UDPROW_OWNER_PID> udp_table_ptr_span{udp_table_ptr->table,
@@ -170,11 +174,11 @@ std::wostream& network() noexcept{
 
 	std::unique_ptr<MIB_TCPTABLE_OWNER_PID, free_table> tcp_table_ptr
 	(static_cast<PMIB_TCPTABLE_OWNER_PID>(malloc(dword_size)));
-	if(!tcp_table_ptr) return std::wcerr << L'\t' << ERROR_TCP_MALLOC << std::endl << std::endl;
+	if(!tcp_table_ptr) return std::wcerr << L'\t' << i18n_system::ERROR_TCP_MALLOC << std::endl << std::endl;
 
 	// Get the TCP table
 	if(GetExtendedTcpTable(tcp_table_ptr.get(), &dword_size, TRUE, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0) != NO_ERROR)
-		return std::wcerr << L'\t' << ERROR_EXTENDED_TCP_TABLE << std::endl << std::endl;
+		return std::wcerr << L'\t' << i18n_system::ERROR_EXTENDED_TCP_TABLE << std::endl << std::endl;
 
 	// Create span over the table entries
 	std::span<MIB_TCPROW_OWNER_PID> tcp_table_ptr_span{tcp_table_ptr->table, tcp_table_ptr->dwNumEntries};
@@ -210,7 +214,7 @@ std::wostream& network() noexcept{
 	// Prints host name
 	host_name_size = sizeof(host_name) / sizeof(host_name[0]);
 	if(!GetComputerName(host_name, &host_name_size))
-		return std::wcerr << L'\t' << ERROR_HOST_NAME << std::endl << std::endl;
+		return std::wcerr << L'\t' << i18n_system::ERROR_HOST_NAME << std::endl << std::endl;
 
 	std::wcout << L'\t' << i18n::HOST_NAME << std::endl << L"\t\t" << host_name << std::endl << std::endl;
 

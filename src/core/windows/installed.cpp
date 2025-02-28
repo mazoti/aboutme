@@ -27,7 +27,8 @@ std::wostream& installed() noexcept{
 
 	std::unique_ptr<std::remove_pointer_t<HKEY>, reg_closer> uninstall_key_ptr(uninstall_key);
 	if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", 0, KEY_READ,
-		&uninstall_key) != ERROR_SUCCESS) return std::wcerr << ERROR_INSTALLED_REG_OPENKEYEX << std::endl << std::endl;
+		&uninstall_key) != ERROR_SUCCESS)
+		return std::wcerr << i18n_system::ERROR_INSTALLED_REG_OPENKEYEX << std::endl << std::endl;
 
 	for(; RegEnumKeyEx(uninstall_key, index, app_key_name, &size, nullptr, nullptr, nullptr, nullptr) == ERROR_SUCCESS; ++index){
 		key_name = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + std::string(app_key_name);

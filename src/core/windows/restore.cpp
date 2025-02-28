@@ -46,29 +46,29 @@ std::wostream& restore() noexcept{
 
 	// Initialize COM and creates a smart pointer to CoUninitialize
 	if(FAILED(CoInitializeEx(nullptr, COINIT_MULTITHREADED)))
-		return std::wcerr << ERROR_RESTORE_COM_INIT << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_RESTORE_COM_INIT << std::endl << std::endl;
 	std::unique_ptr<void, couninitializer_restore> result_handle_ptr(reinterpret_cast<void*>(1));
 
 	// Initialize WMI and creates a smart pointer to Release
 	if(FAILED(CoCreateInstance(CLSID_WbemLocator, nullptr, CLSCTX_INPROC_SERVER, IID_IWbemLocator,
 		reinterpret_cast<LPVOID*>(&locator_pointer))))
-		return std::wcerr << ERROR_RESTORE_WMI_INIT << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_RESTORE_WMI_INIT << std::endl << std::endl;
 	std::unique_ptr<IWbemLocator, releaser<IWbemLocator> > locator_pointer_ptr(locator_pointer);
 
 	// Connect to WMI and creates a smart pointer to Release
 	if(FAILED(locator_pointer->ConnectServer(_bstr_t(L"ROOT\\DEFAULT"), nullptr, nullptr, nullptr, 0, nullptr, nullptr,
-		&svc_pointer))) return std::wcerr << ERROR_RESTORE_WMI_CONNECT << std::endl << std::endl;
+		&svc_pointer))) return std::wcerr << i18n_system::ERROR_RESTORE_WMI_CONNECT << std::endl << std::endl;
 	std::unique_ptr<IWbemServices, releaser<IWbemServices> > svc_pointer_ptr(svc_pointer);
 
 	// Set security levels
 	if(FAILED(CoSetProxyBlanket(svc_pointer, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, nullptr, RPC_C_AUTHN_LEVEL_CALL,
 		RPC_C_IMP_LEVEL_IMPERSONATE, nullptr, EOAC_NONE)))
-		return std::wcerr << ERROR_RESTORE_SECURITY_LEVEL << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_RESTORE_SECURITY_LEVEL << std::endl << std::endl;
 
 	// Query data and creates a smart pointer to Release
 	if(FAILED(svc_pointer->ExecQuery(bstr_t("WQL"), bstr_t(L"SELECT CreationTime, Description FROM SystemRestore"),
 		WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, nullptr, &enumerator_pointer)))
-		return std::wcerr << ERROR_RESTORE_QUERY << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_RESTORE_QUERY << std::endl << std::endl;
 	std::unique_ptr<IEnumWbemClassObject, releaser<IEnumWbemClassObject> > enumerator_pointer_ptr(enumerator_pointer);
 
 	while(enumerator_pointer){

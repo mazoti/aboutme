@@ -40,28 +40,28 @@ std::wostream& tasks() noexcept{
 
 	LONG tasks_count = 0, i = 0;
 
-	if(FAILED(CoInitializeEx(nullptr, COINIT_MULTITHREADED))) return std::wcerr << ERROR_TASKS
+	if(FAILED(CoInitializeEx(nullptr, COINIT_MULTITHREADED))) return std::wcerr << i18n_system::ERROR_TASKS
 		<< " COINITIALIZEEX" << std::endl << std::endl;
 	std::unique_ptr<void, co_uninitialize> couninit_ptr(reinterpret_cast<void*>(1), co_uninitialize());
 
 	if(FAILED(CoCreateInstance(CLSID_TaskScheduler, nullptr, CLSCTX_INPROC_SERVER, IID_ITaskService,
-		reinterpret_cast<void**>(&service_pointer)))) return std::wcerr << ERROR_TASKS
+		reinterpret_cast<void**>(&service_pointer)))) return std::wcerr << i18n_system::ERROR_TASKS
 		<< " COCREATEINSTANCE" << std::endl << std::endl;
 	std::unique_ptr<ITaskService, releaser<ITaskService> > service_ptr_releaser(service_pointer);
 
 	if(FAILED(service_pointer->Connect(_variant_t(), _variant_t(), _variant_t(), _variant_t())))
-		return std::wcerr << ERROR_TASKS << " ITASKSERVICE" << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_TASKS << " ITASKSERVICE" << std::endl << std::endl;
 
 	if(FAILED(service_pointer->GetFolder(_bstr_t(L"\\"), &root_folder_pointer)))
-		return std::wcerr << ERROR_TASKS << " GetFolder" << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_TASKS << " GetFolder" << std::endl << std::endl;
 	std::unique_ptr<ITaskFolder, releaser<ITaskFolder> > root_folder_ptr_releaser(root_folder_pointer);
 
 	if(FAILED(root_folder_pointer->GetFolders(0, &folders_pointer)))
-		return std::wcerr << ERROR_TASKS << " GetFolders" << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_TASKS << " GetFolders" << std::endl << std::endl;
 	std::unique_ptr<ITaskFolderCollection, releaser<ITaskFolderCollection> > folders_ptr_release(folders_pointer);
 
 	if(FAILED(root_folder_pointer->GetTasks(TASK_ENUM_HIDDEN, &tasks_pointer)))
-		return std::wcerr << ERROR_TASKS << " GetTasks" << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_TASKS << " GetTasks" << std::endl << std::endl;
 	std::unique_ptr<IRegisteredTaskCollection, releaser<IRegisteredTaskCollection> > tasks_ptr_releaser(tasks_pointer);
 
 

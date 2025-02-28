@@ -29,7 +29,7 @@ std::wostream& usb() noexcept{
 	// Create a unique_ptr with the custom deleter
 	HDEVINFO device_info_set = SetupDiGetClassDevs(nullptr, "USB", nullptr, DIGCF_PRESENT | DIGCF_ALLCLASSES);
 	if(device_info_set == INVALID_HANDLE_VALUE)
-		return std::wcerr << ERROR_USB_DEVICE_INIT << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_USB_DEVICE_INIT << std::endl << std::endl;
 
 	std::unique_ptr<void, device_info_destroyer> device_info_set_ptr(SetupDiGetClassDevs(
 		nullptr, "USB", nullptr, DIGCF_PRESENT | DIGCF_ALLCLASSES));
@@ -41,13 +41,13 @@ std::wostream& usb() noexcept{
 		// Get the device description
 		if(!SetupDiGetDeviceRegistryProperty(device_info_set, &device_info, SPDRP_DEVICEDESC,
 			nullptr, reinterpret_cast<PBYTE>(key), sizeof(key), nullptr)){
-			std::wcerr << L'\t' << ERROR_USB_DEVICE_REG << std::endl << std::endl;
+			std::wcerr << L'\t' << i18n_system::ERROR_USB_DEVICE_REG << std::endl << std::endl;
 			continue;
 		}
 
 		// Get the device instance ID
 		if(!SetupDiGetDeviceInstanceId(device_info_set, &device_info, value, sizeof(value), nullptr)){
-			std::wcerr << L'\t' << ERROR_USB_DEVICE_INST << std::endl << std::endl;
+			std::wcerr << L'\t' << i18n_system::ERROR_USB_DEVICE_INST << std::endl << std::endl;
 			continue;
 		}
 

@@ -74,8 +74,8 @@ std::wostream& bluetooth() noexcept{
 	device_find_handle = BluetoothFindFirstDevice(&search_params, &device_info);
 	std::unique_ptr<void, bluetooth_find_device_close> device_find_handle_ptr(device_find_handle);
 
-	if(device_find_handle == nullptr) return std::wcerr << ERROR_NO_BLUETOOTH_ADAPTERS << std::endl
-		<< std::endl;
+	if(device_find_handle == nullptr)
+		return std::wcerr << i18n_system::ERROR_NO_BLUETOOTH_ADAPTERS << std::endl << std::endl;
 
 	do{
 		bluetooth_address << std::hex << std::uppercase

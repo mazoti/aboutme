@@ -20,11 +20,12 @@ std::wostream& battery() noexcept{
 
 	SYSTEM_POWER_STATUS power_status;
 
-	if(!GetSystemPowerStatus(&power_status)) return std::wcerr << ERROR_POWER_STATUS << std::endl << std::endl;
+	if(!GetSystemPowerStatus(&power_status))
+		return std::wcerr << i18n_system::ERROR_POWER_STATUS << std::endl << std::endl;
 
 	// System does not have a battery
 	status_percent = static_cast<int>(power_status.BatteryLifePercent);
-	if(status_percent > 100) return std::wcerr << ERROR_BATTERY << std::endl << std::endl;
+	if(status_percent > 100) return std::wcerr << i18n_system::ERROR_BATTERY << std::endl << std::endl;
 
 	duration = std::chrono::seconds(power_status.BatteryLifeTime);
 
@@ -40,11 +41,11 @@ std::wostream& battery() noexcept{
 	total_minutes = std::chrono::duration_cast<std::chrono::minutes>(duration);
 	duration -= total_minutes;
 
-	std::wcout << i18n::BATTERY_STATUS << std::endl << L'\t' << AC_LINE_STATUS << L' ';
+	std::wcout << i18n::BATTERY_STATUS << std::endl << L'\t' << i18n_system::AC_LINE_STATUS << L' ';
 
 	if(power_status.ACLineStatus == 1) std::wcout << i18n::BATTERY_AC_POWER;
 	else {
-		std::wcout << i18n::BATTERY_AC_NOT_CONNECTED << std::endl	<< L'\t' << BATTERY_LIFE_TIME;
+		std::wcout << i18n::BATTERY_AC_NOT_CONNECTED << std::endl << L'\t' << i18n_system::BATTERY_LIFE_TIME;
 		if(total_days.count())    std::wcout << L' ' << total_days.count()    << L' ' << i18n::BATTERY_DAYS;
 		if(total_hours.count())   std::wcout << L' ' << total_hours.count()   << L' ' << i18n::BATTERY_HOURS;
 		if(total_minutes.count()) std::wcout << L' ' << total_minutes.count() << L' ' << i18n::BATTERY_MINUTES;

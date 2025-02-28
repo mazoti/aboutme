@@ -41,31 +41,31 @@ std::wostream& trash() noexcept{
 	LPITEMIDLIST recycle_bin_PID_ptr = nullptr, item_PID_ptr = nullptr;
 	IEnumIDList* enum_ptr = nullptr;
 
-	if(FAILED(CoInitialize(nullptr))) return std::wcerr << ERROR_TRASH_COM_INIT << std::endl << std::endl;
+	if(FAILED(CoInitialize(nullptr))) return std::wcerr << i18n_system::ERROR_TRASH_COM_INIT << std::endl << std::endl;
 	std::unique_ptr<void, co_uninitialize_trash> couninit_ptr(reinterpret_cast<void*>(1), co_uninitialize_trash());
 
 	if(FAILED(SHGetDesktopFolder(&desktop_folder_ptr)))
-		return std::wcerr << ERROR_TRASH_DESKTOP_FOLDER << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_TRASH_DESKTOP_FOLDER << std::endl << std::endl;
 
 	std::unique_ptr<IShellFolder, decltype([](IShellFolder* ptr){
 		if(ptr) ptr->Release();
 	})> df_ptr(desktop_folder_ptr);
 
 	if(FAILED(SHGetSpecialFolderLocation(nullptr, CSIDL_BITBUCKET, &recycle_bin_PID_ptr)))
-		return std::wcerr << ERROR_TRASH_LOCATION << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_TRASH_LOCATION << std::endl << std::endl;
 
 	std::unique_ptr<ITEMIDLIST, decltype([](LPITEMIDLIST ptr) { ILFree(ptr); })>
 		rb_pid_ptr(static_cast<ITEMIDLIST*>(recycle_bin_PID_ptr));
 
 	if(FAILED(desktop_folder_ptr->BindToObject(recycle_bin_PID_ptr, nullptr, IID_IShellFolder, reinterpret_cast<void**>
-		(&recycle_bin_folder_ptr)))) return std::wcerr << ERROR_TRASH_BIND << std::endl << std::endl;
+		(&recycle_bin_folder_ptr)))) return std::wcerr << i18n_system::ERROR_TRASH_BIND << std::endl << std::endl;
 
 	std::unique_ptr<IShellFolder, decltype([](IShellFolder* ptr){
 		if(ptr) ptr->Release();
 	})> rb_folder_ptr(recycle_bin_folder_ptr);
 
 	if(FAILED(recycle_bin_folder_ptr->EnumObjects(nullptr, SHCONTF_FOLDERS | SHCONTF_NONFOLDERS, &enum_ptr)))
-		return std::wcerr << ERROR_TRASH_ENUM << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_TRASH_ENUM << std::endl << std::endl;
 
 	std::unique_ptr<IEnumIDList, decltype([](IEnumIDList* ptr){
 		if(ptr) ptr->Release();

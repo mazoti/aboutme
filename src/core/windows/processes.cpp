@@ -33,7 +33,7 @@ std::wostream& processes() noexcept{
 	std::multimap<std::string, triple<std::string, size_t, size_t> > ordered_processes;
 
 	if(!EnumProcesses(processes, sizeof(processes), &needed))
-		return std::wcerr << ERROR_PROCESSES_ENUM << std::endl;
+		return std::wcerr << i18n_system::ERROR_PROCESSES_ENUM << std::endl;
 
 	// Create span for safe access and safely iterate
 	for(const DWORD& process : std::span<DWORD>(processes, (needed / sizeof(DWORD)))){

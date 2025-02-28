@@ -26,7 +26,7 @@ startup_programs_ordered){
 
 	std::unique_ptr<std::remove_pointer_t<HKEY>, reg_closer_startup> app_key_ptr(app_key);
 	if(RegOpenKeyEx(key_root, sub_key, 0, KEY_READ, &app_key) != ERROR_SUCCESS){
-		std::wcerr << ERROR_REG_OPENKEYEX << std::endl;
+		std::wcerr << i18n_system::ERROR_REG_OPENKEYEX << std::endl;
 		return;
 	}
 

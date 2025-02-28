@@ -25,7 +25,7 @@ std::wostream& services() noexcept{
 	DWORD i, bytes_needed = 0, services_returned = 0, resume_handle = 0;
 
 	SC_HANDLE scm_handle = OpenSCManager(nullptr, nullptr, SC_MANAGER_ENUMERATE_SERVICE);
-	if(scm_handle == nullptr) return std::wcerr << ERROR_SERVICES << std::endl << std::endl;
+	if(scm_handle == nullptr) return std::wcerr << i18n_system::ERROR_SERVICES << std::endl << std::endl;
 
 	// Wrap the handle in a unique_ptr with the custom deleter
 	std::unique_ptr<SC_HANDLE__, service_handle_closer> scm_handle_ptr(scm_handle);
@@ -36,7 +36,7 @@ std::wostream& services() noexcept{
 
 	i = bytes_needed;
 	service_status = static_cast<LPENUM_SERVICE_STATUS>(std::malloc(bytes_needed));
-	if(!service_status) return std::wcerr << ERROR_SERVICES_MALLOC << std::endl << std::endl;
+	if(!service_status) return std::wcerr << i18n_system::ERROR_SERVICES_MALLOC << std::endl << std::endl;
 
 	// Run free at any exit
 	std::unique_ptr<ENUM_SERVICE_STATUS, void(*)(ENUM_SERVICE_STATUS*)> service_status_ptr(
@@ -44,7 +44,7 @@ std::wostream& services() noexcept{
 
 	if(!EnumServicesStatus(scm_handle, SERVICE_WIN32, SERVICE_STATE_ALL, service_status, i, 
 		&bytes_needed, &services_returned, &resume_handle))
-		return std::wcerr << ERROR_SERVICES_ENUM << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_SERVICES_ENUM << std::endl << std::endl;
 
 	// Create span for safe access and safely iterate
 	for(const ENUM_SERVICE_STATUS& service : std::span<ENUM_SERVICE_STATUS>(service_status, services_returned)){
