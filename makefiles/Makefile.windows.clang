@@ -18,11 +18,12 @@
 #ENABLE_PROCESSES =
 #ENABLE_RESTORE =
 #ENABLE_SERVICES =
+#ENABLE_SHARED =
 #ENABLE_STARTUP =
 #ENABLE_TASKS =
-ENABLE_TRASH =
+#ENABLE_TRASH =
 #ENABLE_USB =
-#ENABLE_WIFI =
+ENABLE_WIFI =
 
 #============================================== Compiler and linker flags ==============================================
 
@@ -124,6 +125,11 @@ CXXFLAGS  = $(CXXFLAGS) -DENABLE_RESTORE
 !IFDEF ENABLE_SERVICES
 CORE_OBJS = $(CORE_OBJS) objs\services.o
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_SERVICES
+!ENDIF
+
+!IFDEF ENABLE_SHARED
+CORE_OBJS = $(CORE_OBJS) objs\shared.o
+CXXFLAGS  = $(CXXFLAGS) -DENABLE_SHARED
 !ENDIF
 
 !IFDEF ENABLE_STARTUP
@@ -251,6 +257,11 @@ objs\restore.o: objs\common.o objs\i18n_system.o objs\i18n.o
 objs\services.o: objs\common.o objs\i18n_system.o objs\i18n.o
 	cd objs && \
 	$(CC) $(CXXFLAGS) -c ..\src\core\windows\services.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
+	cd ..
+
+objs\shared.o: objs\common.o objs\i18n_system.o objs\i18n.o
+	cd objs && \
+	$(CC) $(CXXFLAGS) -c ..\src\core\windows\shared.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
 	cd ..
 
 objs\startup.o: objs\common.o objs\i18n_system.o objs\i18n.o

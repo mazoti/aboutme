@@ -36,6 +36,10 @@ void run(char* envp[], char separator) noexcept{
 		network();
 	#endif
 
+	#if defined(ENABLE_SHARED)
+		shared();
+	#endif
+
 	#if defined(ENABLE_WIFI)
 		wifi();
 	#endif
@@ -86,7 +90,9 @@ void run(char* envp[], char separator) noexcept{
 
 	#if defined(ENABLE_ENVIRONMENT_VARIABLES)
 		size_t count = 0;
-		while(envp[count] != nullptr) ++count;
+		if(envp){
+			while(envp[count] != nullptr) ++count;
+		}
 		std::span<char*> envp_span(envp, count);
 		environment_variables(envp_span, separator);
 	#endif

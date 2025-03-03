@@ -19,6 +19,7 @@ Currently, it supports the following system details:
 - Processes
 - Restore points
 - Services
+- Shared resources
 - Startup applications
 - System clock
 - Tasks

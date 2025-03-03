@@ -4,7 +4,9 @@ module;
 
 export module core;
 
-export constexpr wchar_t HEADER[] = L"\U00002699 AboutMe v0.5:\n\thttps://github.com/mazoti/aboutme\n\tby Marcos Mazoti";
+export constexpr wchar_t HEADER[] = L"\U00002699 AboutMe v0.5:\n"
+	                                L"\thttps://github.com/mazoti/aboutme\n"
+									L"\tby Marcos Mazoti";
 
 #if defined(ENABLE_BATTERY)
 	export std::wostream& battery() noexcept;
@@ -58,6 +60,10 @@ export constexpr wchar_t HEADER[] = L"\U00002699 AboutMe v0.5:\n\thttps://github
 	export std::wostream& services() noexcept;
 #endif
 
+#if defined(ENABLE_SHARED)
+	export std::wostream& shared() noexcept;
+#endif
+
 #if defined(ENABLE_STARTUP)
 	export std::wostream& startup() noexcept;
 #endif
@@ -67,7 +73,7 @@ export constexpr wchar_t HEADER[] = L"\U00002699 AboutMe v0.5:\n\thttps://github
 #endif
 
 #if defined(ENABLE_TRASH)
-	export std::wostream& trash() noexcept;
+export std::wostream& trash() noexcept;
 #endif
 
 #if defined(ENABLE_USB)

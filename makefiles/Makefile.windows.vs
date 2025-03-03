@@ -18,6 +18,7 @@ ENABLE_OPERATING_SYSTEM =
 ENABLE_PROCESSES =
 ENABLE_RESTORE =
 ENABLE_SERVICES =
+ENABLE_SHARED =
 ENABLE_STARTUP =
 ENABLE_TASKS =
 ENABLE_TRASH =
@@ -123,6 +124,11 @@ CORE_OBJS = $(CORE_OBJS) objs\services.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_SERVICES
 !ENDIF
 
+!IFDEF ENABLE_SHARED
+CORE_OBJS = $(CORE_OBJS) objs\shared.obj
+CXXFLAGS  = $(CXXFLAGS) /DENABLE_SHARED
+!ENDIF
+
 !IFDEF ENABLE_STARTUP
 CORE_OBJS = $(CORE_OBJS) objs\startup.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_STARTUP
@@ -224,6 +230,9 @@ objs\restore.obj: objs\core.obj
 
 objs\services.obj: objs\core.obj
 	$(CC) $(CXXFLAGS) /c src\core\windows\services.cpp /Foobjs\services.obj
+
+objs\shared.obj: objs\core.obj
+	$(CC) $(CXXFLAGS) /c src\core\windows\shared.cpp /Foobjs\shared.obj
 
 objs\startup.obj: objs\core.obj
 	$(CC) $(CXXFLAGS) /c src\core\windows\startup.cpp /Foobjs\startup.obj
