@@ -19,7 +19,8 @@ import i18n;
 import i18n_system;
 
 
-inline void insert_if_unique(std::multimap<std::wstring, std::wstring>& mm, const std::wstring& key, const std::wstring& value){
+inline static void insert_if_unique(std::multimap<std::wstring, std::wstring>& mm,
+	const std::wstring& key, const std::wstring& value){
 	auto it = mm.lower_bound(key);
 	while(it != mm.end() && it->first == key){
 		if (it->second == value) return; // Value exists
@@ -72,7 +73,8 @@ std::wostream& wifi() noexcept{
 				wlan_available_network->dot11Ssid.uSSIDLength);
 			ssid += L" (" + std::to_wstring(wlan_available_network->wlanSignalQuality) + L"%)";
 
-			insert_if_unique(wifi_ordered, interface_info_ptr->strInterfaceDescription, ssid);
+			insert_if_unique<std::wstring, std::wstring>(wifi_ordered,
+				interface_info_ptr->strInterfaceDescription, ssid);
 		}
 	}
 	if(wifi_ordered.empty()) return std::wcerr << i18n_system::ERROR_WIFI << std::endl << std::endl;

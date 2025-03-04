@@ -112,3 +112,13 @@ std::wostream& print_title(size_t tabs, size_t padding, wchar_t fill, const TITL
 	std::wcout << std::wstring(tabs, L'\t') << title << std::endl;
 	return print(tabs + 1, padding, fill, args...);
 }
+
+export template<typename KEY, typename VALUE>
+void insert_if_unique(std::multimap<KEY, VALUE>& mm, const KEY& key, const VALUE& value){
+	auto it = mm.lower_bound(key);
+	while(it != mm.end() && it->first == key){
+		if(it->second == value) return; // Value exists
+		++it;
+	}
+	mm.insert({key, value});
+}

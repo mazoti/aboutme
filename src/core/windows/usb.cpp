@@ -11,13 +11,10 @@ module;
 
 module core;
 
-import i18n;
-import i18n_system;
-
 import common;
 
-// Custom deleter for HDEVINFO
-struct device_info_destroyer{ void operator()(HDEVINFO hDevInfo) const{ SetupDiDestroyDeviceInfoList(hDevInfo);}};
+import i18n;
+import i18n_system;
 
 std::wostream& usb() noexcept{
 	char key[64], value[64];
@@ -31,8 +28,9 @@ std::wostream& usb() noexcept{
 	if(device_info_set == INVALID_HANDLE_VALUE)
 		return std::wcerr << i18n_system::ERROR_USB_DEVICE_INIT << std::endl << std::endl;
 
-	std::unique_ptr<void, device_info_destroyer> device_info_set_ptr(SetupDiGetClassDevs(
-		nullptr, "USB", nullptr, DIGCF_PRESENT | DIGCF_ALLCLASSES));
+	std::unique_ptr<void, decltype([](HDEVINFO hDevInfo){
+			SetupDiDestroyDeviceInfoList(hDevInfo);
+	})> device_info_set_ptr(SetupDiGetClassDevs(nullptr, "USB", nullptr, DIGCF_PRESENT | DIGCF_ALLCLASSES));
 
 	device_info.cbSize = sizeof(SP_DEVINFO_DATA);
 	for(device_index = 0; SetupDiEnumDeviceInfo(device_info_set, device_index, &device_info);){
@@ -51,7 +49,7 @@ std::wostream& usb() noexcept{
 			continue;
 		}
 
-		mmap_devices.insert({key, value});
+		insert_if_unique<std::string, std::string>(mmap_devices, key, value);
 	}
 
 	return std::wcout << i18n::USB << std::endl << mmap_devices;
