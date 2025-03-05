@@ -83,8 +83,3 @@ std::wostream& shared() noexcept{
 //    }
 //}
 //
-//int main() {
-//    SetConsoleOutputCP(CP_UTF8);
-//    DisplaySharedFolders();
-//    return 0;
-//}

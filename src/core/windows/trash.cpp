@@ -37,9 +37,9 @@ std::wostream& trash() noexcept{
 
 	std::set<std::wstring> trash_data_ordered;
 
+	IEnumIDList *enum_ptr = nullptr;
 	IShellFolder *desktop_folder_ptr = nullptr, *recycle_bin_folder_ptr = nullptr;
 	LPITEMIDLIST recycle_bin_PID_ptr = nullptr, item_PID_ptr = nullptr;
-	IEnumIDList* enum_ptr = nullptr;
 
 	if(FAILED(CoInitialize(nullptr))) return std::wcerr << i18n_system::ERROR_TRASH_COM_INIT << std::endl << std::endl;
 	std::unique_ptr<void, co_uninitialize_trash> couninit_ptr(reinterpret_cast<void*>(1), co_uninitialize_trash());
@@ -47,7 +47,7 @@ std::wostream& trash() noexcept{
 	if(FAILED(SHGetDesktopFolder(&desktop_folder_ptr)))
 		return std::wcerr << i18n_system::ERROR_TRASH_DESKTOP_FOLDER << std::endl << std::endl;
 
-	std::unique_ptr<IShellFolder, decltype([](IShellFolder* ptr){
+	std::unique_ptr<IShellFolder, decltype([](IShellFolder *ptr){
 		if(ptr) ptr->Release();
 	})> df_ptr(desktop_folder_ptr);
 
@@ -60,14 +60,14 @@ std::wostream& trash() noexcept{
 	if(FAILED(desktop_folder_ptr->BindToObject(recycle_bin_PID_ptr, nullptr, IID_IShellFolder, reinterpret_cast<void**>
 		(&recycle_bin_folder_ptr)))) return std::wcerr << i18n_system::ERROR_TRASH_BIND << std::endl << std::endl;
 
-	std::unique_ptr<IShellFolder, decltype([](IShellFolder* ptr){
+	std::unique_ptr<IShellFolder, decltype([](IShellFolder *ptr){
 		if(ptr) ptr->Release();
 	})> rb_folder_ptr(recycle_bin_folder_ptr);
 
 	if(FAILED(recycle_bin_folder_ptr->EnumObjects(nullptr, SHCONTF_FOLDERS | SHCONTF_NONFOLDERS, &enum_ptr)))
 		return std::wcerr << i18n_system::ERROR_TRASH_ENUM << std::endl << std::endl;
 
-	std::unique_ptr<IEnumIDList, decltype([](IEnumIDList* ptr){
+	std::unique_ptr<IEnumIDList, decltype([](IEnumIDList *ptr){
 		if(ptr) ptr->Release();
 	})> enum_list_ptr(enum_ptr);
 

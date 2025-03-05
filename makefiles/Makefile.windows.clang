@@ -21,9 +21,9 @@
 #ENABLE_SHARED =
 #ENABLE_STARTUP =
 #ENABLE_TASKS =
-#ENABLE_TRASH =
+ENABLE_TRASH =
 #ENABLE_USB =
-ENABLE_WIFI =
+#ENABLE_WIFI =
 
 #============================================== Compiler and linker flags ==============================================
 
