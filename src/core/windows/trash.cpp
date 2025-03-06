@@ -21,14 +21,6 @@ import i18n_system;
 
 static bool couninitialize_released_trash = false;
 
-struct co_uninitialize_trash{
-	void operator()(void*) const{
-		if(couninitialize_released_trash) return;
-		couninitialize_released_trash = true;
-		CoUninitialize();
-	}
-};
-
 std::wostream& trash() noexcept{
 	wchar_t display_name[MAX_PATH];
 
@@ -42,7 +34,12 @@ std::wostream& trash() noexcept{
 	LPITEMIDLIST recycle_bin_PID_ptr = nullptr, item_PID_ptr = nullptr;
 
 	if(FAILED(CoInitialize(nullptr))) return std::wcerr << i18n_system::ERROR_TRASH_COM_INIT << std::endl << std::endl;
-	std::unique_ptr<void, co_uninitialize_trash> couninit_ptr(reinterpret_cast<void*>(1), co_uninitialize_trash());
+
+	std::unique_ptr<void, decltype([](void*){
+		if(couninitialize_released_trash) return;
+		couninitialize_released_trash = true;
+		CoUninitialize();
+	})> couninit_ptr(reinterpret_cast<void*>(1));
 
 	if(FAILED(SHGetDesktopFolder(&desktop_folder_ptr)))
 		return std::wcerr << i18n_system::ERROR_TRASH_DESKTOP_FOLDER << std::endl << std::endl;
