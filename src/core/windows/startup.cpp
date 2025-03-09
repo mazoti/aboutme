@@ -36,7 +36,7 @@ startup_programs_ordered){
 		++index){
 		name_size = sizeof(value_name);
 		data_size = sizeof(value_data);
-		startup_programs_ordered.insert({value_name, value_data});
+		insert_if_unique<std::string, std::string>(startup_programs_ordered, value_name, value_data);
 	}
 }
 

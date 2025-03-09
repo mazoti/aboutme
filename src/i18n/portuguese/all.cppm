@@ -119,6 +119,7 @@ export namespace i18n{
 
 // src/core/$(SYSTEM)/restore.cpp
 #if defined(ENABLE_RESTORE)
+	inline constexpr wchar_t RESTORE_POINT[]     = L"\U0001F504 Ponto de restaura\U000000E7\U000000E3o:";
 	inline constexpr wchar_t RESTORE_POINTS[]    = L"\U0001F504 Pontos de restaura\U000000E7\U000000E3o:";
 	inline constexpr wchar_t NO_RESTORE_POINTS[] = L"\U0000274C Nenhum ponto de restaura"
 	                                               L"\U000000E7\U000000E3o encontrado\n"
@@ -143,7 +144,7 @@ export namespace i18n{
 // src/core/windows/trash.cpp
 #if defined(ENABLE_TRASH)
 	inline constexpr wchar_t TRASH[]       = L"\U0001F5D1 Lixeira:";
-	inline constexpr wchar_t TRASH_EMPTY[] = L"\U0000274C Lixeira vazia";
+	inline constexpr wchar_t TRASH_EMPTY[] = L"\U00002705 Lixeira vazia";
 #endif
 
 // src/core/$(SYSTEM)/usb.cpp

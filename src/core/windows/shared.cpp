@@ -1,85 +1,42 @@
 module;
 
 #include <iostream>
+#include <memory>
+#include <span>
+
+#include <Windows.h>
+#include <LM.h>
+
+#pragma comment(lib, "netapi32.lib")
 
 module core;
 
 std::wostream& shared() noexcept{
+	NET_API_STATUS status;
 
+	SHARE_INFO_2 *share_info = nullptr;
+	DWORD entriesRead = 0, totalEntries = 0, resumeHandle = 0, userSharesFound = 0;
 
+	do{
+		status = NetShareEnum(nullptr, 2, reinterpret_cast<LPBYTE*>(&share_info), MAX_PREFERRED_LENGTH, &entriesRead, &totalEntries, &resumeHandle);
+		std::unique_ptr<SHARE_INFO_2, decltype([](SHARE_INFO_2 *share_info_pointer){
+			NetApiBufferFree(share_info_pointer);
+		})> share_info_ptr(share_info);
+
+		if(status != NERR_Success && status != ERROR_MORE_DATA)
+			return std::wcerr << L"Error enumerating shares: " << status << L"\n";
+
+		for(SHARE_INFO_2& sh : std::span<SHARE_INFO_2>(share_info, entriesRead)){
+			if(sh.shi2_type == STYPE_DISKTREE && !(sh.shi2_type & STYPE_SPECIAL) && wcscmp(sh.shi2_netname, L"IPC$")){
+				std::wcout << std::format(L"Share Name: {}\nPath: {}\nRemark: {}\nMax Users: {}\nCurrent Users: {}\n\n", sh.shi2_netname, sh.shi2_path, sh.shi2_remark, sh.shi2_max_uses, sh.shi2_current_uses);
+				++userSharesFound;
+			}
+		}
+
+	} while(status == ERROR_MORE_DATA);
+
+    if (userSharesFound == 0)
+		return std::wcout << L"No user-created shared folders found.\n";
 
 	return std::wcout << L"SHARED=============================" << std::endl;
 }
-
-
-
-
-//#include <Windows.h>
-//#include <lm.h>
-//#include <iostream>
-//#include <string>
-//#include <format>
-//
-//#pragma comment(lib, "netapi32.lib")
-//
-//void DisplaySharedFolders() {
-//    SHARE_INFO_2* shareInfo;
-//    DWORD entriesRead = 0;
-//    DWORD totalEntries = 0;
-//    DWORD resumeHandle = 0;
-//    NET_API_STATUS status;
-//    DWORD userSharesFound = 0;
-//
-//    // Get local computer name
-//    wchar_t computerName[MAX_COMPUTERNAME_LENGTH + 1];
-//    DWORD nameSize = sizeof(computerName) / sizeof(computerName[0]);
-//    GetComputerNameW(computerName, &nameSize);
-//
-//    std::wcout << L"User-created shared folders on " << computerName << L":\n\n";
-//
-//    do {
-//        status = NetShareEnum(
-//            nullptr,
-//            2,
-//            (LPBYTE*)&shareInfo,
-//            MAX_PREFERRED_LENGTH,
-//            &entriesRead,
-//            &totalEntries,
-//            &resumeHandle
-//        );
-//
-//        if (status == NERR_Success || status == ERROR_MORE_DATA) {
-//            for (DWORD i = 0; i < entriesRead; i++) {
-//                // Skip special/administrative shares and non-disk shares
-//                if (shareInfo[i].shi2_type == STYPE_DISKTREE && 
-//                    !(shareInfo[i].shi2_type & STYPE_SPECIAL) &&
-//                    wcscmp(shareInfo[i].shi2_netname, L"IPC$") != 0) {
-//                    
-//                    std::wcout << std::format(
-//                        L"Share Name: {}\n"
-//                        L"Path: {}\n"
-//                        L"Remark: {}\n"
-//                        L"Max Users: {}\n"
-//                        L"Current Users: {}\n\n",
-//                        shareInfo[i].shi2_netname,
-//                        shareInfo[i].shi2_path,
-//                        shareInfo[i].shi2_remark,
-//                        shareInfo[i].shi2_max_uses,
-//                        shareInfo[i].shi2_current_uses
-//                    );
-//                    userSharesFound++;
-//                }
-//            }
-//            NetApiBufferFree(shareInfo);
-//        }
-//        else {
-//            std::wcerr << L"Error enumerating shares: " << status << L"\n";
-//            break;
-//        }
-//    } while (status == ERROR_MORE_DATA);
-//
-//    if (userSharesFound == 0) {
-//        std::wcout << L"No user-created shared folders found.\n";
-//    }
-//}
-//

@@ -117,6 +117,7 @@ export namespace i18n{
 
 // src/core/$(SYSTEM)/restore.cpp
 #if defined(ENABLE_RESTORE)
+	inline constexpr wchar_t RESTORE_POINT[]     = L"\U0001F504 Restore point:";
 	inline constexpr wchar_t RESTORE_POINTS[]    = L"\U0001F504 Restore points:";
 	inline constexpr wchar_t NO_RESTORE_POINTS[] = L"\U0000274C No restore points found\n"
 	                                               L"\t(Requires admin privileges)";
