@@ -16,7 +16,12 @@ import common;
 import i18n;
 import i18n_system;
 
-struct handle_closer{ void operator()(HANDLE handle) const{ CloseHandle(handle); }};
+static inline void print_process(std::wostringstream& woss, const wchar_t* description, size_t total,
+const wchar_t* data_size, size_t& largest){
+	woss.str(L"");
+	woss << description << std::to_wstring(total) << data_size;
+	if(woss.str().size() > largest) largest = woss.str().size();
+}
 
 std::wostream& processes() noexcept{
 	HANDLE process_handle;
@@ -30,6 +35,7 @@ std::wostream& processes() noexcept{
 	std::wostringstream woss;
 	std::string key, process_key;
 	size_t ram_total, cpu_total, count, largest = 0;
+
 	std::multimap<std::string, triple<std::string, size_t, size_t> > ordered_processes;
 
 	if(!EnumProcesses(processes, sizeof(processes), &needed))
@@ -41,16 +47,13 @@ std::wostream& processes() noexcept{
 			// Opens the process and wraps the handle with unique_ptr
 			process_handle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, process);
 		    if(process_handle == nullptr) continue;
-			std::unique_ptr<void, handle_closer> process_handle_ptr(process_handle);
 
-			if(!EnumProcessModules(process_handle, &module_handle, sizeof(module_handle), &module_size_handle))
-				continue;
-			if(!GetModuleBaseName(process_handle, module_handle, process_name, sizeof(process_name) / sizeof(TCHAR)))
-				continue;
-			if(!GetProcessMemoryInfo(process_handle, &process_memory_counters, sizeof(process_memory_counters)))
-				continue;
-			if(!GetProcessTimes(process_handle, &creation_time, &exit_time, &kernel_time, &user_time))
-				continue;
+			std::unique_ptr<void, decltype([](HANDLE handle){CloseHandle(handle);})> proc_handle_ptr(process_handle);
+
+			if(!(EnumProcessModules(process_handle, &module_handle, sizeof(module_handle), &module_size_handle) &&
+				GetModuleBaseName(process_handle, module_handle, process_name, sizeof(process_name) / sizeof(TCHAR)) &&
+				GetProcessMemoryInfo(process_handle, &process_memory_counters, sizeof(process_memory_counters)) &&
+				GetProcessTimes(process_handle, &creation_time, &exit_time, &kernel_time, &user_time)))	continue;
 
 			kernel_time_large.LowPart  = kernel_time.dwLowDateTime;
 			kernel_time_large.HighPart = kernel_time.dwHighDateTime;
@@ -89,25 +92,14 @@ std::wostream& processes() noexcept{
 				woss.str(L"");
 				woss << L"PID:" << std::wstring(iterator->second.first.begin(), iterator->second.first.end());
 				if(woss.str().size() > largest) largest = woss.str().size();
-				
 
-				woss.str(L"");
-				woss << L"RAM:" << std::to_wstring(iterator->second.second / 1024) << L" KB";
-				if(woss.str().size() > largest) largest = woss.str().size();
-
-				woss.str(L"");
-				woss << L"CPU:" << std::to_wstring(iterator->second.third / 10000) << L" ms";
-				if(woss.str().size() > largest) largest = woss.str().size();
+				print_process(woss, L"CPU:", iterator->second.third / 10000, L" ms", largest);
+				print_process(woss, L"RAM:", iterator->second.second / 1024, L" KB", largest);		
 			}
 
 			if(count > 1){
-				woss.str(L"");
-				woss << L"RAM:" << std::to_wstring(ram_total) << L" KB";
-				if(woss.str().size() > largest) largest = woss.str().size();
-
-				woss.str(L"");
-				woss << L"CPU:" << std::to_wstring(cpu_total) << L" ms";
-				if(woss.str().size() > largest) largest = woss.str().size();
+				print_process(woss, L"CPU:", cpu_total, L" ms", largest);
+				print_process(woss, L"RAM:", ram_total, L" KB", largest);
 			}
 		}
 	}
@@ -135,15 +127,15 @@ std::wostream& processes() noexcept{
 				++count;
 
 				print_largest(2, 1, largest, L' ',
-					L"PID:" , std::wstring(iterator->second.first.begin(), iterator->second.first.end()),
-					L"RAM:",  std::to_wstring(iterator->second.second / 1024) + L" KB",
-					L"CPU:",  std::to_wstring(iterator->second.third / 10000) + L" ms");
+					L"PID:", std::wstring(iterator->second.first.begin(), iterator->second.first.end()),
+					L"CPU:", std::to_wstring(iterator->second.third / 10000) + L" ms",
+					L"RAM:", std::to_wstring(iterator->second.second / 1024) + L" KB");
 			}
 
 			if(count > 1){
 				print_largest(2, 1, largest, L' ', i18n::TOTAL_PROCESSES, L"",
-					L"RAM:", std::to_wstring(ram_total) + L" KB",
-					L"CPU:", std::to_wstring(cpu_total) + L" ms");
+					L"CPU:", std::to_wstring(cpu_total) + L" ms",
+					L"RAM:", std::to_wstring(ram_total) + L" KB");
 			}
 		}
 	}

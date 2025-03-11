@@ -99,12 +99,16 @@ export namespace i18n{
 // src/core/$(SYSTEM)/operating_system.cpp
 #if defined(ENABLE_OPERATING_SYSTEM)
 	inline constexpr wchar_t COUNTRY_REGION[]   = L"Country/Region:";
+	inline constexpr wchar_t DAY[]              = L"day";
 	inline constexpr wchar_t DAYS[]             = L"days";
+	inline constexpr wchar_t HOUR_UPTIME[]      = L"hour";
 	inline constexpr wchar_t HOURS_UPTIME[]     = L"hours";
 	inline constexpr wchar_t LANGUAGE[]         = L"Language:";
+	inline constexpr wchar_t MINUTE[]           = L"minute";
 	inline constexpr wchar_t MINUTES[]          = L"minutes";
 	inline constexpr wchar_t NAME[]             = L"Name:";
 	inline constexpr wchar_t OPERATING_SYSTEM[] = L"\U0001F5A5 Operating system:";
+	inline constexpr wchar_t SECOND[]           = L"second";
 	inline constexpr wchar_t SECONDS[]          = L"seconds";
 	inline constexpr wchar_t UPTIME[]           = L"Uptime:";
 #endif
