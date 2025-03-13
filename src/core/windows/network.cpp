@@ -23,10 +23,6 @@ import common;
 import i18n;
 import i18n_system;
 
-struct wsa_cleanup { void operator()(void*){ WSACleanup(); }};
-struct free_table  { void operator()(void* p){ if(p) free(p); }};
-struct free_adapter{ void operator()(IP_ADAPTER_ADDRESSES* adapter) const{ if(adapter) free(adapter); }};
-
 std::wostream& network() noexcept{
 	size_t i;
 	char host_name[MAX_COMPUTERNAME_LENGTH + 1], dns_address[INET6_ADDRSTRLEN],
@@ -72,20 +68,22 @@ std::wostream& network() noexcept{
 		value = woss.str();
 		woss.str(L"");
 
-		network_devices_ordered.insert({key, value});
+		insert_if_unique<std::wstring, std::wstring>(network_devices_ordered, key, value);
 
 		if(adapter_pointer->GatewayList.IpAddress.String[0] != '0'){
 			woss << i18n::GATEWAY << " " << adapter_pointer->GatewayList.IpAddress.String;
 			value = woss.str();
 			woss.str(L"");
-			network_devices_ordered.insert({key, value});	
+			insert_if_unique<std::wstring, std::wstring>(network_devices_ordered, key, value);
 		}
 	}
 
 	// Lists all Ethernet adapters and their MAC addresses
 	output_buffer_length = sizeof(IP_ADAPTER_ADDRESSES);
-	std::unique_ptr<IP_ADAPTER_ADDRESSES, free_adapter> adapter_addresses_ptr(static_cast<IP_ADAPTER_ADDRESSES*>
-		(malloc(output_buffer_length)));
+
+	std::unique_ptr<IP_ADAPTER_ADDRESSES, void(*)(void*)>adapter_addresses_ptr(static_cast<IP_ADAPTER_ADDRESSES*>
+		(malloc(output_buffer_length)), std::free);
+
 	if(!adapter_addresses_ptr)
 		return std::wcerr << L'\t' << i18n_system::ERROR_MEMORY_ALLOCATION << std::endl << std::endl;
 
@@ -119,7 +117,7 @@ std::wostream& network() noexcept{
 			woss << adapter_address->Description;
 			key = woss.str();
 			woss.str(L"");
-			network_devices_ordered.insert({key, value});
+			insert_if_unique<std::wstring, std::wstring>(network_devices_ordered, key, value);
 		}
 
 		// Gets all DNS servers
@@ -143,13 +141,17 @@ std::wostream& network() noexcept{
 	// Initialize Winsock with RAII
 	if(WSAStartup(MAKEWORD(2, 2), &wsa_data))
 		return std::wcerr << L'\t'<< i18n_system::ERROR_WSA_STARTUP << std::endl << std::endl;
-	std::unique_ptr<void, wsa_cleanup> wsa_cleanup_ptr(reinterpret_cast<void*>(1));
+
+	std::unique_ptr<void, decltype([](void*){
+		WSACleanup();
+	})> wsa_cleanup_ptr(reinterpret_cast<void*>(1));
 
 	// First call to get required size
 	GetExtendedUdpTable(nullptr, &dword_size, TRUE, AF_INET, UDP_TABLE_OWNER_PID, 0);
 
-	std::unique_ptr<MIB_UDPTABLE_OWNER_PID, free_table> udp_table_ptr(static_cast<PMIB_UDPTABLE_OWNER_PID>
-		(malloc(dword_size)));
+	std::unique_ptr<MIB_UDPTABLE_OWNER_PID, void(*)(void*)> udp_table_ptr(static_cast<PMIB_UDPTABLE_OWNER_PID>
+		(malloc(dword_size)), std::free);
+
 	if(!udp_table_ptr) return std::wcerr << L'\t' << i18n_system::ERROR_UDP_MALLOC << std::endl << std::endl;
 
 	// Get the UDP table
@@ -172,8 +174,9 @@ std::wostream& network() noexcept{
 	// First call to get required size
 	GetExtendedTcpTable(nullptr, &dword_size, TRUE, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0);
 
-	std::unique_ptr<MIB_TCPTABLE_OWNER_PID, free_table> tcp_table_ptr
-	(static_cast<PMIB_TCPTABLE_OWNER_PID>(malloc(dword_size)));
+	std::unique_ptr<MIB_TCPTABLE_OWNER_PID, void(*)(void*)> tcp_table_ptr(static_cast<PMIB_TCPTABLE_OWNER_PID>
+		(malloc(dword_size)), std::free);
+
 	if(!tcp_table_ptr) return std::wcerr << L'\t' << i18n_system::ERROR_TCP_MALLOC << std::endl << std::endl;
 
 	// Get the TCP table

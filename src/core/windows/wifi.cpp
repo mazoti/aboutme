@@ -18,17 +18,6 @@ import common;
 import i18n;
 import i18n_system;
 
-
-inline static void insert_if_unique(std::multimap<std::wstring, std::wstring>& mm,
-	const std::wstring& key, const std::wstring& value){
-	auto it = mm.lower_bound(key);
-	while(it != mm.end() && it->first == key){
-		if (it->second == value) return; // Value exists
-		++it;
-	}
-	mm.insert({key, value});
-}
-
 std::wostream& wifi() noexcept{
 	std::wstring ssid;
 	std::multimap<std::wstring, std::wstring> wifi_ordered;
