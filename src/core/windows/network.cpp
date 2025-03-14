@@ -23,6 +23,7 @@ import common;
 import i18n;
 import i18n_system;
 
+// Function to display network information
 std::wostream& network() noexcept{
 	size_t i;
 	char host_name[MAX_COMPUTERNAME_LENGTH + 1], dns_address[INET6_ADDRSTRLEN],
@@ -47,7 +48,7 @@ std::wostream& network() noexcept{
 
 	std::wcout << i18n::NETWORK << std::endl;
 
-	// Displays gateway
+	// Gets gateway information
 	GetAdaptersInfo(nullptr, &buffer_length);
 	std::unique_ptr<IP_ADAPTER_INFO, void(*)(void*)> adapter_pointer_info(static_cast<IP_ADAPTER_INFO*>
 		(std::malloc(buffer_length)), std::free);
@@ -55,6 +56,7 @@ std::wostream& network() noexcept{
 	if(!adapter_pointer_info)
 		return std::wcerr << L'\t' << i18n_system::ERROR_MEMORY_ALLOCATION << std::endl << std::endl;
 
+	// Gets adapter information
 	adapter_pointer = adapter_pointer_info.get();
 	if(GetAdaptersInfo(adapter_pointer, &buffer_length) != NO_ERROR)
 		return std::wcerr << L'\t' << i18n_system::ERROR_ADAPTERS_INFO << std::endl << std::endl;
@@ -64,12 +66,14 @@ std::wostream& network() noexcept{
 		key = woss.str();
 		woss.str(L"");
 
+		// Stores IP address
 		woss << L"IP: " << adapter_pointer->IpAddressList.IpAddress.String;
 		value = woss.str();
 		woss.str(L"");
 
 		insert_if_unique<std::wstring, std::wstring>(network_devices_ordered, key, value);
 
+		// Stores gateway if valid
 		if(adapter_pointer->GatewayList.IpAddress.String[0] != '0'){
 			woss << i18n::GATEWAY << " " << adapter_pointer->GatewayList.IpAddress.String;
 			value = woss.str();
@@ -78,7 +82,7 @@ std::wostream& network() noexcept{
 		}
 	}
 
-	// Lists all Ethernet adapters and their MAC addresses
+	// Gets Ethernet adapters and MAC addresses
 	output_buffer_length = sizeof(IP_ADAPTER_ADDRESSES);
 
 	std::unique_ptr<IP_ADAPTER_ADDRESSES, void(*)(void*)>adapter_addresses_ptr(static_cast<IP_ADAPTER_ADDRESSES*>
@@ -87,6 +91,7 @@ std::wostream& network() noexcept{
 	if(!adapter_addresses_ptr)
 		return std::wcerr << L'\t' << i18n_system::ERROR_MEMORY_ALLOCATION << std::endl << std::endl;
 
+	// Gets adapter addresses
 	return_value = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_ALL_COMPARTMENTS, nullptr,
 		adapter_addresses_ptr.get(), &output_buffer_length);
 	if(return_value == ERROR_BUFFER_OVERFLOW){
@@ -103,8 +108,10 @@ std::wostream& network() noexcept{
 		adapter_address != nullptr;
 		adapter_address = adapter_address->Next){
 
+		// Handles Ethernet and WiFi adapters
 		if(adapter_address->IfType == IF_TYPE_ETHERNET_CSMACD || adapter_address->IfType == IF_TYPE_IEEE80211){
 			woss << L"MAC: ";
+			// Formats MAC address
 			for(i = 0; i < adapter_address->PhysicalAddressLength; ++i){
 				woss << std::hex << std::setw(2) << std::setfill(L'0')
 					<< static_cast<int>(adapter_address->PhysicalAddress[i]);
@@ -154,7 +161,7 @@ std::wostream& network() noexcept{
 
 	if(!udp_table_ptr) return std::wcerr << L'\t' << i18n_system::ERROR_UDP_MALLOC << std::endl << std::endl;
 
-	// Get the UDP table
+	// Gets the UDP table
 	if(GetExtendedUdpTable(udp_table_ptr.get(), &dword_size, TRUE, AF_INET, UDP_TABLE_OWNER_PID, 0) != NO_ERROR)
 		return std::wcerr << L'\t' << i18n_system::ERROR_EXTENDED_UDP_TABLE << std::endl << std::endl;
 
@@ -179,7 +186,7 @@ std::wostream& network() noexcept{
 
 	if(!tcp_table_ptr) return std::wcerr << L'\t' << i18n_system::ERROR_TCP_MALLOC << std::endl << std::endl;
 
-	// Get the TCP table
+	// Gets the TCP table
 	if(GetExtendedTcpTable(tcp_table_ptr.get(), &dword_size, TRUE, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0) != NO_ERROR)
 		return std::wcerr << L'\t' << i18n_system::ERROR_EXTENDED_TCP_TABLE << std::endl << std::endl;
 

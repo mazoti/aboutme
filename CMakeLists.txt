@@ -40,7 +40,7 @@ target_sources(aboutme PRIVATE
 #==================================================== Common section ===================================================
 
 macro(add_common_module MODULE_NAME DESCRIPTION FILE)
-	option(ENABLE_${MODULE_NAME} "${DESCRIPTION}" OFF)
+	option(ENABLE_${MODULE_NAME} "${DESCRIPTION}" ON)
 	if(ENABLE_${MODULE_NAME})
 		target_compile_definitions(aboutme PRIVATE ENABLE_${MODULE_NAME})
 		target_compile_definitions(all_modules PRIVATE ENABLE_${MODULE_NAME})
@@ -57,7 +57,7 @@ add_common_module(SYSTEM_CLOCK "Display system date, time, and timezone" src/com
 
 macro(add_core_module MODULE_NAME DESCRIPTION)
 	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/core/${SYSTEM}/${MODULE_NAME}.cpp")
-		option(ENABLE_${MODULE_NAME} "${DESCRIPTION}" OFF)
+		option(ENABLE_${MODULE_NAME} "${DESCRIPTION}" ON)
 		if(ENABLE_${MODULE_NAME})
 			target_compile_definitions(aboutme PRIVATE ENABLE_${MODULE_NAME})
 			target_compile_definitions(all_modules PRIVATE ENABLE_${MODULE_NAME})

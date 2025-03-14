@@ -10,6 +10,8 @@ module core;
 import i18n;
 import i18n_system;
 
+// Static inline helper function to print a number with singular/plural descriptions
+// Avoids code duplication for uptime components (days, hours, minutes, seconds)
 static inline void print_plural(ULONGLONG time_number, const wchar_t* desc, const wchar_t* desc_plural){
 	if(time_number){
 		std::wcout << L" " << time_number << L" ";
@@ -17,7 +19,7 @@ static inline void print_plural(ULONGLONG time_number, const wchar_t* desc, cons
 	}
 }
 
-// Displays system kernel version
+// Function to display operating system details
 std::wostream& operating_system() noexcept{
 	wchar_t locale_name[LOCALE_NAME_MAX_LENGTH], locale_data[256];
 
@@ -26,17 +28,20 @@ std::wostream& operating_system() noexcept{
 	TCHAR buffer[MAX_COMPUTERNAME_LENGTH + 1];
 	DWORD version_number = GetVersion();
 
+	// Calculates uptime from system tick count (in milliseconds)
 	seconds = (GetTickCount64() / 1000)    % 60;
 	minutes = (GetTickCount64() / 60000)   % 60;
 	hours   = (GetTickCount64() / 3600000) % 24;
 	days    = GetTickCount64()  / 86400000;
 
+	// Outputs OS name and version
 	std::wcout  << i18n::OPERATING_SYSTEM << std::endl
 				<< L"\tMicrosoft Windows "
 				<< static_cast<DWORD>(LOBYTE(LOWORD(version_number)))  // Major version
 				<< L"." 
 				<< static_cast<DWORD>(HIBYTE(LOWORD(version_number))); // Minor version
 
+	// If not an NT-based system, skips build number; otherwise, includes it
 	if(version_number < 0x80000000) std::wcout << L" (Build " << static_cast<DWORD>(HIWORD(version_number)) << L")";
 
 	std::wcout << std::endl << L"\t" << i18n::UPTIME;
@@ -46,21 +51,22 @@ std::wostream& operating_system() noexcept{
 	print_plural(minutes, i18n::MINUTE, i18n::MINUTES);
 	print_plural(seconds, i18n::SECOND, i18n::SECONDS);
 
+	// Gets and processes user's locale information
 	user_locale = GetUserDefaultLCID();
 	if(!LCIDToLocaleName(user_locale, locale_name, LOCALE_NAME_MAX_LENGTH, 0)){
 		std::wcerr << std::endl << L'\t' << i18n_system::ERROR_LOCALE_NAME << std::endl;
 	}
 	else{
-		// Get country/region
+		// Gets country/region
 		if(GetLocaleInfoEx(locale_name, LOCALE_SNATIVECOUNTRYNAME, locale_data, 256))
 			std::wcout << std::endl << L"\t" << i18n::COUNTRY_REGION << L' ' << locale_data << std::endl;
 
-		// Get language
+		// Gets language
 		if(GetLocaleInfoEx(locale_name, LOCALE_SNATIVELANGUAGENAME, locale_data, 256))
 			std::wcout << L"\t" << i18n::LANGUAGE << L' ' << locale_data << std::endl;
 	}
 
-	// version_number is used for size
+	// Gets and displays the computer's DNS hostname
 	version_number = sizeof(buffer)/sizeof(buffer[0]);
 	if(GetComputerNameEx(ComputerNameDnsHostname, buffer, &version_number))
 		std::wcout << L'\t' << i18n::NAME << L' ' << buffer;
