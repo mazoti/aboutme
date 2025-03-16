@@ -12,6 +12,14 @@ import common;
 import i18n;
 import i18n_system;
 
+// Helper function to format a disk size line and update the largest line length
+static inline void print_hard_disk(std::wostringstream& woss, const wchar_t* description, size_t total,
+const wchar_t* data_size, size_t& largest){
+	woss.str(L"");
+	woss << description << std::to_wstring(total) << data_size;
+	if(woss.str().size() > largest) largest = woss.str().size();
+}
+
 // Displays all hard disks sizes and usages
 std::wostream& hard_disks() noexcept{
 	std::wostringstream woss;
@@ -36,43 +44,32 @@ std::wostream& hard_disks() noexcept{
 				continue;
 			}
 
+			// Converts sizes from bytes to gigabytes (1 GB = 2^30 bytes)
 			total_tmp     = (total_bytes.QuadPart      / 1073741824);
 			available_tmp = (total_free_bytes.QuadPart / 1073741824);
-			used_tmp = total_tmp - available_tmp;
+			used_tmp      = total_tmp - available_tmp;
 
+			// Accumulates totals across all drives
 			all_total     += total_tmp;
 			all_used      += used_tmp;
 			all_available += available_tmp;
 
-			woss.str(L"");
-			woss << i18n::TOTAL << std::to_wstring(total_tmp) << L" GB";
-			if(woss.str().size() > largest) largest = woss.str().size();
-
-			woss.str(L"");
-			woss << i18n::USED << std::to_wstring(used_tmp) << L" GB";
-			if(woss.str().size() > largest) largest = woss.str().size();
-
-			woss.str(L"");
-			woss << i18n::AVAILABLE << std::to_wstring(available_tmp) << L" GB";
-			if(woss.str().size() > largest) largest = woss.str().size();
+			// Calculates line lengths for this drive
+			print_hard_disk(woss, i18n::TOTAL,         total_tmp, L" GB", largest);
+			print_hard_disk(woss, i18n::USED,           used_tmp, L" GB", largest);	
+			print_hard_disk(woss, i18n::AVAILABLE, available_tmp, L" GB", largest);
 		}
 		drives >>= 1;
 	}
 
-	woss.str(L"");
-	woss << i18n::TOTAL << std::to_wstring(all_total) << L" GB";
-	if(woss.str().size() > largest) largest = woss.str().size();
-
-	woss.str(L"");
-	woss << i18n::USED << std::to_wstring(all_used) << L" GB";
-	if(woss.str().size() > largest) largest = woss.str().size();
-
-	woss.str(L"");
-	woss << i18n::AVAILABLE << std::to_wstring(all_available) << L" GB";
-	if(woss.str().size() > largest) largest = woss.str().size();
+	// Calculates line lengths for overall totals
+	print_hard_disk(woss, i18n::TOTAL,         all_total, L" GB", largest);
+	print_hard_disk(woss, i18n::USED,           all_used, L" GB", largest);
+	print_hard_disk(woss, i18n::AVAILABLE, all_available, L" GB", largest);
 
 	std::wcout << i18n::HARD_DISKS << std::endl;
 
+	// Second pass: prints details for each drive
 	drive = 'A';
 	drives = GetLogicalDrives();
 	for(all_total = all_used = all_available = 0; drive <= 'Z'; ++drive){
@@ -85,17 +82,21 @@ std::wostream& hard_disks() noexcept{
 				continue;
 			}
 
+			// Converts sizes from bytes to gigabytes
 			total_tmp     = (total_bytes.QuadPart      / 1073741824);
 			available_tmp = (total_free_bytes.QuadPart / 1073741824);
-			used_tmp = total_tmp - available_tmp;
+			used_tmp      = total_tmp - available_tmp;
 
+			// Accumulates totals across all drives
 			all_total     += total_tmp;
 			all_used      += used_tmp;
 			all_available += available_tmp;
 
 			++total_drivers;
 
-			print_title_largest(1, 1, largest, L' ', std::wstring(L"Drive ") + std::wstring(1, static_cast<wchar_t>(drive)) + L':' ,
+			// Prints formatted drive info using largest line length for alignment
+			print_title_largest(1, 1, largest, L' ', std::wstring(L"Drive ") + std::wstring(1,
+				static_cast<wchar_t>(drive)) + L':' ,
 				i18n::TOTAL,     std::to_wstring(total_tmp)     + L" GB",
 				i18n::USED,      std::to_wstring(used_tmp)      + L" GB",
 				i18n::AVAILABLE, std::to_wstring(available_tmp) + L" GB");
@@ -109,5 +110,4 @@ std::wostream& hard_disks() noexcept{
 		i18n::AVAILABLE, std::to_wstring(all_available) + L" GB");
 
 	return std::wcout;
-
 }
