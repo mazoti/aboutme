@@ -7,6 +7,7 @@ import common;
 
 module core;
 
+// Runs all defined modules
 void run(char* envp[], char separator) noexcept{
 	#if defined(ENABLE_CPU)
 		cpu();

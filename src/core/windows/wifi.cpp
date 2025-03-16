@@ -18,7 +18,9 @@ import common;
 import i18n;
 import i18n_system;
 
+// Enumerates and displays available WiFi networks
 std::wostream& wifi() noexcept{
+	size_t i, j;
 	std::wstring ssid;
 	std::multimap<std::wstring, std::wstring> wifi_ordered;
 
@@ -29,6 +31,7 @@ std::wostream& wifi() noexcept{
 	PWLAN_AVAILABLE_NETWORK_LIST wlan_available_network_list_ptr = nullptr;
 	PWLAN_AVAILABLE_NETWORK wlan_available_network = nullptr;
 
+	// Attempts to open WLAN handle
 	if(WlanOpenHandle(max_client, nullptr, &current_version, &client_handle) != ERROR_SUCCESS)
 		return std::wcerr << i18n_system::ERROR_WLAN_OPEN_HANDLE << std::endl << std::endl;
 
@@ -44,10 +47,11 @@ std::wostream& wifi() noexcept{
 		if(ptr) WlanFreeMemory(*ptr);
 	})> wlan_ifinfo_lptr(&wlan_interface_info_list_ptr);
 
-	// Retrieves the list of available networks
-	for(size_t i = 0; i < wlan_interface_info_list_ptr->dwNumberOfItems; ++i){
+	// Loops through each wireless interface
+	for(i = 0; i < wlan_interface_info_list_ptr->dwNumberOfItems; ++i){
 		interface_info_ptr = &wlan_interface_info_list_ptr->InterfaceInfo[i];
 
+		// Gets a list of available networks for this interface
 		if(WlanGetAvailableNetworkList(client_handle, &interface_info_ptr->InterfaceGuid, 0, nullptr,
 			&wlan_available_network_list_ptr) != ERROR_SUCCESS) continue;
 
@@ -55,9 +59,12 @@ std::wostream& wifi() noexcept{
 			if(ptr) WlanFreeMemory(*ptr);
 		})> wlan_net_list_ptr(&wlan_available_network_list_ptr);
 
-		for(size_t j = 0; j < wlan_available_network_list_ptr->dwNumberOfItems; ++j){
+		// Loops through each available network
+		for(j = 0; j < wlan_available_network_list_ptr->dwNumberOfItems; ++j){
 			wlan_available_network = static_cast<WLAN_AVAILABLE_NETWORK*>
 				(&wlan_available_network_list_ptr->Network[j]);
+
+			// Constructs SSID string with signal quality percentage
 			ssid = std::wstring(wlan_available_network->dot11Ssid.ucSSID, wlan_available_network->dot11Ssid.ucSSID +
 				wlan_available_network->dot11Ssid.uSSIDLength);
 			ssid += L" (" + std::to_wstring(wlan_available_network->wlanSignalQuality) + L"%)";

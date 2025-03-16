@@ -20,8 +20,10 @@ import i18n_system;
 
 template <typename T> struct releaser{ void operator()(T* ptr) const{if(ptr){ptr->Release();}}};
 
+// Static flag to track if CoUninitialize has been called
 static bool couninitialize_released_restore = false;
 
+// Retrieves and display system restore points
 std::wostream& restore() noexcept{
 	VARIANT variant_property;
 
@@ -58,22 +60,24 @@ std::wostream& restore() noexcept{
 		&svc_pointer))) return std::wcerr << i18n_system::ERROR_RESTORE_WMI_CONNECT << std::endl << std::endl;
 	std::unique_ptr<IWbemServices, releaser<IWbemServices> > svc_pointer_ptr(svc_pointer);
 
-	// Set security levels
+	// Sets security levels for the WMI proxy
 	if(FAILED(CoSetProxyBlanket(svc_pointer, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, nullptr, RPC_C_AUTHN_LEVEL_CALL,
 		RPC_C_IMP_LEVEL_IMPERSONATE, nullptr, EOAC_NONE)))
 		return std::wcerr << i18n_system::ERROR_RESTORE_SECURITY_LEVEL << std::endl << std::endl;
 
-	// Query data and creates a smart pointer to Release
+	// Executes a WQL query to get system restore points
 	if(FAILED(svc_pointer->ExecQuery(bstr_t("WQL"), bstr_t(L"SELECT CreationTime, Description FROM SystemRestore"),
 		WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, nullptr, &enumerator_pointer)))
 		return std::wcerr << i18n_system::ERROR_RESTORE_QUERY << std::endl << std::endl;
 	std::unique_ptr<IEnumWbemClassObject, releaser<IEnumWbemClassObject> > enumerator_pointer_ptr(enumerator_pointer);
 
+	// Loop through the query results
 	while(enumerator_pointer){
 		enumerator_pointer->Next(WBEM_INFINITE, 1, &clsobj_pointer, &return_result);
 		if(!return_result) break;
 		std::unique_ptr<IWbemClassObject, releaser<IWbemClassObject> > class_object_ptr(clsobj_pointer);
 
+		// Gets the CreationTime property
 		woss.str(L"");
 		if(FAILED(clsobj_pointer->Get(L"CreationTime", 0, &variant_property, nullptr, nullptr))) continue;
 		if(variant_property.vt == VT_BSTR){
@@ -81,11 +85,12 @@ std::wostream& restore() noexcept{
 			VariantClear(&variant_property);
 		}
 
-		// Format date and time
+		// Formats date and time
 		tmp = woss.str();
 		tmp = tmp.substr(0,4) + L'-' + tmp.substr(4,2) + L'-' + tmp.substr(6,2) + L' ' + tmp.substr(8,2) + L':'
 			+ tmp.substr(10,2) + L':' + tmp.substr(12,2);
 
+		// Gets the description property
 		woss.str(L"");
 		if(FAILED(clsobj_pointer->Get(L"Description", 0, &variant_property, nullptr, nullptr))) continue;
 		if(variant_property.vt == VT_BSTR){
@@ -93,11 +98,12 @@ std::wostream& restore() noexcept{
 			VariantClear(&variant_property);
 		}
 
-		// Insert in a vector to print in reverse order
+		// Adds the formatted restore point (time + description) to the vector in reverse order
 		restore_points_ordered.emplace(restore_points_ordered.begin(), tmp + L" - " + woss.str());
 	}
 
 	if(restore_points_ordered.size() > 0){
+		// Use singular or plural form of "restore point(s)" based on count
 		restore_points_ordered.size() == 1 ? std::wcout << i18n::RESTORE_POINT : std::wcout << i18n::RESTORE_POINTS;
 		return std::wcout << std::endl << restore_points_ordered;
 	}

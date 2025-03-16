@@ -15,6 +15,7 @@ import common;
 import i18n;
 import i18n_system;
 
+// Enumerates startup applications from a given registry key
 static inline void startup_apps(HKEY key_root, const char* sub_key, std::multimap<std::string, std::string>&
 startup_programs_ordered){
 	char value_name[256], value_data[1024];
@@ -31,15 +32,20 @@ startup_programs_ordered){
 		return;
 	}
 
+	// Enumerates all values under the opened registry key
 	for(; RegEnumValue(app_key, index, value_name, &name_size, nullptr, nullptr,
 		reinterpret_cast<LPBYTE>(value_data), &data_size) == ERROR_SUCCESS;
 		++index){
+
+		// Resets buffer sizes for the next iteration
 		name_size = sizeof(value_name);
 		data_size = sizeof(value_data);
+
 		insert_if_unique<std::string, std::string>(startup_programs_ordered, value_name, value_data);
 	}
 }
 
+// Retrieves and displays startup programs from the Windows registry
 std::wostream& startup() noexcept{
 	std::multimap<std::string, std::string> startup_programs_ordered;
 

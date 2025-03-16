@@ -16,6 +16,7 @@ import common;
 import i18n;
 import i18n_system;
 
+// Lists connected USB devices
 std::wostream& usb() noexcept{
 	char key[64], value[64];
 	DWORD device_index;
@@ -23,7 +24,7 @@ std::wostream& usb() noexcept{
 
 	std::multimap<std::string, std::string> mmap_devices;
 
-	// Create a unique_ptr with the custom deleter
+	// Gets a handle to the device information set for USB devices
 	HDEVINFO device_info_set = SetupDiGetClassDevs(nullptr, "USB", nullptr, DIGCF_PRESENT | DIGCF_ALLCLASSES);
 	if(device_info_set == INVALID_HANDLE_VALUE)
 		return std::wcerr << i18n_system::ERROR_USB_DEVICE_INIT << std::endl << std::endl;
@@ -32,18 +33,19 @@ std::wostream& usb() noexcept{
 			SetupDiDestroyDeviceInfoList(hDevInfo);
 	})> device_info_set_ptr(SetupDiGetClassDevs(nullptr, "USB", nullptr, DIGCF_PRESENT | DIGCF_ALLCLASSES));
 
+	// Enumerates all USB devices in the device info set
 	device_info.cbSize = sizeof(SP_DEVINFO_DATA);
 	for(device_index = 0; SetupDiEnumDeviceInfo(device_info_set, device_index, &device_info);){
 		++device_index;
 
-		// Get the device description
+		// Gets the device description from the registry property
 		if(!SetupDiGetDeviceRegistryProperty(device_info_set, &device_info, SPDRP_DEVICEDESC,
 			nullptr, reinterpret_cast<PBYTE>(key), sizeof(key), nullptr)){
 			std::wcerr << L'\t' << i18n_system::ERROR_USB_DEVICE_REG << std::endl << std::endl;
 			continue;
 		}
 
-		// Get the device instance ID
+		// Gets the device instance ID
 		if(!SetupDiGetDeviceInstanceId(device_info_set, &device_info, value, sizeof(value), nullptr)){
 			std::wcerr << L'\t' << i18n_system::ERROR_USB_DEVICE_INST << std::endl << std::endl;
 			continue;

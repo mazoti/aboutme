@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 
 #include <Windows.h>
 #include <conio.h>
@@ -21,13 +22,18 @@ int main(int argc, char* argv[], char* envp[]){
 	// Saves the console state
 	GetConsoleMode(std_handle, &mode);
 
+	// Restores the console to the initial state
+	std::unique_ptr<void, decltype([](HANDLE console_handle){
+		SetConsoleMode(console_handle, ENABLE_PROCESSED_OUTPUT | ENABLE_WRAP_AT_EOL_OUTPUT);
+	})> console_mode_ptr(std_handle);
+
 	// Memory leaks check in debug mode
 	#ifndef NDEBUG
 		_CrtMemState start_state, end_state, diff_state;
 		_CrtMemCheckpoint(&start_state);
 	#endif
 
-	// Sets the console to handle wide characters (32 bits)
+	// Configures console for wide character (UTF-16) output
 	_setmode(_fileno(stdout), _O_U16TEXT);
 	_setmode(_fileno(stderr), _O_U16TEXT);
 
@@ -36,7 +42,7 @@ int main(int argc, char* argv[], char* envp[]){
 
 	run(envp, ';');
 
-	// Waits for any key to close if no additional arguments are provided
+	// Waits for any key to close if no arguments are provided
 	if(argc == 1){
 		std::wcout << i18n::ANY_KEY_TO_CLOSE << std::endl;
 		_getch();
@@ -50,9 +56,6 @@ int main(int argc, char* argv[], char* envp[]){
 		}
 		std::wcout << L"*** No leak found ***" << std::endl;
 	#endif
-
-	// Restores the console
-	SetConsoleMode(std_handle, ENABLE_PROCESSED_OUTPUT | ENABLE_WRAP_AT_EOL_OUTPUT);
 
 	return 0;
 }
