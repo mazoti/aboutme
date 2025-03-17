@@ -11,7 +11,8 @@ module core;
 
 import i18n;
 
-static std::wstring arch(WORD code){
+// Converts a processor architecture code (WORD) to a human-readable wide string
+inline static std::wstring arch(WORD code){
 	switch(code){
 		case 0:  return L"x86";	
 		case 5:  return L"ARM";	
@@ -29,7 +30,8 @@ std::wostream& cpu() noexcept{
 	std::array<int, 4> cpu_information, cpu_information_extended;
 	SYSTEM_INFO sys_info;
 
-	int* cpu_info = reinterpret_cast<int*>(&cpu_brand[0]);
+	// Retrieves CPU brand string using CPUID leaf 0x80000002 through 0x80000004
+	int *cpu_info = reinterpret_cast<int*>(&cpu_brand[0]);
 	__cpuid(cpu_info, -2147483646); // 0x80000002
 
 	cpu_info = reinterpret_cast<int*>(&cpu_brand[15]);
@@ -38,31 +40,31 @@ std::wostream& cpu() noexcept{
 	cpu_info = reinterpret_cast<int*>(&cpu_brand[31]);
 	__cpuid(cpu_info, -2147483644); // 0x80000004
 
+	// Populates sys_info with details like architecture and processor count
 	GetSystemInfo(&sys_info);
 
-	// Left trim string
+	// Trims leading spaces from the CPU brand string
 	start = 0;
 	for(const char c: cpu_brand){
 		if(!std::isspace(c)) break;
 		++start;
 	}
 
-	// Get vendor string
+	// Gets vendor string, results stored in EBX, EDX, ECX registers
 	__cpuid(cpu_information.data(), 0);
  
-	// Get feature flags
+	// Gets feature flags, results stored in EAX(stepping), EBX(misc), ECX(features), EDX(features)
 	__cpuid(cpu_information.data(), 1);
+
+	// Retrieves extended feature flags using CPUID leaf 7, subleaf 0, results in EBX(extended features)
 	__cpuidex(cpu_information_extended.data(), 7, 0);
 
-	// EDX flags
+	// Converts feature flags from registers to bitsets for easy bit testing
 	std::bitset<32> features_edx(static_cast<unsigned int>(cpu_information[3]));
-
-	// ECX flags
 	std::bitset<32> features_ecx(static_cast<unsigned int>(cpu_information[2]));
-
-	// EBX flags for extended features
 	std::bitset<32> features_ebx(static_cast<unsigned int>(cpu_information_extended[1]));
 
+	// Outputs CPU information in a formatted manner
 	std::wcout << i18n::CPU << std::endl 
 		<< L'\t' << &cpu_brand[start] << std::endl
 		<< L'\t' << i18n::ARCHITECTURE << L' ' << arch(sys_info.wProcessorArchitecture) << std::endl

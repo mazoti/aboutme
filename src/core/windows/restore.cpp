@@ -18,8 +18,6 @@ import common;
 import i18n;
 import i18n_system;
 
-template <typename T> struct releaser{ void operator()(T* ptr) const{if(ptr){ptr->Release();}}};
-
 // Static flag to track if CoUninitialize has been called
 static bool couninitialize_released_restore = false;
 

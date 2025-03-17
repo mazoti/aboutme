@@ -20,9 +20,6 @@ import i18n_system;
 // Global flag to track COM uninitialization
 static bool couninitialize_released = false;
 
-// Template struct for releasing COM objects
-template <typename T> struct releaser{ void operator()(T* ptr) const{if(ptr){ptr->Release();}}};
-
 // Function to display memory information
 std::wostream& memory() noexcept{
 	MEMORYSTATUSEX memory_state;

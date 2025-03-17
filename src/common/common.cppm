@@ -122,3 +122,5 @@ void insert_if_unique(std::multimap<KEY, VALUE>& mm, const KEY& key, const VALUE
 	}
 	mm.insert({key, value});
 }
+
+export template <typename T> struct releaser{ void operator()(T* ptr) const{if(ptr){ptr->Release();}}};
