@@ -22,7 +22,7 @@ std::wostream& installed() noexcept{
 	DWORD index = 0, size = 1024;
 
 	std::string key_name;
-	std::set<std::string> installed_programs_ordered;
+	std::set<std::wstring> installed_programs_ordered;
 
 	// Smart pointer to manage the uninstall_key handle with a custom deleter
 	std::unique_ptr<std::remove_pointer_t<HKEY>, decltype([](HKEY handle){
@@ -54,7 +54,8 @@ std::wostream& installed() noexcept{
 		if(RegQueryValueEx(app_key, "DisplayName", nullptr, nullptr, reinterpret_cast<LPBYTE>(display_name), &size)
 			!= ERROR_SUCCESS) continue;
 
-		installed_programs_ordered.insert(display_name);
+		key_name = std::string(display_name);
+		installed_programs_ordered.insert(std::wstring(key_name.begin(), key_name.end()));
 		size = 1024;
 	}
 

@@ -22,10 +22,6 @@ import i18n_system;
 std::wostream& restore() noexcept{
 	VARIANT variant_property;
 
-	std::wstring tmp;
-	std::wostringstream woss;
-	std::vector<std::wstring> restore_points_ordered;
-
 	IWbemClassObject *clsobj_pointer = nullptr;
 	IWbemLocator *locator_pointer = nullptr;
 	IWbemServices *svc_pointer = nullptr;
@@ -33,20 +29,22 @@ std::wostream& restore() noexcept{
 
 	ULONG return_result = 0;
 
+	std::wstring tmp;
+	std::wostringstream woss;
+	std::vector<std::wstring> restore_points_ordered;
+
 	// Initialize COM and creates a smart pointer to CoUninitialize
 	if(FAILED(CoInitializeEx(nullptr, COINIT_MULTITHREADED)))
 		return std::wcerr << i18n_system::ERROR_RESTORE_COM_INIT << std::endl << std::endl;
 
-	std::unique_ptr<void, decltype([](void*){
-		CoUninitialize();
-	})> result_handle_ptr(reinterpret_cast<void*>(1));
+	std::unique_ptr<void, decltype([](void*){ CoUninitialize(); })> result_handle_ptr(reinterpret_cast<void*>(1));
 
 	// Initialize WMI and creates a smart pointer to Release
 	if(FAILED(CoCreateInstance(CLSID_WbemLocator, nullptr, CLSCTX_INPROC_SERVER, IID_IWbemLocator,
 		reinterpret_cast<LPVOID*>(&locator_pointer))))
 		return std::wcerr << i18n_system::ERROR_RESTORE_WMI_INIT << std::endl << std::endl;
 
-	std::unique_ptr<IWbemLocator, releaser<IWbemLocator> > locator_pointer_ptr(locator_pointer);
+	std::unique_ptr<IWbemLocator, releaser<IWbemLocator>> locator_pointer_ptr(locator_pointer);
 
 	// Connect to WMI and creates a smart pointer to Release
 	if(FAILED(locator_pointer->ConnectServer(_bstr_t(L"ROOT\\DEFAULT"), nullptr, nullptr, nullptr, 0, nullptr, nullptr,
@@ -62,13 +60,14 @@ std::wostream& restore() noexcept{
 	if(FAILED(svc_pointer->ExecQuery(bstr_t("WQL"), bstr_t(L"SELECT CreationTime, Description FROM SystemRestore"),
 		WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, nullptr, &enumerator_pointer)))
 		return std::wcerr << i18n_system::ERROR_RESTORE_QUERY << std::endl << std::endl;
-	std::unique_ptr<IEnumWbemClassObject, releaser<IEnumWbemClassObject> > enumerator_pointer_ptr(enumerator_pointer);
+
+	std::unique_ptr<IEnumWbemClassObject, releaser<IEnumWbemClassObject>> enumerator_pointer_ptr(enumerator_pointer);
 
 	// Loop through the query results
 	while(enumerator_pointer){
 		enumerator_pointer->Next(WBEM_INFINITE, 1, &clsobj_pointer, &return_result);
 		if(!return_result) break;
-		std::unique_ptr<IWbemClassObject, releaser<IWbemClassObject> > class_object_ptr(clsobj_pointer);
+		std::unique_ptr<IWbemClassObject, releaser<IWbemClassObject>> class_object_ptr(clsobj_pointer);
 
 		// Gets the CreationTime property
 		woss.str(L"");
@@ -86,6 +85,7 @@ std::wostream& restore() noexcept{
 		// Gets the description property
 		woss.str(L"");
 		if(FAILED(clsobj_pointer->Get(L"Description", 0, &variant_property, nullptr, nullptr))) continue;
+
 		if(variant_property.vt == VT_BSTR){
 			woss << variant_property.bstrVal;
 			VariantClear(&variant_property);

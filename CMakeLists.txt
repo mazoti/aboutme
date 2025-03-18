@@ -6,7 +6,7 @@ project(aboutme
 	LANGUAGES CXX
 )
 
-# Set C++ standard and related options
+# Sets C++ standard and related options
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -16,12 +16,21 @@ set(CMAKE_CXX_SCAN_FOR_MODULES ON)
 set(TRANSLATION "english" CACHE STRING "Translation language (check i18n folder)")
 set_property(CACHE TRANSLATION PROPERTY STRINGS "english" "portuguese")
 
-# Detect and normalize OS name
+# Detects and normalizes OS name
 message(STATUS "Detected operating system: ${CMAKE_SYSTEM_NAME}")
 message(STATUS "Using translation: ${TRANSLATION}")
 string(TOLOWER "${CMAKE_SYSTEM_NAME}" SYSTEM)
 
-# Define the module library
+# Checks if the selected translation files exist
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/i18n/${TRANSLATION}/${SYSTEM}.cppm")
+	message(FATAL_ERROR "Translation file for '${TRANSLATION}' on '${SYSTEM}' not found: ${CMAKE_CURRENT_SOURCE_DIR}/src/i18n/${TRANSLATION}/${SYSTEM}.cppm")
+endif()
+
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/i18n/${TRANSLATION}/all.cppm")
+	message(FATAL_ERROR "Common translation file for '${TRANSLATION}' not found: ${CMAKE_CURRENT_SOURCE_DIR}/src/i18n/${TRANSLATION}/all.cppm")
+endif()
+
+# Defines the module library
 add_library(all_modules)
 target_sources(all_modules PUBLIC FILE_SET CXX_MODULES FILES
 	src/common/common.cppm
@@ -30,7 +39,7 @@ target_sources(all_modules PUBLIC FILE_SET CXX_MODULES FILES
 	src/i18n/${TRANSLATION}/all.cppm
 )
 
-# Define the executable
+# Defines the executable
 add_executable(aboutme)
 target_sources(aboutme PRIVATE
 	src/core/main.cpp
@@ -40,12 +49,16 @@ target_sources(aboutme PRIVATE
 #==================================================== Common section ===================================================
 
 macro(add_common_module MODULE_NAME DESCRIPTION FILE)
-	option(ENABLE_${MODULE_NAME} "${DESCRIPTION}" ON)
-	if(ENABLE_${MODULE_NAME})
-		target_compile_definitions(aboutme PRIVATE ENABLE_${MODULE_NAME})
-		target_compile_definitions(all_modules PRIVATE ENABLE_${MODULE_NAME})
-		target_sources(aboutme PRIVATE ${FILE})
-		message(STATUS "- ${DESCRIPTION}")
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FILE}")
+		option(ENABLE_${MODULE_NAME} "${DESCRIPTION}" ON)
+		if(ENABLE_${MODULE_NAME})
+			target_compile_definitions(aboutme PRIVATE ENABLE_${MODULE_NAME})
+			target_compile_definitions(all_modules PRIVATE ENABLE_${MODULE_NAME})
+			target_sources(aboutme PRIVATE ${FILE})
+			message(STATUS "- ${DESCRIPTION}")
+		endif()
+	else()
+		message(WARNING "Common module file not found: ${FILE}")
 	endif()
 endmacro()
 
@@ -64,6 +77,8 @@ macro(add_core_module MODULE_NAME DESCRIPTION)
 			target_sources(aboutme PRIVATE src/core/${SYSTEM}/${MODULE_NAME}.cpp)
 			message(STATUS "- ${DESCRIPTION}")
 		endif()
+	else()
+		message(STATUS "Module '${MODULE_NAME}' not available for '${SYSTEM}'")
 	endif()
 endmacro()
 
@@ -89,7 +104,7 @@ add_core_module(WIFI             "Display Wi-Fi networks")
 
 #===================================================== Link section ====================================================
 
-# Link against the module library
+# Links against the module library
 target_link_libraries(aboutme PRIVATE all_modules)
 
 # Adds icon and binary descriptions on Windows version
