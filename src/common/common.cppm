@@ -13,7 +13,7 @@ module;
 export module common;
 
 #if defined(ENABLE_ENVIRONMENT_VARIABLES)
-	export void environment_variables(std::span<char*>& env_vars, char path_separator) noexcept;
+	export void environment_variables(std::span<const char*>& env_vars, char path_separator) noexcept;
 #endif
 
 #if defined(ENABLE_SYSTEM_CLOCK)

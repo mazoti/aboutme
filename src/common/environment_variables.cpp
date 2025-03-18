@@ -11,6 +11,8 @@ module common;
 
 import i18n;
 
+// Defines a static constant set of environment variable names that are expected to contain paths.
+// This set is used to determine if a variable's value should be treated as a list of filesystem paths
 static const std::set<std::string> environment_variable_paths = {
 	"XDG_CONFIG_DIRS",
 	"__EGL_EXTERNAL_PLATFORM_CONFIG_DIRS",
@@ -98,44 +100,59 @@ static const std::set<std::string> environment_variable_paths = {
 	"ZYPAK_LIB"
 };
 
-void environment_variables(std::span<char*>& env_vars, char path_separator) noexcept{
+
+// Defines a function to process and display environment variables.
+void environment_variables(std::span<const char*>& env_vars, char path_separator) noexcept{
 	size_t position;
-	std::string environment_variable;
 	std::string_view data_view, variable_name, temp;
 
 	std::wcout << i18n::ENVIRONMENT_VARIABLES << std::endl;
 
-	for(auto& environment : env_vars){
-		environment_variable = std::string(environment);
-		data_view = environment_variable;
+	// Iterates over each environment variable in the provided span
+	for(const char *environment : env_vars){
+		data_view = std::string_view(environment);
 
+		// Finds the position of the '=' character, which separates the variable name from its value
 		position = data_view.find('=');
 		if(position == std::string::npos) continue;
 
+		// Extracts the variable name from the start of the string up to the '=' position
 		variable_name = data_view.substr(0, position);
+		if(variable_name.size() < 1) continue;
 
 		std::wcout << L'\t' << std::wstring(variable_name.begin(), variable_name.end()) << L':' << std::endl;
 
-		// Removes variable_name=
+		// Removes the variable name and '=' from the view, leaving only the value
 		data_view.remove_prefix(position + 1);
 
-		// Variable value contains paths
+		// Checks if the variable is in the set of path-containing variables
 		if(environment_variable_paths.find(std::string(variable_name)) != environment_variable_paths.end()){
+
+			// Iterates over the value, splitting it by the path separator
 			for(position = data_view.find(path_separator);
 				position != std::string::npos;
 				position = data_view.find(path_separator))
 			{
 				variable_name = data_view.substr(0, position);
+				
+				if(!variable_name.size()) continue;
+
 				std::wcout << L"\t\t" << std::wstring(variable_name.begin(), variable_name.end()) << std::endl;
 
-				if(!std::filesystem::exists(variable_name))
+				// Checks if the path exists using the filesystem library
+				if(!std::filesystem::exists(std::filesystem::path(variable_name)))
 					std::wcout << L"\t\t\t" << i18n::ENVIRONMENT_VARIABLES_WARNING << std::endl;
 
 				data_view.remove_prefix(position + 1);
 			}
 
-			// Last path
-			if(!std::filesystem::exists(data_view)){
+			// Handles the last path segment after the final separator
+			if(!data_view.size()){
+				std::wcout << std::endl;
+				continue;
+			}
+			
+			if(!std::filesystem::exists(std::filesystem::path(data_view))){
 				std::wcout << L"\t\t" << std::wstring(data_view.begin(), data_view.end()) << std::endl
 					<< L"\t\t\t" << i18n::ENVIRONMENT_VARIABLES_WARNING << std::endl << std::endl;
 				continue;
@@ -145,7 +162,7 @@ void environment_variables(std::span<char*>& env_vars, char path_separator) noex
 			continue;
 		}
 
-		// Prints variable values, one on each line
+		// For non-path variables, splits the value by the path separator and prints each part
 		for(position = data_view.find(path_separator);
 			position != std::string::npos;
 			position = data_view.find(path_separator))

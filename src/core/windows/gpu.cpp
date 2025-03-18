@@ -19,9 +19,6 @@ import common;
 import i18n;
 import i18n_system;
 
-// Flag to track if CoUninitialize has been called
-static bool couninitialize_released_gpu = false;
-
 // Function to query and display GPU details
 std::wostream& gpu() noexcept{
 	size_t width;
@@ -38,8 +35,6 @@ std::wostream& gpu() noexcept{
 		return std::wcerr << i18n_system::ERROR_COM_INIT << std::endl << std::endl;
 
 	std::unique_ptr<void, decltype([](void*){
-		if(couninitialize_released_gpu) return;
-		couninitialize_released_gpu = true;
 		CoUninitialize();
 	})> couninit_ptr(reinterpret_cast<void*>(1));
 

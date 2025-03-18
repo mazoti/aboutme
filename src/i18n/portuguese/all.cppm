@@ -19,6 +19,7 @@ export namespace i18n{
 	inline constexpr wchar_t DATE[]                 = L"Data (DD/MM/YY):";
 	inline constexpr wchar_t DAYLIGHT_SAVING_TIME[] = L"Hor\U000000E1rio de ver\U000000E3o";
 	inline constexpr wchar_t GMT[]                  = L"Fuso:";
+	inline constexpr wchar_t HOUR[]                 = L"hora";
 	inline constexpr wchar_t HOURS[]                = L"horas";
 	inline constexpr wchar_t SYSTEM_CLOCK[]         = L"\U0001F556 Rel\U000000F3gio do sistema:";
 	inline constexpr wchar_t TIME[]                 = L"Hora (HH:MM:SS):";

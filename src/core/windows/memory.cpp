@@ -17,9 +17,6 @@ import common;
 import i18n;
 import i18n_system;
 
-// Global flag to track COM uninitialization
-static bool couninitialize_released = false;
-
 // Function to display memory information
 std::wostream& memory() noexcept{
 	MEMORYSTATUSEX memory_state;
@@ -40,8 +37,6 @@ std::wostream& memory() noexcept{
 		return std::wcerr << i18n_system::ERROR_MEMORY_COM_INIT << std::endl << std::endl;
 
 	std::unique_ptr<void, decltype([](void*){
-		if(couninitialize_released) return;
-		couninitialize_released = true;
 		CoUninitialize();
 	})> result_handle_ptr(reinterpret_cast<void*>(1));
 

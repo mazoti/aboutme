@@ -15,9 +15,6 @@ module core;
 import i18n;
 import i18n_system;
 
-// Static flag to ensure CoUninitialize is called only once
-static bool couninitialize_released_tasks = false;
-
 // Lists scheduled tasks from the Windows Task Scheduler
 std::wostream& tasks() noexcept{
 	BSTR task_name;
@@ -35,8 +32,6 @@ std::wostream& tasks() noexcept{
 		<< " COINITIALIZEEX" << std::endl << std::endl;
 
 	std::unique_ptr<void, decltype([](void*){
-		if(couninitialize_released_tasks) return;
-		couninitialize_released_tasks = true;
 		CoUninitialize();
 	})> couninit_ptr(reinterpret_cast<void*>(1));
 

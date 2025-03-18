@@ -15,7 +15,7 @@
 import i18n;
 import core;
 
-int main(int argc, char* argv[], char* envp[]){
+int main(int argc, char* argv[], const char* envp[]){
 	DWORD mode;
 	HANDLE std_handle = nullptr;
 

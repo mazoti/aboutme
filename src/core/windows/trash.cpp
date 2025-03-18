@@ -19,9 +19,6 @@ import common;
 import i18n;
 import i18n_system;
 
-// Static flag to track if CoUninitialize has been called
-static bool couninitialize_released_trash = false;
-
 // Lists contents of the Windows Recycle Bin
 std::wostream& trash() noexcept{
 	wchar_t display_name[MAX_PATH];
@@ -39,8 +36,6 @@ std::wostream& trash() noexcept{
 	if(FAILED(CoInitialize(nullptr))) return std::wcerr << i18n_system::ERROR_TRASH_COM_INIT << std::endl << std::endl;
 
 	std::unique_ptr<void, decltype([](void*){
-		if(couninitialize_released_trash) return;
-		couninitialize_released_trash = true;
 		CoUninitialize();
 	})> couninit_ptr(reinterpret_cast<void*>(1));
 

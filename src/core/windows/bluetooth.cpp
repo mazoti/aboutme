@@ -1,7 +1,7 @@
 module;
 
 #include <iostream>
-#include <sstream>
+#include <format>
 #include <map>
 #include <memory>
 
@@ -13,22 +13,19 @@ module;
 module core;
 
 import common;
-
 import i18n;
 import i18n_system;
 
-struct bluetooth_find_device_close{
-	void operator()(HBLUETOOTH_DEVICE_FIND handle) const{ if(handle) BluetoothFindDeviceClose(handle);}
-};
-
+// Enumerates and displays Bluetooth devices
 std::wostream& bluetooth() noexcept{
-	std::wostringstream bluetooth_address;
-	std::multimap<std::wstring, std::wstring> bluetooth_devices_ordered;
-
 	BLUETOOTH_DEVICE_INFO device_info;
 	BLUETOOTH_DEVICE_SEARCH_PARAMS search_params;
 	HBLUETOOTH_DEVICE_FIND device_find_handle;
 
+	std::wstring address;
+	std::multimap<std::wstring, std::wstring> bluetooth_devices_ordered;
+
+	// Initializes device_info with default values
 	device_info = {
 		.dwSize = sizeof(BLUETOOTH_DEVICE_INFO),
 		.Address = {0},
@@ -59,6 +56,7 @@ std::wostream& bluetooth() noexcept{
 		.szName = L""
 	};
 
+	// Initializes search parameters for Bluetooth device discovery
 	search_params = {
 		sizeof(BLUETOOTH_DEVICE_SEARCH_PARAMS),
 		1,      // Return authenticated devices
@@ -70,25 +68,29 @@ std::wostream& bluetooth() noexcept{
 		nullptr // Radio handle
 	};
 
-	// Wrap the device find handle in a unique_ptr with the custom deleter
+	// Starts searching for Bluetooth devices and gets the first device
 	device_find_handle = BluetoothFindFirstDevice(&search_params, &device_info);
-	std::unique_ptr<void, bluetooth_find_device_close> device_find_handle_ptr(device_find_handle);
+
+	std::unique_ptr<void, decltype([](HBLUETOOTH_DEVICE_FIND handle){
+		if(handle) BluetoothFindDeviceClose(handle);
+	})> device_find_handle_ptr(device_find_handle);
 
 	if(device_find_handle == nullptr)
 		return std::wcerr << i18n_system::ERROR_NO_BLUETOOTH_ADAPTERS << std::endl << std::endl;
 
+	// Enumerates all Bluetooth devices
 	do{
-		bluetooth_address << std::hex << std::uppercase
-			<< ((device_info.Address.ullLong >> 40) & 0xFF) << L':'
-			<< ((device_info.Address.ullLong >> 32) & 0xFF) << L':'
-			<< ((device_info.Address.ullLong >> 24) & 0xFF) << L':'
-			<< ((device_info.Address.ullLong >> 16) & 0xFF) << L':'
-			<< ((device_info.Address.ullLong >> 8) & 0xFF)  << L':'
-			<< (device_info.Address.ullLong & 0xFF);
+		address = std::format(L"{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}",
+			device_info.Address.rgBytes[0],
+			device_info.Address.rgBytes[1],
+			device_info.Address.rgBytes[2],
+			device_info.Address.rgBytes[3],
+			device_info.Address.rgBytes[4],
+			device_info.Address.rgBytes[5]
+		);
 
-		bluetooth_devices_ordered.insert({std::wstring(device_info.szName), bluetooth_address.str()});
-		bluetooth_address.str(L"");
-		bluetooth_address.clear();
+		insert_if_unique<std::wstring, std::wstring>(bluetooth_devices_ordered,
+			std::wstring(device_info.szName), address);
 	}while(BluetoothFindNextDevice(device_find_handle, &device_info));
 
 	return std::wcout << i18n::BLUETOOTH << std::endl << bluetooth_devices_ordered;

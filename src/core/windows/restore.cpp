@@ -18,9 +18,6 @@ import common;
 import i18n;
 import i18n_system;
 
-// Static flag to track if CoUninitialize has been called
-static bool couninitialize_released_restore = false;
-
 // Retrieves and display system restore points
 std::wostream& restore() noexcept{
 	VARIANT variant_property;
@@ -41,8 +38,6 @@ std::wostream& restore() noexcept{
 		return std::wcerr << i18n_system::ERROR_RESTORE_COM_INIT << std::endl << std::endl;
 
 	std::unique_ptr<void, decltype([](void*){
-		if(couninitialize_released_restore) return;
-		couninitialize_released_restore = true;
 		CoUninitialize();
 	})> result_handle_ptr(reinterpret_cast<void*>(1));
 

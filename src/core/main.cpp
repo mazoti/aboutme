@@ -8,7 +8,7 @@ import common;
 module core;
 
 // Runs all defined modules
-void run(char* envp[], char separator) noexcept{
+void run(const char* envp[], char separator) noexcept{
 	#if defined(ENABLE_CPU)
 		cpu();
 	#endif
@@ -94,7 +94,7 @@ void run(char* envp[], char separator) noexcept{
 		if(envp){
 			while(envp[count] != nullptr) ++count;
 		}
-		std::span<char*> envp_span(envp, count);
+		std::span<const char*> envp_span(envp, count);
 		environment_variables(envp_span, separator);
 	#endif
 }

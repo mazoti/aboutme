@@ -9,7 +9,7 @@ export namespace i18n_system{
 	inline constexpr wchar_t AC_LINE_STATUS[]                = L"AC Line Status:";
 	inline constexpr wchar_t BATTERY_FLAG[]                  = L"Battery Flag:";
 	inline constexpr wchar_t BATTERY_LIFE_TIME[]             = L"Battery Life Time:";
-	inline constexpr wchar_t ERROR_BATTERY[]                 = L"\U0000274C No battery found";
+	inline constexpr wchar_t ERROR_BATTERY[]                 = L"\U0000274C No Battery found";
 	inline constexpr wchar_t ERROR_POWER_STATUS[]            = L"\U0000274C Failed to get system power status";
 #endif
 

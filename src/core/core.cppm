@@ -84,4 +84,4 @@ export std::wostream& trash() noexcept;
 	export std::wostream& wifi() noexcept;
 #endif
 
-export void run(char* envp[], char separator) noexcept;
+export void run(const char* envp[], char separator) noexcept;
