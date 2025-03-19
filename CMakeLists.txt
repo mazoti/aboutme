@@ -64,7 +64,7 @@ endmacro()
 
 add_common_module(ENVIRONMENT_VARIABLES "Display and check paths of environment variables"
 	src/common/environment_variables.cpp)
-add_common_module(SYSTEM_CLOCK "Display system date, time, and timezone" src/common/system_clock.cpp)
+add_common_module(SYSTEM_CLOCK "Display system date, time and timezone" src/common/system_clock.cpp)
 
 #===================================================== Core section ====================================================
 

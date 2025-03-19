@@ -21,8 +21,6 @@ import i18n_system;
 // Enumerates and displays available WiFi networks
 std::wostream& wifi() noexcept{
 	size_t i, j;
-	std::wstring ssid;
-	std::multimap<std::wstring, std::wstring> wifi_ordered;
 
 	HANDLE client_handle = nullptr;
 	DWORD current_version = 0, max_client = 2;
@@ -30,6 +28,9 @@ std::wostream& wifi() noexcept{
 	PWLAN_INTERFACE_INFO interface_info_ptr = nullptr;
 	PWLAN_AVAILABLE_NETWORK_LIST wlan_available_network_list_ptr = nullptr;
 	PWLAN_AVAILABLE_NETWORK wlan_available_network = nullptr;
+
+	std::wstring ssid;
+	std::multimap<std::wstring, std::wstring> wifi_ordered;
 
 	// Attempts to open WLAN handle
 	if(WlanOpenHandle(max_client, nullptr, &current_version, &client_handle) != ERROR_SUCCESS)
@@ -61,8 +62,7 @@ std::wostream& wifi() noexcept{
 
 		// Loops through each available network
 		for(j = 0; j < wlan_available_network_list_ptr->dwNumberOfItems; ++j){
-			wlan_available_network = static_cast<WLAN_AVAILABLE_NETWORK*>
-				(&wlan_available_network_list_ptr->Network[j]);
+			wlan_available_network = &wlan_available_network_list_ptr->Network[j];
 
 			// Constructs SSID string with signal quality percentage
 			ssid = std::wstring(wlan_available_network->dot11Ssid.ucSSID, wlan_available_network->dot11Ssid.ucSSID +

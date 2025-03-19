@@ -56,7 +56,7 @@ std::wostream& operator<<(std::wostream& wos, const std::multimap<KEY, VALUE>& s
 		// Checks if the key has changed (first iteration or new key)
 		if(key != it->first){
 			key = it->first;
-			wos << L'\t' << std::wstring(it->first.begin(), it->first.end()) << L':' << std::endl;
+			wos << L'\t' << it->first << L':' << std::endl;
 
 			std::pair<typename std::multimap<KEY, VALUE>::const_iterator,
 				typename std::multimap<KEY, VALUE>::const_iterator> range = string_multimap.equal_range(key);
@@ -64,7 +64,7 @@ std::wostream& operator<<(std::wostream& wos, const std::multimap<KEY, VALUE>& s
 			// Iterates over all values associated with the current key
 			for(typename std::multimap<KEY, VALUE>::const_iterator iterator = range.first;
 				iterator != range.second; ++iterator){
-				wos << L"\t\t" << std::wstring(iterator->second.begin(), iterator->second.end()) << std::endl;
+				wos << L"\t\t" << iterator->second << std::endl;
 			}
 			wos << std::endl;
 		}

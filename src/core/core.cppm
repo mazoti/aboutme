@@ -4,7 +4,7 @@ module;
 
 export module core;
 
-export constexpr wchar_t HEADER[] = L"\U00002699 AboutMe v0.5:\n"
+export constexpr wchar_t HEADER[] = L"\U00002699 AboutMe v0.6:\n"
 									L"\thttps://github.com/mazoti/aboutme\n"
 									L"\tby Marcos Mazoti";
 

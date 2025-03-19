@@ -2,6 +2,7 @@ module;
 
 #include <iostream>
 #include <memory>
+#include <vector>
 #include <map>
 
 #include <Windows.h>
@@ -18,14 +19,15 @@ import i18n_system;
 
 // Lists connected USB devices
 std::wostream& usb() noexcept{
-	char key[64], value[64];
-	DWORD device_index;
+	DWORD device_index, required_size;
+	HDEVINFO device_info_set;
 	SP_DEVINFO_DATA device_info;
 
-	std::multimap<std::string, std::string> mmap_devices;
+	std::vector<wchar_t> key, value;
+	std::multimap<std::wstring, std::wstring> mmap_devices;
 
 	// Gets a handle to the device information set for USB devices
-	HDEVINFO device_info_set = SetupDiGetClassDevs(nullptr, "USB", nullptr, DIGCF_PRESENT | DIGCF_ALLCLASSES);
+	device_info_set = SetupDiGetClassDevs(nullptr, "USB", nullptr, DIGCF_PRESENT | DIGCF_ALLCLASSES);
 	if(device_info_set == INVALID_HANDLE_VALUE)
 		return std::wcerr << i18n_system::ERROR_USB_DEVICE_INIT << std::endl << std::endl;
 
@@ -35,23 +37,31 @@ std::wostream& usb() noexcept{
 
 	// Enumerates all USB devices in the device info set
 	device_info.cbSize = sizeof(SP_DEVINFO_DATA);
-	for(device_index = 0; SetupDiEnumDeviceInfo(device_info_set, device_index, &device_info);){
-		++device_index;
+	for(device_index = 0; SetupDiEnumDeviceInfo(device_info_set, ++device_index, &device_info);){
 
-		// Gets the device description from the registry property
-		if(!SetupDiGetDeviceRegistryProperty(device_info_set, &device_info, SPDRP_DEVICEDESC,
-			nullptr, reinterpret_cast<PBYTE>(key), sizeof(key), nullptr)){
+		// Get device description
+		SetupDiGetDeviceRegistryPropertyW(device_info_set, &device_info, SPDRP_DEVICEDESC, nullptr, nullptr,
+			0, &required_size);
+
+		key.resize(required_size / sizeof(wchar_t));
+
+		if(!SetupDiGetDeviceRegistryPropertyW(device_info_set, &device_info, SPDRP_DEVICEDESC, nullptr,
+			reinterpret_cast<PBYTE>(key.data()), required_size, nullptr)){
 			std::wcerr << L'\t' << i18n_system::ERROR_USB_DEVICE_REG << std::endl << std::endl;
 			continue;
 		}
 
-		// Gets the device instance ID
-		if(!SetupDiGetDeviceInstanceId(device_info_set, &device_info, value, sizeof(value), nullptr)){
+		// Get device instance ID
+		SetupDiGetDeviceInstanceIdW(device_info_set, &device_info, nullptr, 0, &required_size);
+
+		value.resize(required_size);
+
+		if(!SetupDiGetDeviceInstanceIdW(device_info_set, &device_info, value.data(), required_size, nullptr)){
 			std::wcerr << L'\t' << i18n_system::ERROR_USB_DEVICE_INST << std::endl << std::endl;
 			continue;
 		}
 
-		insert_if_unique<std::string, std::string>(mmap_devices, key, value);
+		mmap_devices.emplace(key.data(), value.data());
 	}
 
 	return std::wcout << i18n::USB << std::endl << mmap_devices;

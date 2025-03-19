@@ -2,7 +2,7 @@
 
 #TRANSLATION = portuguese
 
-ENABLE_ENVIRONMENT_VARIABLES =
+#ENABLE_ENVIRONMENT_VARIABLES =
 #ENABLE_SYSTEM_CLOCK =
 
 #ENABLE_BATTERY =
@@ -22,7 +22,7 @@ ENABLE_ENVIRONMENT_VARIABLES =
 #ENABLE_STARTUP =
 #ENABLE_TASKS =
 #ENABLE_TRASH =
-#ENABLE_USB =
+ENABLE_USB =
 #ENABLE_WIFI =
 
 #============================================== Compiler and linker flags ==============================================

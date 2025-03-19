@@ -16,28 +16,44 @@ import i18n;
 import core;
 
 int main(int argc, char* argv[], const char* envp[]){
-	DWORD mode;
-	HANDLE std_handle = nullptr;
+	DWORD original_mode;
+	HANDLE std_handle;
 
-	// Saves the console state
-	GetConsoleMode(std_handle, &mode);
+	// Gets the standard output handle
+	std_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	if(std_handle == INVALID_HANDLE_VALUE){
+		std::wcerr << L"Failed to get standard output handle" << std::endl;
+		return -1;
+	}
 
-	// Restores the console to the initial state
-	std::unique_ptr<void, decltype([](HANDLE console_handle){
-		SetConsoleMode(console_handle, ENABLE_PROCESSED_OUTPUT | ENABLE_WRAP_AT_EOL_OUTPUT);
-	})> console_mode_ptr(std_handle);
+	// Saves the current console mode
+	if(!GetConsoleMode(std_handle, &original_mode)){
+		std::wcerr << L"Failed to get console mode." << std::endl;
+		return -2;
+	}
 
-	// Memory leaks check in debug mode
+	// Creates a unique_ptr with custom deleter to restore original mode
+	auto restorer = [std_handle, original_mode](void*){ SetConsoleMode(std_handle, original_mode); };
+	std::unique_ptr<void, decltype(restorer)> mode_guard(nullptr, restorer);
+
+	// Checks Memory leaks in debug mode
 	#ifndef NDEBUG
 		_CrtMemState start_state, end_state, diff_state;
 		_CrtMemCheckpoint(&start_state);
 	#endif
 
-	// Configures console for wide character (UTF-16) output
-	_setmode(_fileno(stdout), _O_U16TEXT);
-	_setmode(_fileno(stderr), _O_U16TEXT);
+	// Configures console for wide-character (UTF-16) output
+	if(_setmode(_fileno(stdout), _O_U16TEXT) == -1){
+		std::wcerr << L"Failed to set stdout to wide character mode." << std::endl;
+		return -3;
+	}
 
-	// System header with version
+	if(_setmode(_fileno(stderr), _O_U16TEXT) == -1){
+		std::wcerr << L"Failed to set stderr to wide character mode." << std::endl;
+		return -4;
+	}
+
+	// Prints system header with version
 	std::wcout << std::endl << HEADER << std::endl << std::endl;
 
 	run(envp, ';');
@@ -49,10 +65,11 @@ int main(int argc, char* argv[], const char* envp[]){
 	}
 
 	#ifndef NDEBUG
-		_CrtMemCheckpoint(&end_state);
+	_CrtMemCheckpoint(&end_state);
 		if(_CrtMemDifference(&diff_state, &start_state, &end_state)){
 			std::wcerr << L"ERROR: LEAK FOUND" << std::endl;
-			return 1;
+			_CrtMemDumpAllObjectsSince(&start_state);
+			return -4;
 		}
 		std::wcout << L"*** No leak found ***" << std::endl;
 	#endif
