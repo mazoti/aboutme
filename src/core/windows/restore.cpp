@@ -1,7 +1,7 @@
 module;
 
 #include <iostream>
-#include <sstream>
+#include <format>
 #include <memory>
 #include <vector>
 
@@ -14,91 +14,94 @@ module;
 module core;
 
 import common;
-
 import i18n;
 import i18n_system;
 
-// Retrieves and display system restore points
-std::wostream& restore() noexcept{
-	VARIANT variant_property;
+// Helper class to manage VARIANT objects
+class VariantWrapper{
+public:
+	VariantWrapper()     { VariantInit(&var);  }
+	~VariantWrapper()    { VariantClear(&var); }
+	VARIANT* operator&() { return &var;        }
+	VARIANT var;
+};
 
-	IWbemClassObject *clsobj_pointer = nullptr;
-	IWbemLocator *locator_pointer = nullptr;
-	IWbemServices *svc_pointer = nullptr;
-	IEnumWbemClassObject *enumerator_pointer = nullptr;
-
+// Retrieves and displays system restore points
+std::wostream& restore() noexcept {
+	IWbemLocator* locator = nullptr;
+	IWbemServices* service = nullptr;
+	IEnumWbemClassObject* enumerator = nullptr;
+	IWbemClassObject* class_object = nullptr;
 	ULONG return_result = 0;
 
-	std::wstring tmp;
-	std::wostringstream woss;
-	std::vector<std::wstring> restore_points_ordered;
+	std::wstring time_str;
+	std::vector<std::wstring> restore_points;
 
-	// Initialize COM and creates a smart pointer to CoUninitialize
+	// Initializes COM
 	if(FAILED(CoInitializeEx(nullptr, COINIT_MULTITHREADED)))
 		return std::wcerr << i18n_system::ERROR_RESTORE_COM_INIT << std::endl << std::endl;
 
-	std::unique_ptr<void, decltype([](void*){ CoUninitialize(); })> result_handle_ptr(reinterpret_cast<void*>(1));
+	std::unique_ptr<void, decltype([](void*) { CoUninitialize(); })> com_guard(reinterpret_cast<void*>(1));
 
-	// Initialize WMI and creates a smart pointer to Release
+	// Creates WMI locator
 	if(FAILED(CoCreateInstance(CLSID_WbemLocator, nullptr, CLSCTX_INPROC_SERVER, IID_IWbemLocator,
-		reinterpret_cast<LPVOID*>(&locator_pointer))))
+	reinterpret_cast<LPVOID*>(&locator))))
 		return std::wcerr << i18n_system::ERROR_RESTORE_WMI_INIT << std::endl << std::endl;
 
-	std::unique_ptr<IWbemLocator, releaser<IWbemLocator>> locator_pointer_ptr(locator_pointer);
+	std::unique_ptr<IWbemLocator, releaser<IWbemLocator>> locator_ptr(locator);
 
-	// Connect to WMI and creates a smart pointer to Release
-	if(FAILED(locator_pointer->ConnectServer(_bstr_t(L"ROOT\\DEFAULT"), nullptr, nullptr, nullptr, 0, nullptr, nullptr,
-		&svc_pointer))) return std::wcerr << i18n_system::ERROR_RESTORE_WMI_CONNECT << std::endl << std::endl;
-	std::unique_ptr<IWbemServices, releaser<IWbemServices> > svc_pointer_ptr(svc_pointer);
+	// Connects to WMI namespace ROOT\DEFAULT
+	if(FAILED(locator->ConnectServer(_bstr_t(L"ROOT\\DEFAULT"), nullptr, nullptr, nullptr, 0, nullptr,
+	nullptr, &service)))
+		return std::wcerr << i18n_system::ERROR_RESTORE_WMI_CONNECT << std::endl << std::endl;
 
-	// Sets security levels for the WMI proxy
-	if(FAILED(CoSetProxyBlanket(svc_pointer, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, nullptr, RPC_C_AUTHN_LEVEL_CALL,
-		RPC_C_IMP_LEVEL_IMPERSONATE, nullptr, EOAC_NONE)))
+	std::unique_ptr<IWbemServices, releaser<IWbemServices>> service_ptr(service);
+
+	// Sets security levels for the WMI proxy to allow impersonation
+	if(FAILED(CoSetProxyBlanket(service, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, nullptr, RPC_C_AUTHN_LEVEL_CALL,
+	RPC_C_IMP_LEVEL_IMPERSONATE, nullptr, EOAC_NONE)))
 		return std::wcerr << i18n_system::ERROR_RESTORE_SECURITY_LEVEL << std::endl << std::endl;
 
-	// Executes a WQL query to get system restore points
-	if(FAILED(svc_pointer->ExecQuery(bstr_t("WQL"), bstr_t(L"SELECT CreationTime, Description FROM SystemRestore"),
-		WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, nullptr, &enumerator_pointer)))
+	// Executes WQL query to retrieve system restore points
+	if(FAILED(service->ExecQuery(bstr_t("WQL"), bstr_t(L"SELECT CreationTime, Description FROM SystemRestore"),
+	WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, nullptr, &enumerator)))
 		return std::wcerr << i18n_system::ERROR_RESTORE_QUERY << std::endl << std::endl;
 
-	std::unique_ptr<IEnumWbemClassObject, releaser<IEnumWbemClassObject>> enumerator_pointer_ptr(enumerator_pointer);
+	std::unique_ptr<IEnumWbemClassObject, releaser<IEnumWbemClassObject>> enumerator_ptr(enumerator);
 
-	// Loop through the query results
-	while(enumerator_pointer){
-		enumerator_pointer->Next(WBEM_INFINITE, 1, &clsobj_pointer, &return_result);
-		if(!return_result) break;
-		std::unique_ptr<IWbemClassObject, releaser<IWbemClassObject>> class_object_ptr(clsobj_pointer);
+	// Iterates through query results
+	while(enumerator){
+		// Gets CreationTime property
+		VariantWrapper creation_time, description;
 
-		// Gets the CreationTime property
-		woss.str(L"");
-		if(FAILED(clsobj_pointer->Get(L"CreationTime", 0, &variant_property, nullptr, nullptr))) continue;
-		if(variant_property.vt == VT_BSTR){
-			woss << variant_property.bstrVal;
-			VariantClear(&variant_property);
-		}
+		if(FAILED(enumerator->Next(WBEM_INFINITE, 1, &class_object, &return_result)) || return_result == 0) break;
 
-		// Formats date and time
-		tmp = woss.str();
-		tmp = tmp.substr(0,4) + L'-' + tmp.substr(4,2) + L'-' + tmp.substr(6,2) + L' ' + tmp.substr(8,2) + L':'
-			+ tmp.substr(10,2) + L':' + tmp.substr(12,2);
+		std::unique_ptr<IWbemClassObject, releaser<IWbemClassObject>> class_object_ptr(class_object);
 
-		// Gets the description property
-		woss.str(L"");
-		if(FAILED(clsobj_pointer->Get(L"Description", 0, &variant_property, nullptr, nullptr))) continue;
+		if(FAILED(class_object->Get(L"CreationTime", 0, &creation_time, nullptr, nullptr)) ||
+			creation_time.var.vt != VT_BSTR) continue;
 
-		if(variant_property.vt == VT_BSTR){
-			woss << variant_property.bstrVal;
-			VariantClear(&variant_property);
-		}
+		// Ensures valid length
+		time_str = creation_time.var.bstrVal;
+		if(time_str.length() < 14) continue;
 
-		// Adds the formatted restore point (time + description) to the vector in reverse order
-		restore_points_ordered.emplace(restore_points_ordered.begin(), tmp + L" - " + woss.str());
+		// Gets Description property
+		if(FAILED(class_object->Get(L"Description", 0, &description, nullptr, nullptr)) ||
+			description.var.vt != VT_BSTR) continue;
+
+		// Stores restore point
+		restore_points.push_back(std::format(L"{} - {}", std::format(L"{}-{}-{} {}:{}:{}", time_str.substr(0, 4),
+			time_str.substr(4, 2), time_str.substr(6, 2), time_str.substr(8, 2), time_str.substr(10, 2),
+			time_str.substr(12, 2)), description.var.bstrVal));
 	}
 
-	if(restore_points_ordered.size() > 0){
-		// Use singular or plural form of "restore point(s)" based on count
-		restore_points_ordered.size() == 1 ? std::wcout << i18n::RESTORE_POINT : std::wcout << i18n::RESTORE_POINTS;
-		return std::wcout << std::endl << restore_points_ordered;
+	if(restore_points.size() > 0){
+		// Reverses to chronological order
+		if(restore_points.size() > 1) std::reverse(restore_points.begin(), restore_points.end());
+
+		// Uses singular or plural form of "restore point(s)" based on count
+		restore_points.size() == 1 ? std::wcout << i18n::RESTORE_POINT : std::wcout << i18n::RESTORE_POINTS;
+		return std::wcout << std::endl << restore_points;
 	}
 	return std::wcout << i18n::NO_RESTORE_POINTS << std::endl << std::endl;
 }

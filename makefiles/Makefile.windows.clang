@@ -16,13 +16,13 @@
 #ENABLE_NETWORK =
 #ENABLE_OPERATING_SYSTEM =
 #ENABLE_PROCESSES =
-#ENABLE_RESTORE =
+ENABLE_RESTORE =
 #ENABLE_SERVICES =
 #ENABLE_SHARED =
 #ENABLE_STARTUP =
 #ENABLE_TASKS =
 #ENABLE_TRASH =
-ENABLE_USB =
+#ENABLE_USB =
 #ENABLE_WIFI =
 
 #============================================== Compiler and linker flags ==============================================

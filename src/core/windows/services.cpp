@@ -4,7 +4,7 @@ module;
 #include <memory>
 #include <set>
 #include <span>
-
+#include <vector>
 #include <Windows.h>
 
 #pragma comment(lib, "Advapi32.lib")
@@ -12,50 +12,41 @@ module;
 module core;
 
 import common;
-
 import i18n;
 import i18n_system;
 
 // Lists running Windows services in an ordered manner
-std::wostream& services() noexcept{
-	LPENUM_SERVICE_STATUS service_status;
-	DWORD i, bytes_needed = 0, services_returned = 0, resume_handle = 0;
+std::wostream& services() noexcept {
+	DWORD bytes_needed = 0, services_returned = 0, resume_handle = 0;
+	SC_HANDLE scm_handle;
 
 	std::string tmp;
+	std::vector<BYTE> buffer;
 	std::set<std::wstring> services_running_ordered;
 
-	// Opens a handle to the Service Control Manager (SCM) with enumeration privileges
-	SC_HANDLE scm_handle = OpenSCManager(nullptr, nullptr, SC_MANAGER_ENUMERATE_SERVICE);
+	// Opens a handle to the SCM with enumeration privileges
+	scm_handle = OpenSCManager(nullptr, nullptr, SC_MANAGER_ENUMERATE_SERVICE);
 	if(scm_handle == nullptr) return std::wcerr << i18n_system::ERROR_SERVICES << std::endl << std::endl;
+	std::unique_ptr<SC_HANDLE__, decltype([](SC_HANDLE handle) { CloseServiceHandle(handle); })>
+		scm_handle_ptr(scm_handle);
 
-	std::unique_ptr<SC_HANDLE__, decltype([](SC_HANDLE handle){
-		CloseServiceHandle(handle);
-	})> scm_handle_ptr(scm_handle);	
-
-	// First call to EnumServicesStatus to determine the required buffer size.
-	// This call fails intentionally (buffer size is 0) but sets bytes_needed
-	EnumServicesStatus(scm_handle, SERVICE_WIN32, SERVICE_STATE_ALL, nullptr, 0,
-		&bytes_needed, &services_returned, &resume_handle);
-
-	i = bytes_needed;
-	service_status = static_cast<LPENUM_SERVICE_STATUS>(std::malloc(bytes_needed));
-	if(!service_status) return std::wcerr << i18n_system::ERROR_SERVICES_MALLOC << std::endl << std::endl;
-
-	// Run free at any exit
-	std::unique_ptr<ENUM_SERVICE_STATUS, void(*)(ENUM_SERVICE_STATUS*)> service_status_ptr(
-		service_status, [](ENUM_SERVICE_STATUS* ptr){ std::free(ptr); });
-
-	// Second call to EnumServicesStatus to actually retrieve the service data
-	if(!EnumServicesStatus(scm_handle, SERVICE_WIN32, SERVICE_STATE_ALL, service_status, i,
-		&bytes_needed, &services_returned, &resume_handle))
+	// Determines the required buffer size
+	if((EnumServicesStatus(scm_handle, SERVICE_WIN32, SERVICE_STATE_ALL, nullptr, 0, &bytes_needed,
+	&services_returned, &resume_handle)) || (GetLastError() != ERROR_MORE_DATA))
 		return std::wcerr << i18n_system::ERROR_SERVICES_ENUM << std::endl << std::endl;
 
-	// Uses std::span to create a safe, bounds-checked view of the service data
-	// Iterates over the retrieved services
+	// Allocates buffer and enumerate services
+	buffer.resize(bytes_needed);
+	LPENUM_SERVICE_STATUS service_status = reinterpret_cast<LPENUM_SERVICE_STATUS>(buffer.data());
+	if(!EnumServicesStatus(scm_handle, SERVICE_WIN32, SERVICE_STATE_ALL, service_status,
+	buffer.size(), &bytes_needed, &services_returned, &resume_handle))
+		return std::wcerr << i18n_system::ERROR_SERVICES_ENUM << std::endl << std::endl;
+
+	// Collects running services into an ordered set
 	for(const ENUM_SERVICE_STATUS& service : std::span<ENUM_SERVICE_STATUS>(service_status, services_returned)){
-		if(service.ServiceStatus.dwCurrentState == SERVICE_RUNNING){
+		if(service.ServiceStatus.dwCurrentState == SERVICE_RUNNING) {
 			tmp = std::string(service.lpDisplayName);
-			services_running_ordered.emplace(tmp.begin(), tmp.end());
+			services_running_ordered.emplace(std::wstring(tmp.begin(), tmp.end()));
 		}
 	}
 

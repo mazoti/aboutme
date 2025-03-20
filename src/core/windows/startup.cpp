@@ -16,37 +16,34 @@ import i18n;
 import i18n_system;
 
 // Enumerates startup applications from a given registry key
-static inline void startup_apps(HKEY key_root, const char* sub_key, std::multimap<std::wstring, std::wstring>&
-startup_programs_ordered){
-	char value_name[256], value_data[1024];
-	std::string value, data;
+static inline void startup_apps(HKEY key_root, const wchar_t* sub_key,
+std::multimap<std::wstring, std::wstring>& startup_programs_ordered){
+	WCHAR value_name[256];
+	BYTE value_data[1024];
+	DWORD name_size, data_size, type, index;
 
 	HKEY app_key = nullptr;
-	DWORD name_size = sizeof(value_name), data_size = sizeof(value_data), index = 0;
 
-	std::unique_ptr<std::remove_pointer_t<HKEY>, decltype([](HKEY handle){
-		if(handle != nullptr) RegCloseKey(handle);
-	})> app_key_ptr(app_key);
-
-	if(RegOpenKeyEx(key_root, sub_key, 0, KEY_READ, &app_key) != ERROR_SUCCESS){
+	if(RegOpenKeyExW(key_root, sub_key, 0, KEY_READ, &app_key) != ERROR_SUCCESS){
 		std::wcerr << i18n_system::ERROR_REG_OPENKEYEX << std::endl;
 		return;
 	}
 
+	std::unique_ptr<std::remove_pointer_t<HKEY>, decltype([](HKEY handle){
+		if (handle != nullptr) RegCloseKey(handle);
+	})> app_key_ptr(app_key);
+
 	// Enumerates all values under the opened registry key
-	for(; RegEnumValue(app_key, index, value_name, &name_size, nullptr, nullptr,
-		reinterpret_cast<LPBYTE>(value_data), &data_size) == ERROR_SUCCESS;
-		++index){
-
-		// Resets buffer sizes for the next iteration
-		name_size = sizeof(value_name);
+	for(index = 0; ; ++index){
+		name_size = 255; // Maximum number of characters excluding null terminator
 		data_size = sizeof(value_data);
+		if(RegEnumValueW(app_key, index, value_name, &name_size, nullptr, &type,
+			value_data, &data_size) != ERROR_SUCCESS)
+			break;
 
-		value = std::string(value_name);
-		data  = std::string(value_data);
-
-		insert_if_unique<std::wstring, std::wstring>(startup_programs_ordered, std::wstring(value.begin(),
-			value.end()), std::wstring(data.begin(), data.end()));
+		if(type == REG_SZ || type == REG_EXPAND_SZ)
+			startup_programs_ordered.emplace(std::wstring(value_name),std::wstring(reinterpret_cast<const wchar_t*>
+			(value_data)));
 	}
 }
 
@@ -54,8 +51,8 @@ startup_programs_ordered){
 std::wostream& startup() noexcept{
 	std::multimap<std::wstring, std::wstring> startup_programs_ordered;
 
-	startup_apps(HKEY_CURRENT_USER,  "Software\\Microsoft\\Windows\\CurrentVersion\\Run", startup_programs_ordered);
-	startup_apps(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", startup_programs_ordered);
+	startup_apps(HKEY_CURRENT_USER,  L"Software\\Microsoft\\Windows\\CurrentVersion\\Run", startup_programs_ordered);
+	startup_apps(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", startup_programs_ordered);
 
 	if(startup_programs_ordered.size() > 0)
 		return std::wcout << i18n::STARTUP << std::endl << startup_programs_ordered;

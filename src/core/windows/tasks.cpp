@@ -25,7 +25,7 @@ std::wostream& tasks() noexcept{
 	IRegisteredTaskCollection *tasks_pointer = nullptr;
 	IRegisteredTask *task_ptr = nullptr;
 
-	LONG tasks_count = 0, i = 0;
+	LONG tasks_count = 0, i = 1;
 
 	// Initialize COM library in multithreaded mode
 	if(FAILED(CoInitializeEx(nullptr, COINIT_MULTITHREADED))) return std::wcerr << i18n_system::ERROR_TASKS
@@ -38,7 +38,7 @@ std::wostream& tasks() noexcept{
 	// Create an instance of the Task Scheduler service
 	if(FAILED(CoCreateInstance(CLSID_TaskScheduler, nullptr, CLSCTX_INPROC_SERVER, IID_ITaskService,
 		reinterpret_cast<void**>(&service_pointer)))) return std::wcerr << i18n_system::ERROR_TASKS
-		<< " COCREATEINSTANCE" << std::endl << std::endl;
+			<< " COCREATEINSTANCE" << std::endl << std::endl;
 
 	std::unique_ptr<ITaskService, decltype([](ITaskService *ptr){
 		if(ptr) ptr->Release();

@@ -2,7 +2,7 @@ module;
 
 #include <iostream>
 #include <memory>
-#include <set>
+#include <vector>
 
 #include <Windows.h>
 #include <ShlObj.h>
@@ -26,11 +26,11 @@ std::wostream& trash() noexcept{
 	ULONG fetched;
 	STRRET string_return;
 
-	std::set<std::wstring> trash_data_ordered;
-
 	IEnumIDList *enum_ptr = nullptr;
 	IShellFolder *desktop_folder_ptr = nullptr, *recycle_bin_folder_ptr = nullptr;
 	LPITEMIDLIST recycle_bin_PID_ptr = nullptr, item_PID_ptr = nullptr;
+
+	std::vector<std::wstring> trash_data;
 
 	// Initializes COM library
 	if(FAILED(CoInitialize(nullptr))) return std::wcerr << i18n_system::ERROR_TRASH_COM_INIT << std::endl << std::endl;
@@ -71,18 +71,18 @@ std::wostream& trash() noexcept{
 	})> enum_list_ptr(enum_ptr);
 
 	// Loops through all items in the Recycle Bin
-	while(enum_ptr->Next(1, &item_PID_ptr, &fetched) == S_OK && fetched == 1){
+	while((enum_ptr->Next(1, &item_PID_ptr, &fetched) == S_OK) && (fetched == 1)){
 		std::unique_ptr<ITEMIDLIST, decltype([](LPITEMIDLIST ptr){
-			CoTaskMemFree(ptr);
+			ILFree(ptr);
 		})> ipid_ptr(static_cast<ITEMIDLIST*>(item_PID_ptr));
 
 		// Gets display name of the item
-		if(FAILED(recycle_bin_folder_ptr->GetDisplayNameOf(item_PID_ptr, SHGDN_NORMAL, &string_return))) continue;
-		if(FAILED(StrRetToBufW(&string_return, item_PID_ptr, display_name, MAX_PATH))) continue;
+		if((FAILED(recycle_bin_folder_ptr->GetDisplayNameOf(item_PID_ptr, SHGDN_NORMAL, &string_return))) ||
+		(FAILED(StrRetToBufW(&string_return, item_PID_ptr, display_name, MAX_PATH)))) continue;
 
-		trash_data_ordered.emplace(display_name);
+		trash_data.emplace_back(display_name);
 	}
 
-	if(trash_data_ordered.empty()) return std::wcout << i18n::TRASH_EMPTY << std::endl << std::endl;
-	return std::wcout << i18n::TRASH << std::endl << trash_data_ordered;
+	if(trash_data.empty()) return std::wcout << i18n::TRASH_EMPTY << std::endl << std::endl;
+	return std::wcout << i18n::TRASH << std::endl << trash_data;
 }
