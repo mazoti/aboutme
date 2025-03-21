@@ -13,10 +13,10 @@
 #ENABLE_HARD_DISKS =
 #ENABLE_INSTALLED =
 #ENABLE_MEMORY =
-#ENABLE_NETWORK =
+ENABLE_NETWORK =
 #ENABLE_OPERATING_SYSTEM =
 #ENABLE_PROCESSES =
-ENABLE_RESTORE =
+#ENABLE_RESTORE =
 #ENABLE_SERVICES =
 #ENABLE_SHARED =
 #ENABLE_STARTUP =
@@ -33,14 +33,14 @@ CXXFLAGS = -std=c++23 -D_WINDOWS -Weverything -pipe
 !IFDEF DEBUG
 CXXFLAGS = $(CXXFLAGS) -fsafe-buffer-usage-suggestions -g
 !ELSE
-#CXXFLAGS = $(CXXFLAGS) -fuse-ld=lld -flto -DNDEBUG -O3 -march=native
 CXXFLAGS = $(CXXFLAGS) -DNDEBUG -O3 -march=native
 !ENDIF
 
 CC = clang++
-MODFLAGS = -fmodule-file=common=common.pcm common.pcm \
-	-fmodule-file=i18n=i18n.pcm i18n.pcm \
-	-fmodule-file=i18n_system=i18n_system.pcm i18n_system.pcm
+MODFLAGS = -fmodule-file=common=objs/common.pcm \
+           -fmodule-file=i18n=objs/i18n.pcm \
+           -fmodule-file=i18n_system=objs/i18n_system.pcm \
+           -fmodule-file=core=objs/core.pcm
 
 TARGET = releases\aboutme.exe
 
@@ -49,12 +49,12 @@ TARGET = releases\aboutme.exe
 COMMON_OBJS =
 
 !IFDEF ENABLE_ENVIRONMENT_VARIABLES
-COMMON_OBJS = $(COMMON_OBJS) objs\environment_variables.o
+COMMON_OBJS = $(COMMON_OBJS) objs\environment_variables.obj
 CXXFLAGS    = $(CXXFLAGS) -DENABLE_ENVIRONMENT_VARIABLES
 !ENDIF
 
 !IFDEF ENABLE_SYSTEM_CLOCK
-COMMON_OBJS = $(COMMON_OBJS) objs\system_clock.o
+COMMON_OBJS = $(COMMON_OBJS) objs\system_clock.obj
 CXXFLAGS    = $(CXXFLAGS) -DENABLE_SYSTEM_CLOCK
 !ENDIF
 
@@ -63,97 +63,97 @@ CXXFLAGS    = $(CXXFLAGS) -DENABLE_SYSTEM_CLOCK
 CORE_OBJS =
 
 !IFDEF ENABLE_BATTERY
-CORE_OBJS = $(CORE_OBJS) objs\battery.o
+CORE_OBJS = $(CORE_OBJS) objs\battery.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_BATTERY
 !ENDIF
 
 !IFDEF ENABLE_BLUETOOTH
-CORE_OBJS = $(CORE_OBJS) objs\bluetooth.o
+CORE_OBJS = $(CORE_OBJS) objs\bluetooth.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_BLUETOOTH
 !ENDIF
 
 !IFDEF ENABLE_CPU
-CORE_OBJS = $(CORE_OBJS) objs\cpu.o
+CORE_OBJS = $(CORE_OBJS) objs\cpu.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_CPU
 !ENDIF
 
 !IFDEF ENABLE_FEATURES
-CORE_OBJS = $(CORE_OBJS) objs\features.o
+CORE_OBJS = $(CORE_OBJS) objs\features.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_FEATURES
 !ENDIF
 
 !IFDEF ENABLE_GPU
-CORE_OBJS = $(CORE_OBJS) objs\gpu.o
+CORE_OBJS = $(CORE_OBJS) objs\gpu.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_GPU
 !ENDIF
 
 !IFDEF ENABLE_HARD_DISKS
-CORE_OBJS = $(CORE_OBJS) objs\hard_disks.o
+CORE_OBJS = $(CORE_OBJS) objs\hard_disks.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_HARD_DISKS
 !ENDIF
 
 !IFDEF ENABLE_INSTALLED
-CORE_OBJS = $(CORE_OBJS) objs\installed.o
+CORE_OBJS = $(CORE_OBJS) objs\installed.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_INSTALLED
 !ENDIF
 
 !IFDEF ENABLE_MEMORY
-CORE_OBJS = $(CORE_OBJS) objs\memory.o
+CORE_OBJS = $(CORE_OBJS) objs\memory.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_MEMORY
 !ENDIF
 
 !IFDEF ENABLE_NETWORK
-CORE_OBJS = $(CORE_OBJS) objs\network.o
+CORE_OBJS = $(CORE_OBJS) objs\network.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_NETWORK
 !ENDIF
 
 !IFDEF ENABLE_OPERATING_SYSTEM
-CORE_OBJS = $(CORE_OBJS) objs\operating_system.o
+CORE_OBJS = $(CORE_OBJS) objs\operating_system.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_OPERATING_SYSTEM
 !ENDIF
 
 !IFDEF ENABLE_PROCESSES
-CORE_OBJS = $(CORE_OBJS) objs\processes.o
+CORE_OBJS = $(CORE_OBJS) objs\processes.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_PROCESSES
 !ENDIF
 
 !IFDEF ENABLE_RESTORE
-CORE_OBJS = $(CORE_OBJS) objs\restore.o
+CORE_OBJS = $(CORE_OBJS) objs\restore.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_RESTORE
 !ENDIF
 
 !IFDEF ENABLE_SERVICES
-CORE_OBJS = $(CORE_OBJS) objs\services.o
+CORE_OBJS = $(CORE_OBJS) objs\services.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_SERVICES
 !ENDIF
 
 !IFDEF ENABLE_SHARED
-CORE_OBJS = $(CORE_OBJS) objs\shared.o
+CORE_OBJS = $(CORE_OBJS) objs\shared.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_SHARED
 !ENDIF
 
 !IFDEF ENABLE_STARTUP
-CORE_OBJS = $(CORE_OBJS) objs\startup.o
+CORE_OBJS = $(CORE_OBJS) objs\startup.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_STARTUP
 !ENDIF
 
 !IFDEF ENABLE_TASKS
-CORE_OBJS = $(CORE_OBJS) objs\tasks.o
+CORE_OBJS = $(CORE_OBJS) objs\tasks.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_TASKS
 !ENDIF
 
 !IFDEF ENABLE_TRASH
-CORE_OBJS = $(CORE_OBJS) objs\trash.o
+CORE_OBJS = $(CORE_OBJS) objs\trash.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_TRASH
 !ENDIF
 
 !IFDEF ENABLE_USB
-CORE_OBJS = $(CORE_OBJS) objs\usb.o
+CORE_OBJS = $(CORE_OBJS) objs\usb.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_USB
 !ENDIF
 
 !IFDEF ENABLE_WIFI
-CORE_OBJS = $(CORE_OBJS) objs\wifi.o
+CORE_OBJS = $(CORE_OBJS) objs\wifi.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_WIFI
 !ENDIF
 
@@ -165,169 +165,113 @@ TRANSLATION = english
 
 #===================================================== Link section ====================================================
 
-# Module files
-MODULE_OBJS = objs\common.o objs\core.o objs\i18n.o objs\i18n_system.o
+# Object files to link (no .pcm files here)
+LINK_OBJS = objs\main.obj objs\main_windows.obj $(COMMON_OBJS) $(CORE_OBJS)
 
 # Links target
-$(TARGET): objs objs\main_windows.o
-	$(CC) $(CXXFLAGS) -o $(TARGET) \
-	objs\main.o                    \
-	objs\main_windows.o            \
-	$(MODULE_OBJS)                 \
-	$(COMMON_OBJS)                 \
-	$(CORE_OBJS)                   \
-	resources\aboutme.res
+$(TARGET): objs $(LINK_OBJS)
+    $(CC) $(CXXFLAGS) -o $(TARGET) $(LINK_OBJS) resources\aboutme.res
 
 objs:
-	if not exist objs mkdir objs
+    if not exist objs mkdir objs
+
+#================================================ Precompiled Modules ==================================================
+
+objs\common.pcm: src\common\common.cppm
+    $(CC) $(CXXFLAGS) --precompile src\common\common.cppm -o objs\common.pcm
+
+objs\i18n.pcm: src\i18n\$(TRANSLATION)\all.cppm
+    $(CC) $(CXXFLAGS) --precompile src\i18n\$(TRANSLATION)\all.cppm -o objs\i18n.pcm
+
+objs\i18n_system.pcm: src\i18n\$(TRANSLATION)\windows.cppm
+    $(CC) $(CXXFLAGS) --precompile src\i18n\$(TRANSLATION)\windows.cppm -o objs\i18n_system.pcm
+
+objs\core.pcm: src\core\core.cppm objs\common.pcm
+    $(CC) $(CXXFLAGS) --precompile src\core\core.cppm -o objs\core.pcm -fmodule-file=common=objs/common.pcm
 
 #================================================ Common objects section ================================================
 
-objs\common.o: src\common\common.cppm
-	$(CC) $(CXXFLAGS) src\common\common.cppm --precompile -o objs\common.pcm
+objs\environment_variables.obj: src\common\environment_variables.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm
+    $(CC) $(CXXFLAGS) -c src\common\environment_variables.cpp -o $@ $(MODFLAGS)
 
-objs\environment_variables.o: objs\common.pcm objs\i18n_system.o objs\i18n.o
-	cd objs && $(CC) $(CXXFLAGS) -c ..\src\common\environment_variables.cpp $(MODFLAGS) && cd ..
-
-objs\system_clock.o: objs\common.pcm objs\i18n_system.o objs\i18n.o
-	cd objs && $(CC) $(CXXFLAGS) -c ..\src\common\system_clock.cpp $(MODFLAGS) && cd ..
+objs\system_clock.obj: src\common\system_clock.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm
+    $(CC) $(CXXFLAGS) -c src\common\system_clock.cpp -o $@ $(MODFLAGS)
 
 #================================================ Core objects section =================================================
 
-objs\battery.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\battery.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\battery.obj: src\core\windows\battery.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\battery.cpp -o $@ $(MODFLAGS)
 
-objs\bluetooth.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\bluetooth.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\bluetooth.obj: src\core\windows\bluetooth.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\bluetooth.cpp -o $@ $(MODFLAGS)
 
-objs\cpu.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\cpu.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\cpu.obj: src\core\windows\cpu.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\cpu.cpp -o $@ $(MODFLAGS)
 
-objs\features.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\features.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\features.obj: src\core\windows\features.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\features.cpp -o $@ $(MODFLAGS)
 
-objs\gpu.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\gpu.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\gpu.obj: src\core\windows\gpu.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\gpu.cpp -o $@ $(MODFLAGS)
 
-objs\hard_disks.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\hard_disks.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\hard_disks.obj: src\core\windows\hard_disks.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\hard_disks.cpp -o $@ $(MODFLAGS)
 
-objs\installed.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\installed.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\installed.obj: src\core\windows\installed.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\installed.cpp -o $@ $(MODFLAGS)
 
-objs\memory.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\memory.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\memory.obj: src\core\windows\memory.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\memory.cpp -o $@ $(MODFLAGS)
 
-objs\network.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\network.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\network.obj: src\core\windows\network.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\network.cpp -o $@ $(MODFLAGS)
 
-objs\operating_system.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\operating_system.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\operating_system.obj: src\core\windows\operating_system.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\operating_system.cpp -o $@ $(MODFLAGS)
 
-objs\processes.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\processes.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\processes.obj: src\core\windows\processes.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\processes.cpp -o $@ $(MODFLAGS)
 
-objs\restore.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\restore.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\restore.obj: src\core\windows\restore.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\restore.cpp -o $@ $(MODFLAGS)
 
-objs\services.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\services.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\services.obj: src\core\windows\services.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\services.cpp -o $@ $(MODFLAGS)
 
-objs\shared.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\shared.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\shared.obj: src\core\windows\shared.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\shared.cpp -o $@ $(MODFLAGS)
 
-objs\startup.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\startup.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\startup.obj: src\core\windows\startup.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\startup.cpp -o $@ $(MODFLAGS)
 
-objs\tasks.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\tasks.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\tasks.obj: src\core\windows\tasks.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\tasks.cpp -o $@ $(MODFLAGS)
 
-objs\trash.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\trash.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\trash.obj: src\core\windows\trash.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\trash.cpp -o $@ $(MODFLAGS)
 
-objs\usb.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\usb.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
+objs\usb.obj: src\core\windows\usb.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\usb.cpp -o $@ $(MODFLAGS)
 
-objs\wifi.o: objs\common.o objs\i18n_system.o objs\i18n.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) -c ..\src\core\windows\wifi.cpp $(MODFLAGS) -fmodule-file=core=core.pcm core.pcm && \
-	cd ..
-
-objs\core.o: src\core\core.cppm objs\common.o
-	cd objs && \
-	$(CC) $(CXXFLAGS) ..\src\core\core.cppm --precompile -o core.pcm -fmodule-file=common=common.pcm common.pcm && \
-	cd ..
-
-#================================================= I18n objects section ================================================
-
-objs\i18n.o: src\i18n\$(TRANSLATION)\all.cppm
-	$(CC) $(CXXFLAGS) src\i18n\$(TRANSLATION)\all.cppm --precompile -o objs\i18n.pcm
-
-objs\i18n_system.o: src\i18n\$(TRANSLATION)\windows.cppm
-	$(CC) $(CXXFLAGS) src\i18n\$(TRANSLATION)\windows.cppm --precompile -o objs\i18n_system.pcm
+objs\wifi.obj: src\core\windows\wifi.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\core\windows\wifi.cpp -o $@ $(MODFLAGS)
 
 #================================================= Main object section =================================================
 
-objs\main.o: $(MODULE_OBJS) $(COMMON_OBJS) $(CORE_OBJS) src\core\main.cpp
-	cd objs && $(CC) $(CXXFLAGS) -c ..\src\core\main.cpp      \
-	-fmodule-file=i18n=i18n.pcm i18n.pcm                      \
-	-fmodule-file=i18n_system=i18n_system.pcm i18n_system.pcm \
-	-fmodule-file=common=common.pcm common.pcm                \
-	-fmodule-file=core=core.pcm core.pcm                      \
-	&& cd ..
+objs\main.obj: src\core\main.cpp objs\common.pcm objs\i18n.pcm objs\i18n_system.pcm objs\core.pcm $(COMMON_OBJS) $(CORE_OBJS)
+    $(CC) $(CXXFLAGS) -c src\core\main.cpp -o $@ $(MODFLAGS)
 
-objs\main_windows.o: objs\main.o src\main_windows.cpp
-	cd objs && $(CC) $(CXXFLAGS) -c ..\src\main_windows.cpp   \
-	-fmodule-file=i18n=i18n.pcm i18n.pcm                      \
-	-fmodule-file=i18n_system=i18n_system.pcm i18n_system.pcm \
-	-fmodule-file=common=common.pcm common.pcm                \
-	-fmodule-file=core=core.pcm core.pcm                      \
-	&& cd ..
+objs\main_windows.obj: src\main_windows.cpp objs\main.obj objs\common.pcm objs\i18n.pcm objs\i18n_system.pcm objs\core.pcm
+    $(CC) $(CXXFLAGS) -c src\main_windows.cpp -o $@ $(MODFLAGS)
 
 #==================================================== Clean section ====================================================
 
 clean:
-	if exist $(TARGET) del $(TARGET)
-	if exist objs rd /S /Q objs
-	if exist *.ifc del *.ifc
-	if exist *.pdb del *.pdb
-	if exist release\aboutme.pdb del release\aboutme.pdb
-	if exist release\aboutme.ilk del release\aboutme.ilk
+    if exist $(TARGET) del $(TARGET)
+    if exist objs rd /S /Q objs
+    if exist *.ifc del *.ifc
+    if exist *.pdb del *.pdb
+    if exist releases\aboutme.pdb del releases\aboutme.pdb
+    if exist releases\aboutme.ilk del releases\aboutme.ilk
 
 .PHONY: clean

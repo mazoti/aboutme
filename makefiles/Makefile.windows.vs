@@ -1,5 +1,6 @@
 #==================================================== Configuration ====================================================
 
+# Uncomment to enable features or set via command line (e.g., nmake ENABLE_NETWORK=1)
 #TRANSLATION = portuguese
 
 ENABLE_ENVIRONMENT_VARIABLES =
@@ -29,29 +30,36 @@ ENABLE_WIFI =
 
 CXXFLAGS = /EHsc /std:c++latest /W4 /D_WINDOWS
 
-# Debug version builds faster and checks for memory leaks
+# Debug vs. Release builds
 !IFDEF DEBUG
 CXXFLAGS = $(CXXFLAGS) /Zi /MDd
+LINKERFLAGS = /DEBUG
 !ELSE
 CXXFLAGS = $(CXXFLAGS) /DNDEBUG /O2 /GL /Gy /Oi /Oy
+LINKERFLAGS = /LTCG /RELEASE
 !ENDIF
 
 CC = cl
 LINKER = link
-LINKERFLAGS = /LTCG /RELEASE
 TARGET = releases\aboutme.exe
+OBJ_DIR = objs
+
+# Libraries commonly needed for Windows APIs (adjust as needed)
+# kernel32.lib user32.lib gdi32.lib advapi32.lib shell32.lib ole32.lib
+# oleaut32.lib wbemuuid.lib ws2_32.lib iphlpapi.lib
+LIBS = 
 
 #==================================================== Common section ===================================================
 
 COMMON_OBJS =
 
 !IFDEF ENABLE_ENVIRONMENT_VARIABLES
-COMMON_OBJS = $(COMMON_OBJS) objs\environment_variables.obj
+COMMON_OBJS = $(COMMON_OBJS) $(OBJ_DIR)\environment_variables.obj
 CXXFLAGS    = $(CXXFLAGS) /DENABLE_ENVIRONMENT_VARIABLES
 !ENDIF
 
 !IFDEF ENABLE_SYSTEM_CLOCK
-COMMON_OBJS = $(COMMON_OBJS) objs\system_clock.obj
+COMMON_OBJS = $(COMMON_OBJS) $(OBJ_DIR)\system_clock.obj
 CXXFLAGS    = $(CXXFLAGS) /DENABLE_SYSTEM_CLOCK
 !ENDIF
 
@@ -60,97 +68,97 @@ CXXFLAGS    = $(CXXFLAGS) /DENABLE_SYSTEM_CLOCK
 CORE_OBJS =
 
 !IFDEF ENABLE_BATTERY
-CORE_OBJS = $(CORE_OBJS) objs\battery.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\battery.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_BATTERY
 !ENDIF
 
 !IFDEF ENABLE_BLUETOOTH
-CORE_OBJS = $(CORE_OBJS) objs\bluetooth.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\bluetooth.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_BLUETOOTH
 !ENDIF
 
 !IFDEF ENABLE_CPU
-CORE_OBJS = $(CORE_OBJS) objs\cpu.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\cpu.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_CPU
 !ENDIF
 
 !IFDEF ENABLE_FEATURES
-CORE_OBJS = $(CORE_OBJS) objs\features.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\features.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_FEATURES
 !ENDIF
 
 !IFDEF ENABLE_GPU
-CORE_OBJS = $(CORE_OBJS) objs\gpu.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\gpu.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_GPU
 !ENDIF
 
 !IFDEF ENABLE_HARD_DISKS
-CORE_OBJS = $(CORE_OBJS) objs\hard_disks.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\hard_disks.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_HARD_DISKS
 !ENDIF
 
 !IFDEF ENABLE_INSTALLED
-CORE_OBJS = $(CORE_OBJS) objs\installed.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\installed.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_INSTALLED
 !ENDIF
 
 !IFDEF ENABLE_MEMORY
-CORE_OBJS = $(CORE_OBJS) objs\memory.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\memory.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_MEMORY
 !ENDIF
 
 !IFDEF ENABLE_NETWORK
-CORE_OBJS = $(CORE_OBJS) objs\network.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\network.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_NETWORK
 !ENDIF
 
 !IFDEF ENABLE_OPERATING_SYSTEM
-CORE_OBJS = $(CORE_OBJS) objs\operating_system.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\operating_system.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_OPERATING_SYSTEM
 !ENDIF
 
 !IFDEF ENABLE_PROCESSES
-CORE_OBJS = $(CORE_OBJS) objs\processes.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\processes.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_PROCESSES
 !ENDIF
 
 !IFDEF ENABLE_RESTORE
-CORE_OBJS = $(CORE_OBJS) objs\restore.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\restore.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_RESTORE
 !ENDIF
 
 !IFDEF ENABLE_SERVICES
-CORE_OBJS = $(CORE_OBJS) objs\services.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\services.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_SERVICES
 !ENDIF
 
 !IFDEF ENABLE_SHARED
-CORE_OBJS = $(CORE_OBJS) objs\shared.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\shared.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_SHARED
 !ENDIF
 
 !IFDEF ENABLE_STARTUP
-CORE_OBJS = $(CORE_OBJS) objs\startup.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\startup.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_STARTUP
 !ENDIF
 
 !IFDEF ENABLE_TASKS
-CORE_OBJS = $(CORE_OBJS) objs\tasks.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\tasks.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_TASKS
 !ENDIF
 
 !IFDEF ENABLE_TRASH
-CORE_OBJS = $(CORE_OBJS) objs\trash.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\trash.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_TRASH
 !ENDIF
 
 !IFDEF ENABLE_USB
-CORE_OBJS = $(CORE_OBJS) objs\usb.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\usb.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_USB
 !ENDIF
 
 !IFDEF ENABLE_WIFI
-CORE_OBJS = $(CORE_OBJS) objs\wifi.obj
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\wifi.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_WIFI
 !ENDIF
 
@@ -162,123 +170,116 @@ TRANSLATION = english
 
 #===================================================== Link section ====================================================
 
-$(TARGET): objs objs\main_windows.obj
-	$(LINKER) $(LINKERFLAGS)  \
-		objs\i18n_system.obj  \
-		objs\i18n.obj         \
-		objs\common.obj       \
-		$(COMMON_OBJS)        \
-		objs\core.obj         \
-		$(CORE_OBJS)          \
-		objs\main.obj         \
-		objs\main_windows.obj \
-		resources\aboutme.res \
-		/OUT:$(TARGET)
+ALL_OBJS = $(OBJ_DIR)\i18n_system.obj $(OBJ_DIR)\i18n.obj $(OBJ_DIR)\common.obj $(COMMON_OBJS) \
+           $(OBJ_DIR)\core.obj $(CORE_OBJS) $(OBJ_DIR)\main.obj $(OBJ_DIR)\main_windows.obj
 
-objs:
-	if not exist objs mkdir objs
+$(TARGET): $(OBJ_DIR) $(ALL_OBJS)
+    $(LINKER) $(ALL_OBJS) resources\aboutme.res $(LIBS) /OUT:$(TARGET) $(LINKERFLAGS)
+
+$(OBJ_DIR):
+    if not exist $(OBJ_DIR) mkdir $(OBJ_DIR)
 
 #================================================ Common objects section ================================================
 
-objs\common.obj: src\common\common.cppm
-	copy src\common\common.cppm objs\common.ixx
-	$(CC) $(CXXFLAGS) /c objs\common.ixx /Foobjs\common.obj
+$(OBJ_DIR)\common.obj: src\common\common.cppm
+    copy src\common\common.cppm $(OBJ_DIR)\common.ixx
+    $(CC) $(CXXFLAGS) /c $(OBJ_DIR)\common.ixx /Fo$(OBJ_DIR)\common.obj
 
-objs\environment_variables.obj: objs\common.obj objs\i18n_system.obj objs\i18n.obj
-	$(CC) $(CXXFLAGS) /c src\common\environment_variables.cpp /Foobjs\environment_variables.obj
+$(OBJ_DIR)\environment_variables.obj: src\common\environment_variables.cpp $(OBJ_DIR)\common.obj $(OBJ_DIR)\i18n_system.obj $(OBJ_DIR)\i18n.obj
+    $(CC) $(CXXFLAGS) /c src\common\environment_variables.cpp /Fo$@
 
-objs\system_clock.obj: objs\common.obj objs\i18n_system.obj objs\i18n.obj
-	$(CC) $(CXXFLAGS) /c src\common\system_clock.cpp /Foobjs\system_clock.obj
+$(OBJ_DIR)\system_clock.obj: src\common\system_clock.cpp $(OBJ_DIR)\common.obj $(OBJ_DIR)\i18n_system.obj $(OBJ_DIR)\i18n.obj
+    $(CC) $(CXXFLAGS) /c src\common\system_clock.cpp /Fo$@
 
 #================================================ Core objects section =================================================
 
-objs\battery.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\battery.cpp /Foobjs\battery.obj
+$(OBJ_DIR)\core.obj: src\core\core.cppm
+    copy src\core\core.cppm $(OBJ_DIR)\core.ixx
+    $(CC) $(CXXFLAGS) /c $(OBJ_DIR)\core.ixx /Fo$@
 
-objs\bluetooth.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\bluetooth.cpp /Foobjs\bluetooth.obj
+$(OBJ_DIR)\battery.obj: src\core\windows\battery.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\battery.cpp /Fo$@
 
-objs\cpu.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\cpu.cpp /Foobjs\cpu.obj
+$(OBJ_DIR)\bluetooth.obj: src\core\windows\bluetooth.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\bluetooth.cpp /Fo$@
 
-objs\features.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\features.cpp /Foobjs\features.obj
+$(OBJ_DIR)\cpu.obj: src\core\windows\cpu.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\cpu.cpp /Fo$@
 
-objs\gpu.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\gpu.cpp /Foobjs\gpu.obj
+$(OBJ_DIR)\features.obj: src\core\windows\features.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\features.cpp /Fo$@
 
-objs\hard_disks.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\hard_disks.cpp /Foobjs\hard_disks.obj
+$(OBJ_DIR)\gpu.obj: src\core\windows\gpu.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\gpu.cpp /Fo$@
 
-objs\installed.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\installed.cpp /Foobjs\installed.obj
+$(OBJ_DIR)\hard_disks.obj: src\core\windows\hard_disks.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\hard_disks.cpp /Fo$@
 
-objs\memory.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\memory.cpp /Foobjs\memory.obj
+$(OBJ_DIR)\installed.obj: src\core\windows\installed.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\installed.cpp /Fo$@
 
-objs\network.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\network.cpp /Foobjs\network.obj
+$(OBJ_DIR)\memory.obj: src\core\windows\memory.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\memory.cpp /Fo$@
 
-objs\operating_system.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\operating_system.cpp /Foobjs\operating_system.obj
+$(OBJ_DIR)\network.obj: src\core\windows\network.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\network.cpp /Fo$@
 
-objs\processes.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\processes.cpp /Foobjs\processes.obj
+$(OBJ_DIR)\operating_system.obj: src\core\windows\operating_system.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\operating_system.cpp /Fo$@
 
-objs\restore.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\restore.cpp /Foobjs\restore.obj
+$(OBJ_DIR)\processes.obj: src\core\windows\processes.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\processes.cpp /Fo$@
 
-objs\services.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\services.cpp /Foobjs\services.obj
+$(OBJ_DIR)\restore.obj: src\core\windows\restore.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\restore.cpp /Fo$@
 
-objs\shared.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\shared.cpp /Foobjs\shared.obj
+$(OBJ_DIR)\services.obj: src\core\windows\services.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\services.cpp /Fo$@
 
-objs\startup.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\startup.cpp /Foobjs\startup.obj
+$(OBJ_DIR)\shared.obj: src\core\windows\shared.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\shared.cpp /Fo$@
 
-objs\tasks.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\tasks.cpp /Foobjs\tasks.obj
+$(OBJ_DIR)\startup.obj: src\core\windows\startup.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\startup.cpp /Fo$@
 
-objs\trash.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\trash.cpp /Foobjs\trash.obj
+$(OBJ_DIR)\tasks.obj: src\core\windows\tasks.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\tasks.cpp /Fo$@
 
-objs\usb.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\usb.cpp /Foobjs\usb.obj
+$(OBJ_DIR)\trash.obj: src\core\windows\trash.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\trash.cpp /Fo$@
 
-objs\wifi.obj: objs\core.obj
-	$(CC) $(CXXFLAGS) /c src\core\windows\wifi.cpp /Foobjs\wifi.obj
+$(OBJ_DIR)\usb.obj: src\core\windows\usb.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\usb.cpp /Fo$@
 
-objs\core.obj:
-	copy src\core\core.cppm objs\core.ixx
-	$(CC) $(CXXFLAGS) /c objs\core.ixx /Foobjs\core.obj
+$(OBJ_DIR)\wifi.obj: src\core\windows\wifi.cpp $(OBJ_DIR)\core.obj
+    $(CC) $(CXXFLAGS) /c src\core\windows\wifi.cpp /Fo$@
 
 #================================================= I18n objects section ================================================
 
-objs\i18n.obj:
-	copy src\i18n\$(TRANSLATION)\all.cppm objs\i18n.ixx
-	$(CC) $(CXXFLAGS) /c objs\i18n.ixx /Foobjs\i18n.obj
+$(OBJ_DIR)\i18n.obj: src\i18n\$(TRANSLATION)\all.cppm
+    copy src\i18n\$(TRANSLATION)\all.cppm $(OBJ_DIR)\i18n.ixx
+    $(CC) $(CXXFLAGS) /c $(OBJ_DIR)\i18n.ixx /Fo$@
 
-objs\i18n_system.obj:
-	copy src\i18n\$(TRANSLATION)\windows.cppm objs\i18n_system.ixx
-	$(CC) $(CXXFLAGS) /c objs\i18n_system.ixx /Foobjs\i18n_system.obj
+$(OBJ_DIR)\i18n_system.obj: src\i18n\$(TRANSLATION)\windows.cppm
+    copy src\i18n\$(TRANSLATION)\windows.cppm $(OBJ_DIR)\i18n_system.ixx
+    $(CC) $(CXXFLAGS) /c $(OBJ_DIR)\i18n_system.ixx /Fo$@
 
 #================================================= Main object section =================================================
 
-objs\main.obj: objs\i18n_system.obj objs\i18n.obj objs\common.obj $(COMMON_OBJS) objs\core.obj $(CORE_OBJS)
-	$(CC) $(CXXFLAGS) /c src\core\main.cpp /Foobjs\main.obj
+$(OBJ_DIR)\main.obj: src\core\main.cpp $(OBJ_DIR)\i18n_system.obj $(OBJ_DIR)\i18n.obj $(OBJ_DIR)\common.obj $(COMMON_OBJS) $(OBJ_DIR)\core.obj $(CORE_OBJS)
+    $(CC) $(CXXFLAGS) /c src\core\main.cpp /Fo$@
 
-objs\main_windows.obj: objs\main.obj
-	$(CC) $(CXXFLAGS) /c src\main_windows.cpp /Foobjs\main_windows.obj
+$(OBJ_DIR)\main_windows.obj: src\main_windows.cpp $(OBJ_DIR)\main.obj
+    $(CC) $(CXXFLAGS) /c src\main_windows.cpp /Fo$@
 
 #==================================================== Clean section ====================================================
 
 clean:
-	if exist $(TARGET) del $(TARGET)
-	if exist objs rd /S /Q objs
-	if exist *.ifc del *.ifc
-	if exist *.pdb del *.pdb
-	if exist release\aboutme.pdb del release\aboutme.pdb
-	if exist release\aboutme.ilk del release\aboutme.ilk
+    if exist $(TARGET) del $(TARGET)
+    if exist $(OBJ_DIR) rd /S /Q $(OBJ_DIR)
+    if exist *.ifc del *.ifc
+    if exist *.pdb del *.pdb
+    if exist releases\aboutme.pdb del releases\aboutme.pdb
+    if exist releases\aboutme.ilk del releases\aboutme.ilk
 
 .PHONY: clean
