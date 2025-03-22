@@ -6,6 +6,9 @@ export namespace i18n{
 
 	// src/main_$(SYSTEM).cpp
 	inline constexpr wchar_t ANY_KEY_TO_CLOSE[] = L"Pressione qualquer tecla para fechar...";
+	inline constexpr wchar_t HEADER[]           = L"\U00002699 AboutMe v0.7:\n"
+	                                              L"\thttps://github.com/mazoti/aboutme\n"
+	                                              L"\tby Marcos Mazoti";
 
 	// src/common/environment_variables.cpp
 #if defined(ENABLE_ENVIRONMENT_VARIABLES)
@@ -29,8 +32,11 @@ export namespace i18n{
 #if defined(ENABLE_BATTERY)
 	inline constexpr wchar_t BATTERY_AC_NOT_CONNECTED[] = L"Funcionando na bateria";
 	inline constexpr wchar_t BATTERY_AC_POWER[]         = L"Conectado \u00E0 energia el\u00E9trica";
+	inline constexpr wchar_t BATTERY_DAY[]              = L"dia";
 	inline constexpr wchar_t BATTERY_DAYS[]             = L"dias";
+	inline constexpr wchar_t BATTERY_HOUR[]             = L"hora";
 	inline constexpr wchar_t BATTERY_HOURS[]            = L"horas";
+	inline constexpr wchar_t BATTERY_MINUTE[]           = L"minuto";
 	inline constexpr wchar_t BATTERY_MINUTES[]          = L"minutos";
 	inline constexpr wchar_t BATTERY_STATUS[]           = L"\U0001F50B Bateria:";
 #endif

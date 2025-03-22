@@ -54,7 +54,7 @@ int main(int argc, char* argv[], const char* envp[]){
 	}
 
 	// Prints system header with version
-	std::wcout << std::endl << HEADER << std::endl << std::endl;
+	std::wcout << std::endl << i18n::HEADER << std::endl << std::endl;
 
 	run(envp, ';');
 

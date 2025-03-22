@@ -20,15 +20,39 @@ export module common;
 	export std::wostream& system_clock() noexcept;
 #endif
 
-// Defines a generic triple struct to hold three values of potentially different types
-export template<typename T1, typename T2, typename T3>
-struct triple{
-	T1 first;
-	T2 second;
-	T3 third;
+#if defined(ENABLE_BATTERY) || defined(ENABLE_OPERATING_SYSTEM)
+// Static inline helper function to print a number with singular/plural descriptions
+// Avoids code duplication for uptime components (days, hours, minutes, seconds)
+export template<typename NUMBER>
+void print_plural(NUMBER time_number, const wchar_t* desc, const wchar_t* desc_plural, bool& is_first){
+	if(time_number){
+		std::wcout << (is_first ? L" " : L", ") << time_number << L" " << (time_number == 1? desc : desc_plural);
+		is_first = false;
+	}
+}
+#endif
 
-	triple(const T1& a, const T2& b, const T3& c) : first(a), second(b), third(c) {}
-};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Overloads the output operator for std::set to print its elements with indentation
 export template<typename DATA>

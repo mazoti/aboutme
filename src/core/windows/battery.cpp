@@ -7,6 +7,7 @@ module;
 
 module core;
 
+import common;
 import i18n;
 import i18n_system;
 
@@ -20,6 +21,9 @@ std::wostream& battery() noexcept{
 	std::chrono::duration<int, std::ratio<60>>    total_minutes;
 
 	SYSTEM_POWER_STATUS power_status;
+
+	// Prints comma after description
+	bool is_first = true;
 
 	// Retrieves the system power status using the Windows API
 	if(!GetSystemPowerStatus(&power_status))
@@ -51,9 +55,10 @@ std::wostream& battery() noexcept{
 		std::wcout << i18n::BATTERY_AC_POWER;
 	}else{
 		std::wcout << i18n::BATTERY_AC_NOT_CONNECTED << std::endl << L'\t' << i18n_system::BATTERY_LIFE_TIME;
-		if(total_days.count())    std::wcout << L' ' << total_days.count()    << L' ' << i18n::BATTERY_DAYS;
-		if(total_hours.count())   std::wcout << L' ' << total_hours.count()   << L' ' << i18n::BATTERY_HOURS;
-		if(total_minutes.count()) std::wcout << L' ' << total_minutes.count() << L' ' << i18n::BATTERY_MINUTES;
+
+		print_plural<int>(total_days.count(),    i18n::BATTERY_DAY,    i18n::BATTERY_DAYS,    is_first);
+		print_plural<int>(total_hours.count(),   i18n::BATTERY_HOUR,   i18n::BATTERY_HOURS,   is_first);
+		print_plural<int>(total_minutes.count(), i18n::BATTERY_MINUTE, i18n::BATTERY_MINUTES, is_first);
 	}
 
 	return std::wcout << L" (" << status_percent << L"%)" << std::endl << std::endl;

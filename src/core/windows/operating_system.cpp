@@ -7,17 +7,9 @@ module;
 
 module core;
 
+import common;
 import i18n;
 import i18n_system;
-
-// Static inline helper function to print a number with singular/plural descriptions
-// Avoids code duplication for uptime components (days, hours, minutes, seconds)
-static inline void print_plural(ULONGLONG time_number, const wchar_t* desc, const wchar_t* desc_plural){
-	if(time_number){
-		std::wcout << L" " << time_number << L" ";
-		time_number == 1? std::wcout << desc : std::wcout << desc_plural;
-	}
-}
 
 // Function to display operating system details
 std::wostream& operating_system() noexcept{
@@ -26,13 +18,19 @@ std::wostream& operating_system() noexcept{
 	LCID user_locale;
 	ULONGLONG seconds, minutes, hours, days;
 	TCHAR buffer[MAX_COMPUTERNAME_LENGTH + 1];
+
+	bool first = true;
 	DWORD version_number = GetVersion();
 
 	// Calculates uptime from system tick count (in milliseconds)
-	seconds = (GetTickCount64() / 1000)    % 60;
-	minutes = (GetTickCount64() / 60000)   % 60;
-	hours   = (GetTickCount64() / 3600000) % 24;
-	days    = GetTickCount64()  / 86400000;
+	seconds = (GetTickCount64() / 1000);
+	minutes = seconds / 60;
+	hours   = minutes / 60;
+	days    = hours   / 24;
+
+	seconds %= 60;
+	minutes %= 60;
+	hours   %= 24;
 
 	// Outputs OS name and version
 	std::wcout  << i18n::OPERATING_SYSTEM << std::endl
@@ -44,12 +42,13 @@ std::wostream& operating_system() noexcept{
 	// If not an NT-based system, skips build number; otherwise, includes it
 	if(version_number < 0x80000000) std::wcout << L" (Build " << static_cast<DWORD>(HIWORD(version_number)) << L")";
 
+	// Outputs uptime with commas
 	std::wcout << std::endl << L"\t" << i18n::UPTIME;
 
-	print_plural(days, i18n::DAY, i18n::DAYS);
-	print_plural(hours, i18n::HOUR_UPTIME, i18n::HOURS_UPTIME);
-	print_plural(minutes, i18n::MINUTE, i18n::MINUTES);
-	print_plural(seconds, i18n::SECOND, i18n::SECONDS);
+	print_plural<ULONGLONG>(days,    i18n::DAY,         i18n::DAYS,         first);
+	print_plural<ULONGLONG>(hours,   i18n::HOUR_UPTIME, i18n::HOURS_UPTIME, first);
+	print_plural<ULONGLONG>(minutes, i18n::MINUTE,      i18n::MINUTES,      first);
+	print_plural<ULONGLONG>(seconds, i18n::SECOND,      i18n::SECONDS,      first);
 
 	// Gets and processes user's locale information
 	user_locale = GetUserDefaultLCID();

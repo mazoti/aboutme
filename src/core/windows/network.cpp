@@ -1,13 +1,24 @@
 module;
 
 #include <iostream>
+
+
+
 #include <sstream>
+
+
+
 #include <iomanip>
 #include <memory>
 #include <map>
 #include <set>
 
 #include <span>
+
+
+
+#include <format>
+
 
 #include <WinSock2.h>
 #include <WS2tcpip.h>
@@ -39,10 +50,12 @@ std::wostream& network() noexcept{
 	IP_ADAPTER_DNS_SERVER_ADDRESS* dns_server_pointer;
 
 	std::wostringstream woss;
+
+	std::string tmp;
 	std::wstring key, value;
 
-	std::set<std::wstring> udp_ordered;
-	std::set<std::wstring> tcp_established_ordered, tcp_listening_ordered, tcp_closed_ordered, tcp_other_ordered;
+	std::set<std::wstring> udp_ordered, tcp_established_ordered, tcp_listening_ordered,
+		tcp_closed_ordered, tcp_other_ordered;
 	std::set<std::string> dns_servers_ordered;
 	std::multimap<std::wstring, std::wstring> network_devices_ordered;
 
@@ -62,22 +75,19 @@ std::wostream& network() noexcept{
 		return std::wcerr << L'\t' << i18n_system::ERROR_ADAPTERS_INFO << std::endl << std::endl;
 
 	for(;adapter_pointer;adapter_pointer = adapter_pointer->Next){
-		woss << adapter_pointer->Description;
-		key = woss.str();
-		woss.str(L"");
+		tmp = std::string(adapter_pointer->Description);
+		key = std::format(L"{}", std::wstring(tmp.begin(), tmp.end()));
 
-		// Stores IP address
-		woss << L"IP: " << adapter_pointer->IpAddressList.IpAddress.String;
-		value = woss.str();
-		woss.str(L"");
+		tmp = std::string(adapter_pointer->IpAddressList.IpAddress.String);
+		value = std::format(L"IP: {}", std::wstring(tmp.begin(), tmp.end()));
 
 		insert_if_unique<std::wstring, std::wstring>(network_devices_ordered, key, value);
 
 		// Stores gateway if valid
 		if(adapter_pointer->GatewayList.IpAddress.String[0] != '0'){
-			woss << i18n::GATEWAY << " " << adapter_pointer->GatewayList.IpAddress.String;
-			value = woss.str();
-			woss.str(L"");
+			tmp = std::string(adapter_pointer->GatewayList.IpAddress.String);
+			value = std::format(L"{} {}", i18n::GATEWAY, std::wstring(tmp.begin(), tmp.end())); 
+
 			insert_if_unique<std::wstring, std::wstring>(network_devices_ordered, key, value);
 		}
 	}
@@ -119,11 +129,8 @@ std::wostream& network() noexcept{
 			}
 
 			value = woss.str();
-			woss.str(L"");
+			key = std::format(L"{}", adapter_address->Description);
 
-			woss << adapter_address->Description;
-			key = woss.str();
-			woss.str(L"");
 			insert_if_unique<std::wstring, std::wstring>(network_devices_ordered, key, value);
 		}
 
@@ -175,6 +182,16 @@ std::wostream& network() noexcept{
 		woss.str(L"");
 		woss << local_ip << L":" << std::dec << ntohs(static_cast<u_short>(entry.dwLocalPort))
 			<< L" (PID " << entry.dwOwningPid << L")";
+			
+		
+  //      std::wstring connection = std::format(L"{}:{} - {}:{} (PID: {})",
+    //                                          std::string(local_ip), ntohs(entry.dwLocalPort),
+      //                                        std::string(remote_ip), ntohs(entry.dwRemotePort),
+        //                                      entry.dwOwningPid);
+
+		
+			
+			
 		udp_ordered.insert(woss.str());
 	}
 
@@ -205,17 +222,10 @@ std::wostream& network() noexcept{
 			<< L" (PID: " << entry.dwOwningPid << L")";
 
 		switch(entry.dwState){
-			case MIB_TCP_STATE_CLOSED:
-				tcp_closed_ordered.insert(woss.str());
-				break;
-			case MIB_TCP_STATE_LISTEN:
-				tcp_listening_ordered.insert(woss.str());
-				break;
-			case MIB_TCP_STATE_ESTAB:
-				tcp_established_ordered.insert(woss.str());
-				break;
-			default:
-				tcp_other_ordered.insert(woss.str());
+			case MIB_TCP_STATE_CLOSED: tcp_closed_ordered.insert(woss.str());      break;
+			case MIB_TCP_STATE_LISTEN: tcp_listening_ordered.insert(woss.str());   break;
+			case MIB_TCP_STATE_ESTAB:  tcp_established_ordered.insert(woss.str()); break;
+			default: tcp_other_ordered.insert(woss.str());
 		}
 	}
 
