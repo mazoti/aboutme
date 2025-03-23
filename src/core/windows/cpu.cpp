@@ -11,13 +11,50 @@ module core;
 
 import i18n;
 
+// Displays all CPU supported instructions
+inline const static std::wstring instructions(const std::array<int, 4>& cpu_information,
+const std::array<int, 4>& cpu_information_extended){
+	std::wstring all_instructions;
+
+	// Converts feature flags from registers to bitsets for easy bit testing
+	std::bitset<32> features_edx(static_cast<unsigned int>(cpu_information[3]));
+	std::bitset<32> features_ecx(static_cast<unsigned int>(cpu_information[2]));
+	std::bitset<32> features_ebx(static_cast<unsigned int>(cpu_information_extended[1]));
+
+	if(features_ecx[25]) all_instructions.append(L"AES ");
+	if(features_ecx[28]) all_instructions.append(L"AVX ");
+	if(features_ebx[5])  all_instructions.append(L"AVX2 ");
+	if(features_ebx[30]) all_instructions.append(L"AVX512BW ");
+	if(features_ebx[28]) all_instructions.append(L"AVX512CD ");
+	if(features_ebx[17]) all_instructions.append(L"AVX512DQ ");
+	if(features_ebx[27]) all_instructions.append(L"AVX512ER ");
+	if(features_ebx[16]) all_instructions.append(L"AVX512F ");
+	if(features_ebx[21]) all_instructions.append(L"AVX512IFMA ");
+	if(features_ebx[26]) all_instructions.append(L"AVX512PF ");
+	if(features_ebx[31]) all_instructions.append(L"AVX512VL ");
+	if(features_edx[15]) all_instructions.append(L"CMOV ");
+	if(features_ecx[13]) all_instructions.append(L"CMPXCHG16B ");
+	if(features_edx[23]) all_instructions.append(L"MMX ");
+	if(features_edx[25]) all_instructions.append(L"SSE ");
+	if(features_edx[26]) all_instructions.append(L"SSE2 ");
+	if(features_ecx[0])  all_instructions.append(L"SSE3 ");
+	if(features_ecx[9])  all_instructions.append(L"SSSE3 ");
+	if(features_ecx[19]) all_instructions.append(L"SSE4.1 ");
+	if(features_ecx[20]) all_instructions.append(L"SSE4.2 ");
+	if(features_edx[4])  all_instructions.append(L"TSC ");
+
+	// Remove trailing space
+	if(!all_instructions.empty()) all_instructions.pop_back();
+	return all_instructions;
+}
+
 // Converts a processor architecture code (WORD) to a human-readable wide string
-inline static std::wstring arch(WORD code){
+inline const static std::wstring arch(WORD code){
 	switch(code){
-		case 0:  return L"x86";	
-		case 5:  return L"ARM";	
-		case 6:  return L"Itanium";	
-		case 9:  return L"AMD64";
+		case  0: return L"x86";	
+		case  5: return L"ARM";	
+		case  6: return L"Itanium";	
+		case  9: return L"AMD64";
 		case 12: return L"ARM64";
 		default: return L"Unknown";
 	}
@@ -26,9 +63,10 @@ inline static std::wstring arch(WORD code){
 // Displays CPU details
 std::wostream& cpu() noexcept{
 	size_t start;
-	std::array<char, 64> cpu_brand{};
-	std::array<int, 4> cpu_information, cpu_information_extended;
 	SYSTEM_INFO sys_info;
+
+	std::array<char, 64> cpu_brand{};
+	std::array<int,   4> cpu_information, cpu_information_extended;
 
 	// Retrieves CPU brand string using CPUID leaf 0x80000002 through 0x80000004
 	int *cpu_info = reinterpret_cast<int*>(&cpu_brand[0]);
@@ -64,34 +102,11 @@ std::wostream& cpu() noexcept{
 	std::bitset<32> features_ecx(static_cast<unsigned int>(cpu_information[2]));
 	std::bitset<32> features_ebx(static_cast<unsigned int>(cpu_information_extended[1]));
 
-	// Outputs CPU information in a formatted manner
-	std::wcout << i18n::CPU << std::endl 
-		<< L'\t' << &cpu_brand[start] << std::endl
-		<< L'\t' << i18n::ARCHITECTURE << L' ' << arch(sys_info.wProcessorArchitecture) << std::endl
+	// Outputs CPU information formatted
+	return std::wcout << i18n::CPU        << std::endl 
+		<< L'\t' << &cpu_brand[start]     << std::endl
+		<< L'\t' << i18n::ARCHITECTURE    << L' ' << arch(sys_info.wProcessorArchitecture) << std::endl
 		<< L'\t' << i18n::THREADS << L' ' << sys_info.dwNumberOfProcessors << std::endl
-		<< L'\t' << i18n::INSTRUCTIONS_SUPPORTED << L' ';
-
-	if(features_ecx[25]) std::wcout << "AES ";
-	if(features_ecx[28]) std::wcout << "AVX ";
-	if(features_ebx[5])  std::wcout << "AVX2 ";
-	if(features_ebx[30]) std::wcout << "AVX512BW ";
-	if(features_ebx[28]) std::wcout << "AVX512CD ";
-	if(features_ebx[17]) std::wcout << "AVX512DQ ";
-	if(features_ebx[27]) std::wcout << "AVX512ER ";
-	if(features_ebx[16]) std::wcout << "AVX512F ";
-	if(features_ebx[21]) std::wcout << "AVX512IFMA ";
-	if(features_ebx[26]) std::wcout << "AVX512PF ";
-	if(features_ebx[31]) std::wcout << "AVX512VL ";
-	if(features_edx[15]) std::wcout << "CMOV ";
-	if(features_ecx[13]) std::wcout << "CMPXCHG16B ";
-	if(features_edx[23]) std::wcout << "MMX ";
-	if(features_edx[25]) std::wcout << "SSE ";
-	if(features_edx[26]) std::wcout << "SSE2 ";
-	if(features_ecx[0])  std::wcout << "SSE3 ";
-	if(features_ecx[9])  std::wcout << "SSSE3 ";
-	if(features_ecx[19]) std::wcout << "SSE4.1 ";
-	if(features_ecx[20]) std::wcout << "SSE4.2 ";
-	if(features_edx[4])  std::wcout << "TSC ";
-
-	return std::wcout << std::endl << std::endl;
+		<< L'\t' << i18n::INSTRUCTIONS_SUPPORTED << L' ' << instructions(cpu_information, cpu_information_extended)
+		<< std::endl << std::endl;
 }

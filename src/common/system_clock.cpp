@@ -6,10 +6,10 @@ module;
 #endif
 
 #include <iostream>
-#include <sstream>
 #include <iomanip>
-#include <chrono>
+#include <format>
 
+#include <chrono>
 #include <ctime>
 
 module common;
@@ -21,7 +21,6 @@ std::wostream& system_clock() noexcept{
 	int offset;
 	std::tm local_tm, gmt_tm;
 	std::wstring date_value, time_value, gmt_value;
-	std::wostringstream woss;
 
 	// Gets the current system time as a time_t value
 	std::time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -33,6 +32,7 @@ std::wostream& system_clock() noexcept{
 	// Calculates GMT offset in hours and append an internationalized "hours" string
 	offset = static_cast<int>(difftime(mktime(&local_tm), mktime(&gmt_tm)) / 3600);
 	gmt_value = std::to_wstring(offset) + L" ";
+
 	((offset >= -1) && (offset <= 1)) ? gmt_value += i18n::HOUR : gmt_value += i18n::HOURS;
 
 	// Checks if the system is using local time or UTC based on the offset
@@ -40,13 +40,10 @@ std::wostream& system_clock() noexcept{
 		gmt_value += L" (local)" : gmt_value += L" (UTC)";
 
 	// Formats the local date as "DD/MM/YY" (e.g., 25/12/23)
-	woss << std::put_time(&local_tm, L"%d/%m/%y");
-	date_value = woss.str();
+	date_value = std::format(L"{:02}/{:02}/{:02}", local_tm.tm_mday, local_tm.tm_mon + 1, local_tm.tm_year % 100);
 
 	// Formats the local time as "HH:MM:SS" (e.g., 14:30:45)
-	woss.str(L"");
-	woss << std::put_time(&local_tm, L"%H:%M:%S");
-	time_value = woss.str();
+	time_value = std::format(L"{:02}:{:02}:{:02}", local_tm.tm_hour, local_tm.tm_min, local_tm.tm_sec);
 
 	// Checks daylight saving time
 	if(local_tm.tm_isdst > 0){

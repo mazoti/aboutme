@@ -43,7 +43,9 @@ export namespace i18n{
 
 // src/core/$(SYSTEM)/bluetooth.cpp
 #if defined(ENABLE_BLUETOOTH)
-	inline constexpr wchar_t BLUETOOTH[] = L"\U0001F91D Bluetooth:";
+	inline constexpr wchar_t AUTHENTICATED[] = L" (autenticado)";
+	inline constexpr wchar_t BLUETOOTH[]     = L"\U0001F91D Bluetooth:";
+	inline constexpr wchar_t CONNECTED[]     = L" (conectado)";
 #endif
 
 // src/core/$(SYSTEM)/cpu.cpp
