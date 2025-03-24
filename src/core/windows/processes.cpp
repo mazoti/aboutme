@@ -64,7 +64,7 @@ std::wostream& processes() noexcept{
 
 	// Enumerates processes
 	if(!EnumProcesses(processes, sizeof(processes), &needed))
-		return std::wcerr << i18n_system::ERROR_PROCESSES_ENUM << std::endl;
+		return std::wcerr << i18n_system::ERROR_PROCESSES_ENUM << L'\n';
 
 	// Collects process data
 	for(const DWORD& process : std::span<DWORD>(processes, needed / sizeof(DWORD))){
@@ -151,16 +151,16 @@ std::wostream& processes() noexcept{
 	max_ram_width = (max_ram_width > ram_header.length() ? max_ram_width : ram_header.length());
 
 	// Prints process information
-	std::wcout << i18n::RUNNING_PROCESSES << std::endl;
+	std::wcout << i18n::RUNNING_PROCESSES << L'\n';
 
 	for(const auto& pair : process_map){
 		const auto& name = pair.first;
 		const auto& processes = pair.second;
 
-		std::wcout << L"\t" << name << L":" << std::endl
+		std::wcout << L"\t" << name << L":" << L'\n'
 			<< L"\t\t" << std::left << std::setw(max_pid_width) << pid_header
 			<< L"  " << std::left << std::setw(max_cpu_width) << cpu_header
-			<< L"  " << std::left << std::setw(max_ram_width) << ram_header << std::endl;
+			<< L"  " << std::left << std::setw(max_ram_width) << ram_header << L'\n';
 
 		for(const auto& proc : processes){
 			std::wstring pid_str = std::to_wstring(proc.pid);
@@ -168,7 +168,7 @@ std::wostream& processes() noexcept{
 			std::wstring ram_str = format_ram_usage(proc.ram_usage);
 			std::wcout << L"\t\t" << std::left << std::setw(max_pid_width) << pid_str
 				<< L"  " << std::left << std::setw(max_cpu_width) << cpu_str
-				<< L"  " << std::left << std::setw(max_ram_width) << ram_str << std::endl;
+				<< L"  " << std::left << std::setw(max_ram_width) << ram_str << L'\n';
 		}
 
 		if(processes.size() > 1){
@@ -183,10 +183,10 @@ std::wostream& processes() noexcept{
 			std::wstring total_ram_str = format_ram_usage(total_ram);
 			std::wcout << L"\t\t" << std::left << std::setw(max_pid_width) << total_label
 				<< L"  " << std::left << std::setw(max_cpu_width) << total_cpu_str
-				<< L"  " << std::left << std::setw(max_ram_width) << total_ram_str << std::endl << std::endl;
+				<< L"  " << std::left << std::setw(max_ram_width) << total_ram_str << L"\n\n";
 		}
 
-		if(processes.size() == 1) std::wcout << std::endl;
+		if(processes.size() == 1) std::wcout << L'\n';
 	}
 
 	return std::wcout;

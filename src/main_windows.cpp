@@ -22,13 +22,13 @@ int main(int argc, char* argv[], const char* envp[]){
 	// Gets the standard output handle
 	std_handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	if(std_handle == INVALID_HANDLE_VALUE){
-		std::wcerr << L"Failed to get standard output handle" << std::endl;
+		std::wcerr << L"Failed to get standard output handle" << L'\n';
 		return -1;
 	}
 
 	// Saves the current console mode
 	if(!GetConsoleMode(std_handle, &original_mode)){
-		std::wcerr << L"Failed to get console mode." << std::endl;
+		std::wcerr << L"Failed to get console mode." << L'\n';
 		return -2;
 	}
 
@@ -44,34 +44,34 @@ int main(int argc, char* argv[], const char* envp[]){
 
 	// Configures console for wide-character (UTF-16) output
 	if(_setmode(_fileno(stdout), _O_U16TEXT) == -1){
-		std::wcerr << L"Failed to set stdout to wide character mode." << std::endl;
+		std::wcerr << L"Failed to set stdout to wide character mode." << L'\n';
 		return -3;
 	}
 
 	if(_setmode(_fileno(stderr), _O_U16TEXT) == -1){
-		std::wcerr << L"Failed to set stderr to wide character mode." << std::endl;
+		std::wcerr << L"Failed to set stderr to wide character mode." << L'\n';
 		return -4;
 	}
 
 	// Prints system header with version
-	std::wcout << std::endl << i18n::HEADER << std::endl << std::endl;
+	std::wcout << L'\n' << i18n::HEADER << L"\n\n";
 
 	run(envp, ';');
 
 	// Waits for any key to close if no arguments are provided
 	if(argc == 1){
-		std::wcout << i18n::ANY_KEY_TO_CLOSE << std::endl;
+		std::wcout << i18n::ANY_KEY_TO_CLOSE << L'\n';
 		_getch();
 	}
 
 	#ifndef NDEBUG
 	_CrtMemCheckpoint(&end_state);
 		if(_CrtMemDifference(&diff_state, &start_state, &end_state)){
-			std::wcerr << L"ERROR: LEAK FOUND" << std::endl;
+			std::wcerr << L"ERROR: LEAK FOUND" << L'\n';
 			_CrtMemDumpAllObjectsSince(&start_state);
 			return -4;
 		}
-		std::wcout << L"*** No leak found ***" << std::endl;
+		std::wcout << L"*** No leak found ***" << L'\n';
 	#endif
 
 	return 0;

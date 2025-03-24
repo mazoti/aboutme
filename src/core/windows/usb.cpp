@@ -29,7 +29,7 @@ std::wostream& usb() noexcept{
 	// Gets a handle to the device information set for USB devices
 	device_info_set = SetupDiGetClassDevs(nullptr, "USB", nullptr, DIGCF_PRESENT | DIGCF_ALLCLASSES);
 	if(device_info_set == INVALID_HANDLE_VALUE)
-		return std::wcerr << i18n_system::ERROR_USB_DEVICE_INIT << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_USB_DEVICE_INIT << L"\n\n";
 
 	std::unique_ptr<void, decltype([](HDEVINFO hDevInfo){
 			SetupDiDestroyDeviceInfoList(hDevInfo);
@@ -47,7 +47,7 @@ std::wostream& usb() noexcept{
 
 		if(!SetupDiGetDeviceRegistryPropertyW(device_info_set, &device_info, SPDRP_DEVICEDESC, nullptr,
 			reinterpret_cast<PBYTE>(key.data()), required_size, nullptr)){
-			std::wcerr << L'\t' << i18n_system::ERROR_USB_DEVICE_REG << std::endl << std::endl;
+			std::wcerr << L'\t' << i18n_system::ERROR_USB_DEVICE_REG << L"\n\n";
 			continue;
 		}
 
@@ -57,12 +57,12 @@ std::wostream& usb() noexcept{
 		value.resize(required_size);
 
 		if(!SetupDiGetDeviceInstanceIdW(device_info_set, &device_info, value.data(), required_size, nullptr)){
-			std::wcerr << L'\t' << i18n_system::ERROR_USB_DEVICE_INST << std::endl << std::endl;
+			std::wcerr << L'\t' << i18n_system::ERROR_USB_DEVICE_INST << L"\n\n";
 			continue;
 		}
 
 		mmap_devices.emplace(key.data(), value.data());
 	}
 
-	return std::wcout << i18n::USB << std::endl << mmap_devices;
+	return std::wcout << i18n::USB << L'\n' << mmap_devices;
 }

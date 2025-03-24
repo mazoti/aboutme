@@ -15,6 +15,9 @@ module core;
 import i18n;
 import i18n_system;
 
+// Defines a custom deleter for smart pointers managing COM-like objects
+template <typename T> struct releaser{ void operator()(T* ptr) const{if(ptr){ptr->Release();}}};
+
 // Lists scheduled tasks from the Windows Task Scheduler
 std::wostream& tasks() noexcept{
 	BSTR task_name;
@@ -29,7 +32,7 @@ std::wostream& tasks() noexcept{
 
 	// Initialize COM library in multithreaded mode
 	if(FAILED(CoInitializeEx(nullptr, COINIT_MULTITHREADED))) return std::wcerr << i18n_system::ERROR_TASKS
-		<< " COINITIALIZEEX" << std::endl << std::endl;
+		<< " COINITIALIZEEX" << L"\n\n";
 
 	std::unique_ptr<void, decltype([](void*){
 		CoUninitialize();
@@ -38,7 +41,7 @@ std::wostream& tasks() noexcept{
 	// Create an instance of the Task Scheduler service
 	if(FAILED(CoCreateInstance(CLSID_TaskScheduler, nullptr, CLSCTX_INPROC_SERVER, IID_ITaskService,
 		reinterpret_cast<void**>(&service_pointer)))) return std::wcerr << i18n_system::ERROR_TASKS
-			<< " COCREATEINSTANCE" << std::endl << std::endl;
+			<< " COCREATEINSTANCE" << L"\n\n";
 
 	std::unique_ptr<ITaskService, decltype([](ITaskService *ptr){
 		if(ptr) ptr->Release();
@@ -46,10 +49,10 @@ std::wostream& tasks() noexcept{
 
 	// Connects to the Task Scheduler service
 	if(FAILED(service_pointer->Connect(_variant_t(), _variant_t(), _variant_t(), _variant_t())))
-		return std::wcerr << i18n_system::ERROR_TASKS << " ITASKSERVICE" << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_TASKS << " ITASKSERVICE" << L"\n\n";
 
 	if(FAILED(service_pointer->GetFolder(_bstr_t(L"\\"), &root_folder_pointer)))
-		return std::wcerr << i18n_system::ERROR_TASKS << " GetFolder" << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_TASKS << " GetFolder" << L"\n\n";
 
 	std::unique_ptr<ITaskFolder, decltype([](ITaskFolder *ptr){
 		if(ptr) ptr->Release();
@@ -57,7 +60,7 @@ std::wostream& tasks() noexcept{
 
 	// Gets the collection of subfolders
 	if(FAILED(root_folder_pointer->GetFolders(0, &folders_pointer)))
-		return std::wcerr << i18n_system::ERROR_TASKS << " GetFolders" << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_TASKS << " GetFolders" << L"\n\n";
 
 	std::unique_ptr<ITaskFolderCollection, decltype([](ITaskFolderCollection *ptr){
 		if(ptr) ptr->Release();
@@ -65,13 +68,13 @@ std::wostream& tasks() noexcept{
 
 	// Gets all tasks in the root folder, including hidden ones
 	if(FAILED(root_folder_pointer->GetTasks(TASK_ENUM_HIDDEN, &tasks_pointer)))
-		return std::wcerr << i18n_system::ERROR_TASKS << " GetTasks" << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_TASKS << " GetTasks" << L"\n\n";
 
 	std::unique_ptr<IRegisteredTaskCollection, decltype([](IRegisteredTaskCollection *ptr){
 		if(ptr) ptr->Release();
 	})> tasks_ptr_releaser(tasks_pointer);
 
-	std::wcout << i18n::TASKS << std::endl;
+	std::wcout << i18n::TASKS << L'\n';
 
 	tasks_pointer->get_Count(&tasks_count);
 
@@ -90,8 +93,8 @@ std::wostream& tasks() noexcept{
 			if(bstr) SysFreeString(bstr);
 		})> bstr_ptr(task_name);
 
-		std::wcout << L'\t' << task_name << std::endl;
+		std::wcout << L'\t' << task_name << L'\n';
 	}
 
-	return std::wcout << std::endl;
+	return std::wcout << L'\n';
 }

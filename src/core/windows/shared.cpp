@@ -38,5 +38,5 @@ std::wostream& shared() noexcept{
     if (userSharesFound == 0)
 		return std::wcout << L"No user-created shared folders found.\n";
 
-	return std::wcout << L"SHARED=============================" << std::endl;
+	return std::wcout << L"SHARED=============================" << L'\n';
 }

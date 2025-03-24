@@ -34,7 +34,7 @@ std::wostream& wifi() noexcept{
 
 	// Attempts to open WLAN handle
 	if(WlanOpenHandle(max_client, nullptr, &current_version, &client_handle) != ERROR_SUCCESS)
-		return std::wcerr << i18n_system::ERROR_WLAN_OPEN_HANDLE << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_WLAN_OPEN_HANDLE << L"\n\n";
 
 	std::unique_ptr<void, decltype([](HANDLE ptr){
 		if(ptr) WlanCloseHandle(ptr, nullptr);
@@ -42,7 +42,7 @@ std::wostream& wifi() noexcept{
 
 	// Enumerates wireless interfaces
 	if(WlanEnumInterfaces(client_handle, nullptr, &wlan_interface_info_list_ptr) != ERROR_SUCCESS)
-		return std::wcerr << i18n_system::ERROR_WLAN_ENUM_INTERFACES << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_WLAN_ENUM_INTERFACES << L"\n\n";
 
 	std::unique_ptr<PWLAN_INTERFACE_INFO_LIST, decltype([](PWLAN_INTERFACE_INFO_LIST* ptr){
 		if(ptr) WlanFreeMemory(*ptr);
@@ -73,6 +73,6 @@ std::wostream& wifi() noexcept{
 				interface_info_ptr->strInterfaceDescription, ssid);
 		}
 	}
-	if(wifi_ordered.empty()) return std::wcerr << i18n_system::ERROR_WIFI << std::endl << std::endl;
-	return std::wcout << i18n::WIFI << std::endl << wifi_ordered;
+	if(wifi_ordered.empty()) return std::wcerr << i18n_system::ERROR_WIFI << L"\n\n";
+	return std::wcout << i18n::WIFI << L'\n' << wifi_ordered;
 }

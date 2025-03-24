@@ -36,17 +36,17 @@ export module common;
 
 			woss.str(L"");
 			woss << arguments[i] << arguments[i + 1];
-			std::wcout << std::wstring(largest_padding - woss.str().size(), fill) << arguments[i + 1] << std::endl;
+			std::wcout << std::wstring(largest_padding - woss.str().size(), fill) << arguments[i + 1] << L'\n';
 		}
 
-		return std::wcout << std::endl;
+		return std::wcout << L'\n';
 	}
 
 	// Prints a title followed by key-value pairs with precomputed maximum width.
 	// Increases indentation for the pairs relative to the title
 	export template<typename TITLE, typename... Arguments>
 	std::wostream& print_title_largest(size_t tabs, size_t padding, size_t largest, wchar_t fill, const TITLE& title, Arguments... args){
-		std::wcout << std::wstring(tabs, L'\t') << title << std::endl;
+		std::wcout << std::wstring(tabs, L'\t') << title << L'\n';
 		return print_largest(tabs + 1, padding, largest, fill, args...);
 	}
 
@@ -73,7 +73,7 @@ export module common;
 	// Combines title output with dynamic width calculation from print
 	export template<typename TITLE, typename... Arguments>
 	std::wostream& print_title(size_t tabs, size_t padding, wchar_t fill, const TITLE& title, Arguments... args){
-		std::wcout << std::wstring(tabs, L'\t') << title << std::endl;
+		std::wcout << std::wstring(tabs, L'\t') << title << L'\n';
 		return print(tabs + 1, padding, fill, args...);
 	}
 #endif
@@ -91,7 +91,7 @@ export module common;
 			// Checks if the key has changed (first iteration or new key)
 			if(key != it->first){
 				key = it->first;
-				wos << L'\t' << it->first << L':' << std::endl;
+				wos << L'\t' << it->first << L':' << L'\n';
 
 				std::pair<typename std::multimap<KEY, VALUE>::const_iterator,
 					typename std::multimap<KEY, VALUE>::const_iterator> range = string_multimap.equal_range(key);
@@ -99,9 +99,9 @@ export module common;
 				// Iterates over all values associated with the current key
 				for(typename std::multimap<KEY, VALUE>::const_iterator iterator = range.first;
 					iterator != range.second; ++iterator){
-					wos << L"\t\t" << iterator->second << std::endl;
+					wos << L"\t\t" << iterator->second << L'\n';
 				}
-				wos << std::endl;
+				wos << L'\n';
 			}
 		}
 		return wos;
@@ -120,18 +120,11 @@ export module common;
 	}
 #endif
 
-// Overloads the output operator for std::set to print its elements with indentation
-export template<typename DATA>
-std::wostream& operator<<(std::wostream& wos, const std::set<DATA>& dataset){
-	for(const DATA& data : dataset) wos << L'\t' << data << std::endl;
-	return wos << std::endl;
-}
-
 // Overloads the output operator for std::vector to print its elements with indentation
 export template<typename DATA>
 std::wostream& operator<<(std::wostream& wos, const std::vector<DATA>& dataset){
-	for(const DATA& data : dataset) wos << L'\t' << data << std::endl;
-	return wos << std::endl;
+	for(const DATA& data : dataset) wos << L'\t' << data << L'\n';
+	return wos << L'\n';
 }
 
 // Inserts a key-value pair into a multimap only if the value is unique for that key.
@@ -145,6 +138,3 @@ void insert_if_unique(std::multimap<KEY, VALUE>& mm, const KEY& key, const VALUE
 	}
 	mm.insert({key, value});
 }
-
-// Defines a custom deleter for smart pointers managing COM-like objects
-export template <typename T> struct releaser{ void operator()(T* ptr) const{if(ptr){ptr->Release();}}};

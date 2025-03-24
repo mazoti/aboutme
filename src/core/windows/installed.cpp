@@ -10,6 +10,7 @@ module;
 
 module core;
 
+
 import common;
 
 import i18n;
@@ -32,7 +33,7 @@ std::wostream& installed() noexcept{
 	// Attempts to open the Uninstall registry key under HKEY_LOCAL_MACHINE
 	if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", 0, KEY_READ,
 		&uninstall_key) != ERROR_SUCCESS)
-		return std::wcerr << i18n_system::ERROR_INSTALLED_REG_OPENKEYEX << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_INSTALLED_REG_OPENKEYEX << L"\n\n";
 
 	// Enumerates all subkeys under the Uninstall key
 	// RegEnumKeyEx retrieves each subkey name into app_key_name
@@ -59,5 +60,7 @@ std::wostream& installed() noexcept{
 		size = 1024;
 	}
 
-	return std::wcout << i18n::INSTALLED_PROGRAMS << std::endl << installed_programs_ordered;
+	std::wcout << i18n::INSTALLED_PROGRAMS << L'\n';
+	for(const std::wstring& data : installed_programs_ordered) std::wcout << L'\t' << data << L'\n';
+	return std::wcout << L'\n';
 }

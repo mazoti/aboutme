@@ -59,7 +59,7 @@ std::wostream& network() noexcept{
 	std::set<std::string> dns_servers_ordered;
 	std::multimap<std::wstring, std::wstring> network_devices_ordered;
 
-	std::wcout << i18n::NETWORK << std::endl;
+	std::wcout << i18n::NETWORK << L'\n';
 
 	// Gets gateway information
 	GetAdaptersInfo(nullptr, &buffer_length);
@@ -67,12 +67,12 @@ std::wostream& network() noexcept{
 		(std::malloc(buffer_length)), std::free);
 
 	if(!adapter_pointer_info)
-		return std::wcerr << L'\t' << i18n_system::ERROR_MEMORY_ALLOCATION << std::endl << std::endl;
+		return std::wcerr << L'\t' << i18n_system::ERROR_MEMORY_ALLOCATION << L"\n\n";
 
 	// Gets adapter information
 	adapter_pointer = adapter_pointer_info.get();
 	if(GetAdaptersInfo(adapter_pointer, &buffer_length) != NO_ERROR)
-		return std::wcerr << L'\t' << i18n_system::ERROR_ADAPTERS_INFO << std::endl << std::endl;
+		return std::wcerr << L'\t' << i18n_system::ERROR_ADAPTERS_INFO << L"\n\n";
 
 	for(;adapter_pointer;adapter_pointer = adapter_pointer->Next){
 		tmp = std::string(adapter_pointer->Description);
@@ -99,20 +99,20 @@ std::wostream& network() noexcept{
 		(malloc(output_buffer_length)), std::free);
 
 	if(!adapter_addresses_ptr)
-		return std::wcerr << L'\t' << i18n_system::ERROR_MEMORY_ALLOCATION << std::endl << std::endl;
+		return std::wcerr << L'\t' << i18n_system::ERROR_MEMORY_ALLOCATION << L"\n\n";
 
 	// Gets adapter addresses
 	return_value = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_ALL_COMPARTMENTS, nullptr,
 		adapter_addresses_ptr.get(), &output_buffer_length);
 	if(return_value == ERROR_BUFFER_OVERFLOW){
         adapter_addresses_ptr.reset(static_cast<IP_ADAPTER_ADDRESSES*>(malloc(output_buffer_length)));
-		if(!adapter_addresses_ptr) return std::wcerr << i18n_system::ERROR_MEMORY_ALLOCATION << std::endl << std::endl;
+		if(!adapter_addresses_ptr) return std::wcerr << i18n_system::ERROR_MEMORY_ALLOCATION << L"\n\n";
 		return_value = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_ALL_COMPARTMENTS, nullptr,
 			adapter_addresses_ptr.get(), &output_buffer_length);
 	}
 
 	if(return_value != ERROR_SUCCESS)
-		return std::wcerr << L'\t' << i18n_system::ERROR_ADAPTERS_ADDRESS << std::endl << std::endl;
+		return std::wcerr << L'\t' << i18n_system::ERROR_ADAPTERS_ADDRESS << L"\n\n";
 
 	for(adapter_address = adapter_addresses_ptr.get();
 		adapter_address != nullptr;
@@ -154,7 +154,7 @@ std::wostream& network() noexcept{
 
 	// Initialize Winsock with RAII
 	if(WSAStartup(MAKEWORD(2, 2), &wsa_data))
-		return std::wcerr << L'\t'<< i18n_system::ERROR_WSA_STARTUP << std::endl << std::endl;
+		return std::wcerr << L'\t'<< i18n_system::ERROR_WSA_STARTUP << L"\n\n";
 
 	std::unique_ptr<void, decltype([](void*){
 		WSACleanup();
@@ -166,11 +166,11 @@ std::wostream& network() noexcept{
 	std::unique_ptr<MIB_UDPTABLE_OWNER_PID, void(*)(void*)> udp_table_ptr(static_cast<PMIB_UDPTABLE_OWNER_PID>
 		(malloc(dword_size)), std::free);
 
-	if(!udp_table_ptr) return std::wcerr << L'\t' << i18n_system::ERROR_UDP_MALLOC << std::endl << std::endl;
+	if(!udp_table_ptr) return std::wcerr << L'\t' << i18n_system::ERROR_UDP_MALLOC << L"\n\n";
 
 	// Gets the UDP table
 	if(GetExtendedUdpTable(udp_table_ptr.get(), &dword_size, TRUE, AF_INET, UDP_TABLE_OWNER_PID, 0) != NO_ERROR)
-		return std::wcerr << L'\t' << i18n_system::ERROR_EXTENDED_UDP_TABLE << std::endl << std::endl;
+		return std::wcerr << L'\t' << i18n_system::ERROR_EXTENDED_UDP_TABLE << L"\n\n";
 
 	// Create span over the table entries
 	std::span<MIB_UDPROW_OWNER_PID> udp_table_ptr_span{udp_table_ptr->table,
@@ -201,11 +201,11 @@ std::wostream& network() noexcept{
 	std::unique_ptr<MIB_TCPTABLE_OWNER_PID, void(*)(void*)> tcp_table_ptr(static_cast<PMIB_TCPTABLE_OWNER_PID>
 		(malloc(dword_size)), std::free);
 
-	if(!tcp_table_ptr) return std::wcerr << L'\t' << i18n_system::ERROR_TCP_MALLOC << std::endl << std::endl;
+	if(!tcp_table_ptr) return std::wcerr << L'\t' << i18n_system::ERROR_TCP_MALLOC << L"\n\n";
 
 	// Gets the TCP table
 	if(GetExtendedTcpTable(tcp_table_ptr.get(), &dword_size, TRUE, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0) != NO_ERROR)
-		return std::wcerr << L'\t' << i18n_system::ERROR_EXTENDED_TCP_TABLE << std::endl << std::endl;
+		return std::wcerr << L'\t' << i18n_system::ERROR_EXTENDED_TCP_TABLE << L"\n\n";
 
 	// Create span over the table entries
 	std::span<MIB_TCPROW_OWNER_PID> tcp_table_ptr_span{tcp_table_ptr->table, tcp_table_ptr->dwNumEntries};
@@ -234,46 +234,46 @@ std::wostream& network() noexcept{
 	// Prints host name
 	host_name_size = sizeof(host_name) / sizeof(host_name[0]);
 	if(!GetComputerName(host_name, &host_name_size))
-		return std::wcerr << L'\t' << i18n_system::ERROR_HOST_NAME << std::endl << std::endl;
+		return std::wcerr << L'\t' << i18n_system::ERROR_HOST_NAME << L"\n\n";
 
-	std::wcout << L'\t' << i18n::HOST_NAME << std::endl << L"\t\t" << host_name << std::endl << std::endl;
+	std::wcout << L'\t' << i18n::HOST_NAME << L"\n\t\t" << host_name << L"\n\n";
 
 	// Prints DNS servers
-	std::wcout << L'\t' << i18n::DNS_SERVERS << std::endl;
+	std::wcout << L'\t' << i18n::DNS_SERVERS << L'\n';
 	for(const std::string& dns_server : dns_servers_ordered)
-		std::wcout << L"\t\t" << std::wstring(dns_server.begin(), dns_server.end()) << std::endl;
+		std::wcout << L"\t\t" << std::wstring(dns_server.begin(), dns_server.end()) << L'\n';
 
 	// Prints UDP endpoints
-	std::wcout << std::endl << L'\t' << i18n::UDP_ENDPOINTS << std::endl;
+	std::wcout << L"\n\t" << i18n::UDP_ENDPOINTS << L'\n';
 	for(const std::wstring& udp_endpoint : udp_ordered)
-		std::wcout << L"\t\t" << udp_endpoint << std::endl;
+		std::wcout << L"\t\t" << udp_endpoint << L'\n';
 
 	// Prints TCP endpoints
-	std::wcout << std::endl << L'\t' << i18n::TCP_ENDPOINTS << std::endl;
+	std::wcout << L"\n\t" << i18n::TCP_ENDPOINTS << L'\n';
 
 	if(!tcp_established_ordered.empty()){
-		std::wcout << L"\t\t" << "ESTABLISHED:" << std::endl;
+		std::wcout << L"\t\t" << "ESTABLISHED:\n";
 		for(const std::wstring& tcp_endpoint : tcp_established_ordered)
-			std::wcout << L"\t\t\t" << tcp_endpoint << std::endl;
+			std::wcout << L"\t\t\t" << tcp_endpoint << L'\n';
 	}
 
 	if(!tcp_listening_ordered.empty()){
-		std::wcout << std::endl << L"\t\t" << "LISTENING:" << std::endl;
+		std::wcout << L"\n\t\t" << "LISTENING:\n";
 		for(const std::wstring& tcp_endpoint : tcp_listening_ordered)
-			std::wcout << L"\t\t\t" << tcp_endpoint << std::endl;
+			std::wcout << L"\t\t\t" << tcp_endpoint << L'\n';
 	}
 
 	if(!tcp_closed_ordered.empty()){
-		std::wcout << std::endl << L"\t\t" << "CLOSED:" << std::endl;
+		std::wcout << L"\n\t\t" << "CLOSED:\n";
 		for(const std::wstring& tcp_endpoint : tcp_closed_ordered)
-			std::wcout << L"\t\t\t" << tcp_endpoint << std::endl;
+			std::wcout << L"\t\t\t" << tcp_endpoint << L'\n';
 	}
 
 	if(!tcp_other_ordered.empty()){
-		std::wcout << std::endl << L"\t\t" << "OTHER:" << std::endl;
+		std::wcout << L"\n\t\t" << "OTHER:\n";
 		for(const std::wstring& tcp_endpoint : tcp_other_ordered)
-			std::wcout << L"\t\t\t" << tcp_endpoint << std::endl;
+			std::wcout << L"\t\t\t" << tcp_endpoint << L'\n';
 	}
 
-	return std::wcout << std::endl;
+	return std::wcout << L'\n';
 }

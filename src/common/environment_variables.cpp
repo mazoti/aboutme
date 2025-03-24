@@ -110,7 +110,7 @@ void environment_variables(std::span<const char*>& env_vars, char path_separator
 	// Convert path separator to wide character
 	wchar_t wpath_separator = static_cast<wchar_t>(path_separator);
 
-	std::wcout << i18n::ENVIRONMENT_VARIABLES << std::endl;
+	std::wcout << i18n::ENVIRONMENT_VARIABLES << L'\n';
 
 	// Iterates over each environment variable in the provided span
 	for(const char *environment : env_vars){
@@ -126,7 +126,7 @@ void environment_variables(std::span<const char*>& env_vars, char path_separator
 		wvariable_name = wdata_view.substr(0, position);
 		if(wvariable_name.size() < 1) continue;
 
-		std::wcout << L'\t' << wvariable_name << L':' << std::endl;
+		std::wcout << L'\t' << wvariable_name << L':' << L'\n';
 
 		// Removes the variable name and '=' from the view, leaving only the value
 		wdata_view.remove_prefix(position + 1);
@@ -139,37 +139,37 @@ void environment_variables(std::span<const char*>& env_vars, char path_separator
 				wvariable_name = wdata_view.substr(0, position);
 
 				if(!wvariable_name.size()) continue;
-				std::wcout << L"\t\t" << wvariable_name << std::endl;
+				std::wcout << L"\t\t" << wvariable_name << L'\n';
 
 				// Checks if the path exists using the filesystem library
 				if(!std::filesystem::exists(std::filesystem::path(wvariable_name)))
-					std::wcout << L"\t\t\t" << i18n::ENVIRONMENT_VARIABLES_WARNING << std::endl;
+					std::wcout << L"\t\t\t" << i18n::ENVIRONMENT_VARIABLES_WARNING << L'\n';
 
 				wdata_view.remove_prefix(position + 1);
 			}
 
 			// Handles the last path segment after the final separator
 			if(!wdata_view.size()){
-				std::wcout << std::endl;
+				std::wcout << L'\n';
 				continue;
 			}
 
 			if(!std::filesystem::exists(std::filesystem::path(wdata_view))){
-				std::wcout << L"\t\t" << wdata_view << std::endl
-					<< L"\t\t\t" << i18n::ENVIRONMENT_VARIABLES_WARNING << std::endl << std::endl;
+				std::wcout << L"\t\t" << wdata_view << L'\n'
+					<< L"\t\t\t" << i18n::ENVIRONMENT_VARIABLES_WARNING << L"\n\n";
 				continue;
 			}
 
-			std::wcout << L"\t\t" << wdata_view << std::endl << std::endl;
+			std::wcout << L"\t\t" << wdata_view << L"\n\n";
 			continue;
 		}
 
 		for(position = wdata_view.find(wpath_separator); position != std::wstring::npos;
 		position = wdata_view.find(wpath_separator)){
-			std::wcout << L"\t\t" << wdata_view.substr(0, position) << std::endl;
+			std::wcout << L"\t\t" << wdata_view.substr(0, position) << L'\n';
 			wdata_view.remove_prefix(position + 1);
 		}
 
-		std::wcout << L"\t\t" << wdata_view << std::endl << std::endl;
+		std::wcout << L"\t\t" << wdata_view << L"\n\n";
 	}
 }

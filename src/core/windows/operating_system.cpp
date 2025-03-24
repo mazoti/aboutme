@@ -33,17 +33,17 @@ std::wostream& operating_system() noexcept{
 	hours   %= 24;
 
 	// Outputs OS name and version
-	std::wcout  << i18n::OPERATING_SYSTEM << std::endl
-				<< L"\tMicrosoft Windows "
+	std::wcout  << i18n::OPERATING_SYSTEM
+				<< L"\n\tMicrosoft Windows "
 				<< static_cast<DWORD>(LOBYTE(LOWORD(version_number)))  // Major version
 				<< L"." 
 				<< static_cast<DWORD>(HIBYTE(LOWORD(version_number))); // Minor version
 
 	// If not an NT-based system, skips build number; otherwise, includes it
-	if(version_number < 0x80000000) std::wcout << L" (Build " << static_cast<DWORD>(HIWORD(version_number)) << L")";
+	if(version_number < 0x80000000) std::wcout << L" (Build " << static_cast<DWORD>(HIWORD(version_number)) << L')';
 
 	// Outputs uptime with commas
-	std::wcout << std::endl << L"\t" << i18n::UPTIME;
+	std::wcout << L"\n\t" << i18n::UPTIME;
 
 	print_plural<ULONGLONG>(days,    i18n::DAY,         i18n::DAYS,         first);
 	print_plural<ULONGLONG>(hours,   i18n::HOUR_UPTIME, i18n::HOURS_UPTIME, first);
@@ -53,16 +53,16 @@ std::wostream& operating_system() noexcept{
 	// Gets and processes user's locale information
 	user_locale = GetUserDefaultLCID();
 	if(!LCIDToLocaleName(user_locale, locale_name, LOCALE_NAME_MAX_LENGTH, 0)){
-		std::wcerr << std::endl << L'\t' << i18n_system::ERROR_LOCALE_NAME << std::endl;
+		std::wcerr << L"\n\t" << i18n_system::ERROR_LOCALE_NAME << L'\n';
 	}
 	else{
 		// Gets country/region
 		if(GetLocaleInfoEx(locale_name, LOCALE_SNATIVECOUNTRYNAME, locale_data, 256))
-			std::wcout << std::endl << L"\t" << i18n::COUNTRY_REGION << L' ' << locale_data << std::endl;
+			std::wcout << L"\n\t" << i18n::COUNTRY_REGION << L' ' << locale_data << L'\n';
 
 		// Gets language
 		if(GetLocaleInfoEx(locale_name, LOCALE_SNATIVELANGUAGENAME, locale_data, 256))
-			std::wcout << L"\t" << i18n::LANGUAGE << L' ' << locale_data << std::endl;
+			std::wcout << L'\t' << i18n::LANGUAGE << L' ' << locale_data << L'\n';
 	}
 
 	// Gets and displays the computer's DNS hostname
@@ -70,5 +70,5 @@ std::wostream& operating_system() noexcept{
 	if(GetComputerNameEx(ComputerNameDnsHostname, buffer, &version_number))
 		std::wcout << L'\t' << i18n::NAME << L' ' << buffer;
 
-	return std::wcout << std::endl << std::endl;
+	return std::wcout << L"\n\n";
 }

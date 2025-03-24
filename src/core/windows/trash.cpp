@@ -19,6 +19,9 @@ import common;
 import i18n;
 import i18n_system;
 
+// Defines a custom deleter for smart pointers managing COM-like objects
+template <typename T> struct releaser{ void operator()(T* ptr) const{if(ptr){ptr->Release();}}};
+
 // Lists contents of the Windows Recycle Bin
 std::wostream& trash() noexcept{
 	wchar_t display_name[MAX_PATH];
@@ -33,7 +36,7 @@ std::wostream& trash() noexcept{
 	std::vector<std::wstring> trash_data;
 
 	// Initializes COM library
-	if(FAILED(CoInitialize(nullptr))) return std::wcerr << i18n_system::ERROR_TRASH_COM_INIT << std::endl << std::endl;
+	if(FAILED(CoInitialize(nullptr))) return std::wcerr << i18n_system::ERROR_TRASH_COM_INIT << L"\n\n";
 
 	std::unique_ptr<void, decltype([](void*){
 		CoUninitialize();
@@ -41,7 +44,7 @@ std::wostream& trash() noexcept{
 
 	// Gets the desktop folder
 	if(FAILED(SHGetDesktopFolder(&desktop_folder_ptr)))
-		return std::wcerr << i18n_system::ERROR_TRASH_DESKTOP_FOLDER << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_TRASH_DESKTOP_FOLDER << L"\n\n";
 
 	std::unique_ptr<IShellFolder, decltype([](IShellFolder *ptr){
 		if(ptr) ptr->Release();
@@ -49,14 +52,14 @@ std::wostream& trash() noexcept{
 
 	// Gets the Recycle Bin location
 	if(FAILED(SHGetSpecialFolderLocation(nullptr, CSIDL_BITBUCKET, &recycle_bin_PID_ptr)))
-		return std::wcerr << i18n_system::ERROR_TRASH_LOCATION << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_TRASH_LOCATION << L"\n\n";
 
 	std::unique_ptr<ITEMIDLIST, decltype([](LPITEMIDLIST ptr) { ILFree(ptr); })>
 		rb_pid_ptr(static_cast<ITEMIDLIST*>(recycle_bin_PID_ptr));
 
 	// Binds to the Recycle Bin folder
 	if(FAILED(desktop_folder_ptr->BindToObject(recycle_bin_PID_ptr, nullptr, IID_IShellFolder, reinterpret_cast<void**>
-		(&recycle_bin_folder_ptr)))) return std::wcerr << i18n_system::ERROR_TRASH_BIND << std::endl << std::endl;
+		(&recycle_bin_folder_ptr)))) return std::wcerr << i18n_system::ERROR_TRASH_BIND << L"\n\n";
 
 	std::unique_ptr<IShellFolder, decltype([](IShellFolder *ptr){
 		if(ptr) ptr->Release();
@@ -64,7 +67,7 @@ std::wostream& trash() noexcept{
 
 	// Enumerates objects in the Recycle Bin
 	if(FAILED(recycle_bin_folder_ptr->EnumObjects(nullptr, SHCONTF_FOLDERS | SHCONTF_NONFOLDERS, &enum_ptr)))
-		return std::wcerr << i18n_system::ERROR_TRASH_ENUM << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_TRASH_ENUM << L"\n\n";
 
 	std::unique_ptr<IEnumIDList, decltype([](IEnumIDList *ptr){
 		if(ptr) ptr->Release();
@@ -83,6 +86,6 @@ std::wostream& trash() noexcept{
 		trash_data.emplace_back(display_name);
 	}
 
-	if(trash_data.empty()) return std::wcout << i18n::TRASH_EMPTY << std::endl << std::endl;
-	return std::wcout << i18n::TRASH << std::endl << trash_data;
+	if(trash_data.empty()) return std::wcout << i18n::TRASH_EMPTY << L"\n\n";
+	return std::wcout << i18n::TRASH << L'\n' << trash_data;
 }

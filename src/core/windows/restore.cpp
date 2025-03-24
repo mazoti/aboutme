@@ -17,7 +17,10 @@ import common;
 import i18n;
 import i18n_system;
 
-// Helper class to manage VARIANT objects
+// Defines a custom deleter for smart pointers managing COM-like objects
+template <typename T> struct releaser{ void operator()(T* ptr) const{if(ptr){ptr->Release();}}};
+
+// Helper class to manage Variant objects
 class VariantWrapper{
 public:
 	VariantWrapper()     { VariantInit(&var);  }
@@ -39,33 +42,33 @@ std::wostream& restore() noexcept {
 
 	// Initializes COM
 	if(FAILED(CoInitializeEx(nullptr, COINIT_MULTITHREADED)))
-		return std::wcerr << i18n_system::ERROR_RESTORE_COM_INIT << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_RESTORE_COM_INIT << L"\n\n";
 
 	std::unique_ptr<void, decltype([](void*) { CoUninitialize(); })> com_guard(reinterpret_cast<void*>(1));
 
 	// Creates WMI locator
 	if(FAILED(CoCreateInstance(CLSID_WbemLocator, nullptr, CLSCTX_INPROC_SERVER, IID_IWbemLocator,
 	reinterpret_cast<LPVOID*>(&locator))))
-		return std::wcerr << i18n_system::ERROR_RESTORE_WMI_INIT << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_RESTORE_WMI_INIT << L"\n\n";
 
 	std::unique_ptr<IWbemLocator, releaser<IWbemLocator>> locator_ptr(locator);
 
 	// Connects to WMI namespace ROOT\DEFAULT
 	if(FAILED(locator->ConnectServer(_bstr_t(L"ROOT\\DEFAULT"), nullptr, nullptr, nullptr, 0, nullptr,
 	nullptr, &service)))
-		return std::wcerr << i18n_system::ERROR_RESTORE_WMI_CONNECT << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_RESTORE_WMI_CONNECT << L"\n\n";
 
 	std::unique_ptr<IWbemServices, releaser<IWbemServices>> service_ptr(service);
 
 	// Sets security levels for the WMI proxy to allow impersonation
 	if(FAILED(CoSetProxyBlanket(service, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, nullptr, RPC_C_AUTHN_LEVEL_CALL,
 	RPC_C_IMP_LEVEL_IMPERSONATE, nullptr, EOAC_NONE)))
-		return std::wcerr << i18n_system::ERROR_RESTORE_SECURITY_LEVEL << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_RESTORE_SECURITY_LEVEL << L"\n\n";
 
 	// Executes WQL query to retrieve system restore points
 	if(FAILED(service->ExecQuery(bstr_t("WQL"), bstr_t(L"SELECT CreationTime, Description FROM SystemRestore"),
 	WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, nullptr, &enumerator)))
-		return std::wcerr << i18n_system::ERROR_RESTORE_QUERY << std::endl << std::endl;
+		return std::wcerr << i18n_system::ERROR_RESTORE_QUERY << L"\n\n";
 
 	std::unique_ptr<IEnumWbemClassObject, releaser<IEnumWbemClassObject>> enumerator_ptr(enumerator);
 
@@ -101,7 +104,7 @@ std::wostream& restore() noexcept {
 
 		// Uses singular or plural form of "restore point(s)" based on count
 		restore_points.size() == 1 ? std::wcout << i18n::RESTORE_POINT : std::wcout << i18n::RESTORE_POINTS;
-		return std::wcout << std::endl << restore_points;
+		return std::wcout << L'\n' << restore_points;
 	}
-	return std::wcout << i18n::NO_RESTORE_POINTS << std::endl << std::endl;
+	return std::wcout << i18n::NO_RESTORE_POINTS << L"\n\n";
 }

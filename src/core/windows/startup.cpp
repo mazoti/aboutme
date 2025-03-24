@@ -25,7 +25,7 @@ std::multimap<std::wstring, std::wstring>& startup_programs_ordered){
 	HKEY app_key = nullptr;
 
 	if(RegOpenKeyExW(key_root, sub_key, 0, KEY_READ, &app_key) != ERROR_SUCCESS){
-		std::wcerr << i18n_system::ERROR_REG_OPENKEYEX << std::endl;
+		std::wcerr << i18n_system::ERROR_REG_OPENKEYEX << L'\n';
 		return;
 	}
 
@@ -55,6 +55,6 @@ std::wostream& startup() noexcept{
 	startup_apps(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", startup_programs_ordered);
 
 	if(startup_programs_ordered.size() > 0)
-		return std::wcout << i18n::STARTUP << std::endl << startup_programs_ordered;
+		return std::wcout << i18n::STARTUP << L'\n' << startup_programs_ordered;
 	return std::wcout;
 }
