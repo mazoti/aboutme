@@ -129,12 +129,12 @@ std::wostream& operator<<(std::wostream& wos, const std::vector<DATA>& dataset){
 
 // Inserts a key-value pair into a multimap only if the value is unique for that key.
 // Prevents duplicate values under the same key
-export template<typename KEY, typename VALUE>
-void insert_if_unique(std::multimap<KEY, VALUE>& mm, const KEY& key, const VALUE& value){
-	typename std::multimap<KEY, VALUE>::iterator it = mm.lower_bound(key);
-	// Iterates over all entries with the matching key
-	for(;(it != mm.end() && it->first == key); ++it){
-		if(it->second == value) return;
+#if defined(ENABLE_NETWORK)
+	export template<typename KEY, typename VALUE>
+	void insert_if_unique(std::multimap<KEY, VALUE>& mm, const KEY& key, const VALUE& value){
+		typename std::multimap<KEY, VALUE>::iterator it = mm.lower_bound(key);
+		// Iterates over all entries with the matching key
+		for(;(it != mm.end() && it->first == key); ++it) if(it->second == value) return;
+		mm.insert({key, value});
 	}
-	mm.insert({key, value});
-}
+#endif

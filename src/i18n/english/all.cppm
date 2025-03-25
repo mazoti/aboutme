@@ -97,7 +97,6 @@ export namespace i18n{
 // src/core/$(SYSTEM)/network.cpp
 #if defined(ENABLE_NETWORK)
 	inline constexpr wchar_t DESCRIPTION[]   = L"Description:";
-	inline constexpr wchar_t DNS_SERVERS[]   = L"DNS servers:";
 	inline constexpr wchar_t GATEWAY[]       = L"Gateway:";
 	inline constexpr wchar_t HOST_NAME[]     = L"Hostname:";
 	inline constexpr wchar_t NETWORK[]       = L"\U0001F310 Network:";

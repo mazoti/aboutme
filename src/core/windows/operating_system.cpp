@@ -23,7 +23,7 @@ std::wostream& operating_system() noexcept{
 	DWORD version_number = GetVersion();
 
 	// Calculates uptime from system tick count (in milliseconds)
-	seconds = (GetTickCount64() / 1000);
+	seconds = GetTickCount64() / 1000;
 	minutes = seconds / 60;
 	hours   = minutes / 60;
 	days    = hours   / 24;
