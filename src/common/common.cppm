@@ -120,13 +120,6 @@ export module common;
 	}
 #endif
 
-// Overloads the output operator for std::vector to print its elements with indentation
-export template<typename DATA>
-std::wostream& operator<<(std::wostream& wos, const std::vector<DATA>& dataset){
-	for(const DATA& data : dataset) wos << L'\t' << data << L'\n';
-	return wos << L'\n';
-}
-
 // Inserts a key-value pair into a multimap only if the value is unique for that key.
 // Prevents duplicate values under the same key
 #if defined(ENABLE_NETWORK)

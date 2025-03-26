@@ -14,8 +14,6 @@ module;
 
 module core;
 
-import common;
-
 import i18n;
 import i18n_system;
 
@@ -87,5 +85,8 @@ std::wostream& trash() noexcept{
 	}
 
 	if(trash_data.empty()) return std::wcout << i18n::TRASH_EMPTY << L"\n\n";
-	return std::wcout << i18n::TRASH << L'\n' << trash_data;
+
+	std::wcout << i18n::TRASH << L'\n';
+	for(const std::wstring& data : trash_data) std::wcout << L'\t' << data << L'\n';
+	return std::wcout << L'\n';
 }
