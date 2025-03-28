@@ -161,7 +161,8 @@ export namespace i18n{
 
 // src/core/$(SYSTEM)/usb.cpp
 #if defined(ENABLE_USB)
-	inline constexpr wchar_t USB[] = L"\U0001F50C Dispositivos USB:";
+	inline constexpr wchar_t USB[]       = L"\U0001F50C Dispositivos USB:";
+	inline constexpr wchar_t USB_EMPTY[] = L"\U0000274C Nenhum dispositivo USB encontrado";
 #endif
 
 // src/core/$(SYSTEM)/wifi.cpp

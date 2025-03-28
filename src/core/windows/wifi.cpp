@@ -22,12 +22,12 @@ import i18n_system;
 std::wostream& wifi() noexcept{
 	size_t i, j;
 
-	HANDLE client_handle = nullptr;
 	DWORD current_version = 0, max_client = 2;
-	PWLAN_INTERFACE_INFO_LIST wlan_interface_info_list_ptr = nullptr;
-	PWLAN_INTERFACE_INFO interface_info_ptr = nullptr;
+	HANDLE client_handle                                         = nullptr;
+	PWLAN_INTERFACE_INFO_LIST wlan_interface_info_list_ptr       = nullptr;
+	PWLAN_INTERFACE_INFO interface_info_ptr                      = nullptr;
 	PWLAN_AVAILABLE_NETWORK_LIST wlan_available_network_list_ptr = nullptr;
-	PWLAN_AVAILABLE_NETWORK wlan_available_network = nullptr;
+	PWLAN_AVAILABLE_NETWORK wlan_available_network               = nullptr;
 
 	std::wstring ssid;
 	std::multimap<std::wstring, std::wstring> wifi_ordered;
@@ -73,6 +73,8 @@ std::wostream& wifi() noexcept{
 				interface_info_ptr->strInterfaceDescription, ssid);
 		}
 	}
+
 	if(wifi_ordered.empty()) return std::wcerr << i18n_system::ERROR_WIFI << L"\n\n";
+
 	return std::wcout << i18n::WIFI << L'\n' << wifi_ordered;
 }

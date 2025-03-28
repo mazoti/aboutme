@@ -37,7 +37,7 @@ std::wostream& usb() noexcept{
 
 	// Enumerates all USB devices in the device info set
 	device_info.cbSize = sizeof(SP_DEVINFO_DATA);
-	for(device_index = 0; SetupDiEnumDeviceInfo(device_info_set, ++device_index, &device_info);){
+	for(device_index = 0; SetupDiEnumDeviceInfo(device_info_set, device_index, &device_info); ++device_index){
 
 		// Get device description
 		SetupDiGetDeviceRegistryPropertyW(device_info_set, &device_info, SPDRP_DEVICEDESC, nullptr, nullptr,
@@ -63,6 +63,8 @@ std::wostream& usb() noexcept{
 
 		mmap_devices.emplace(key.data(), value.data());
 	}
+
+	if(mmap_devices.empty()) return std::wcout << i18n::USB_EMPTY << L"\n\n";
 
 	return std::wcout << i18n::USB << L'\n' << mmap_devices;
 }
