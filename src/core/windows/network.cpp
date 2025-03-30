@@ -24,14 +24,15 @@ import common;
 import i18n;
 import i18n_system;
 
+// Retrieves all TCP endpoints in all states
 static void tcp_endpoints(const std::span<MIB_TCPROW_OWNER_PID>& tcp_table_ptr_span, std::set<std::wstring>&
-tcp_closed_ordered, std::set<std::wstring>& tcp_listening_ordered, std::set<std::wstring>&
-tcp_established_ordered, std::set<std::wstring>& tcp_other_ordered){
+tcp_closed, std::set<std::wstring>& tcp_listening, std::set<std::wstring>& tcp_established,
+std::set<std::wstring>& tcp_other){
 
 	char local_ip[INET_ADDRSTRLEN], remote_ip[INET_ADDRSTRLEN];
-
 	std::wostringstream woss;
 
+	// Iterates through TCP table
 	for(const _MIB_TCPROW_OWNER_PID& entry : tcp_table_ptr_span){
 		inet_ntop(AF_INET, &entry.dwLocalAddr,  local_ip,  sizeof(local_ip));
 		inet_ntop(AF_INET, &entry.dwRemoteAddr, remote_ip, sizeof(remote_ip));
@@ -42,20 +43,22 @@ tcp_established_ordered, std::set<std::wstring>& tcp_other_ordered){
 		     << L" (PID: " << entry.dwOwningPid << L')';
 
 		switch(entry.dwState){
-			case MIB_TCP_STATE_CLOSED: tcp_closed_ordered.emplace(woss.str());      break;
-			case MIB_TCP_STATE_LISTEN: tcp_listening_ordered.emplace(woss.str());   break;
-			case MIB_TCP_STATE_ESTAB:  tcp_established_ordered.emplace(woss.str()); break;
-			default: tcp_other_ordered.emplace(woss.str());
+			case MIB_TCP_STATE_CLOSED: tcp_closed.emplace(woss.str());      break;
+			case MIB_TCP_STATE_LISTEN: tcp_listening.emplace(woss.str());   break;
+			case MIB_TCP_STATE_ESTAB:  tcp_established.emplace(woss.str()); break;
+			default: tcp_other.emplace(woss.str());
 		}
 	}
 }
 
+// Retrieves all UDP endpoints
 static const std::set<std::wstring> udp_endpoints(const std::span<MIB_UDPROW_OWNER_PID>& udp_table_ptr_span){
 	char local_ip[INET_ADDRSTRLEN];
 
 	std::wostringstream woss;
 	std::set<std::wstring> udp_ordered;
 
+	// Iterates through UDP table
 	for(const _MIB_UDPROW_OWNER_PID& entry : udp_table_ptr_span){
 		inet_ntop(AF_INET, &entry.dwLocalAddr, local_ip, sizeof(local_ip));
 
@@ -68,6 +71,7 @@ static const std::set<std::wstring> udp_endpoints(const std::span<MIB_UDPROW_OWN
 	return udp_ordered;
 }
 
+// Retrieves all network adapters
 static const std::multimap<std::wstring, std::wstring> network_devices(const PIP_ADAPTER_INFO& adapter_pointer,
 const PIP_ADAPTER_ADDRESSES& adapter_address){
 	size_t i;
@@ -77,33 +81,36 @@ const PIP_ADAPTER_ADDRESSES& adapter_address){
 	std::wstring key;
 	std::wostringstream woss;
 
-	IP_ADAPTER_DNS_SERVER_ADDRESS *dns_server_pointer;
 	PIP_ADAPTER_INFO adapter_pointer_local;
 	PIP_ADAPTER_ADDRESSES adapter_address_local;
 
+	IP_ADAPTER_DNS_SERVER_ADDRESS *dns_server_pointer;
 	sockaddr_in  *socket_address;
 	sockaddr_in6 *socket_address_ipv6;
 
 	std::multimap<std::wstring, std::wstring> network_devices_ordered;
 
+	// Iterates through adapters
 	for(adapter_pointer_local = adapter_pointer; adapter_pointer_local;
 		adapter_pointer_local = adapter_pointer_local->Next){
 
-		tmp = std::string(adapter_pointer_local->Description);
+		// Converts char[] to wstring
+		tmp = adapter_pointer_local->Description;
 		key = std::wstring(tmp.begin(), tmp.end());
 
-		tmp = std::string(adapter_pointer_local->IpAddressList.IpAddress.String);
+		tmp = adapter_pointer_local->IpAddressList.IpAddress.String;
 		insert_if_unique<std::wstring, std::wstring>(network_devices_ordered, key,
 			std::format(L"IP: {}", std::wstring(tmp.begin(), tmp.end())));
 
 		// Stores gateway if valid
 		if(adapter_pointer_local->GatewayList.IpAddress.String[0] != '0'){
-			tmp = std::string(adapter_pointer_local->GatewayList.IpAddress.String);
+			tmp = adapter_pointer_local->GatewayList.IpAddress.String;
 			insert_if_unique<std::wstring, std::wstring>(network_devices_ordered, key,
 				std::format(L"{} {}", i18n::GATEWAY, std::wstring(tmp.begin(), tmp.end())));
 		}
 	}
 
+	// Iterates again to get MAC
 	for(adapter_address_local = adapter_address; adapter_address_local != nullptr;
 		adapter_address_local = adapter_address_local->Next){
 
@@ -149,14 +156,14 @@ const PIP_ADAPTER_ADDRESSES& adapter_address){
 	return network_devices_ordered;
 }
 
-// Function to display network information
+// Displays network informations
 std::wostream& network() noexcept{
 	wchar_t host_name[MAX_COMPUTERNAME_LENGTH + 1];
 
-	DWORD host_name_size, output_buffer_length, return_value, dword_size;
-	ULONG buffer_length;
 	WSADATA wsa_data;
+	ULONG buffer_length;
 	PIP_ADAPTER_INFO adapter_pointer;
+	DWORD host_name_size, output_buffer_length, return_value, dword_size;
 
 	std::set<std::wstring> tcp_established_ordered, tcp_listening_ordered, tcp_closed_ordered, tcp_other_ordered;
 
@@ -168,7 +175,7 @@ std::wostream& network() noexcept{
 	if(!adapter_pointer_info)
 		return std::wcerr << L'\t' << i18n_system::ERROR_MEMORY_ALLOCATION << L"\n\n";
 
-	// Gets adapter information
+	// Gets adapter informations
 	adapter_pointer = adapter_pointer_info.get();
 	if(GetAdaptersInfo(adapter_pointer, &buffer_length) != NO_ERROR)
 		return std::wcerr << L'\t' << i18n_system::ERROR_ADAPTERS_INFO << L"\n\n";
@@ -187,9 +194,10 @@ std::wostream& network() noexcept{
 		adapter_addresses_ptr.get(), &output_buffer_length);
 
 	if(return_value == ERROR_BUFFER_OVERFLOW){
-        adapter_addresses_ptr.reset(static_cast<IP_ADAPTER_ADDRESSES*>(malloc(output_buffer_length)));
+		adapter_addresses_ptr.reset(static_cast<IP_ADAPTER_ADDRESSES*>(malloc(output_buffer_length)));
 
 		if(!adapter_addresses_ptr) return std::wcerr << i18n_system::ERROR_MEMORY_ALLOCATION << L"\n\n";
+
 		return_value = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_ALL_COMPARTMENTS, nullptr,
 			adapter_addresses_ptr.get(), &output_buffer_length);
 	}
@@ -215,9 +223,6 @@ std::wostream& network() noexcept{
 	if(GetExtendedUdpTable(udp_table_ptr.get(), &dword_size, TRUE, AF_INET, UDP_TABLE_OWNER_PID, 0) != NO_ERROR)
 		return std::wcerr << L'\t' << i18n_system::ERROR_EXTENDED_UDP_TABLE << L"\n\n";
 
-	// Creates span over the table entries
-	std::span<MIB_UDPROW_OWNER_PID> udp_table_ptr_span{udp_table_ptr->table, udp_table_ptr->dwNumEntries};
-
 	// First call to get required size for TCP table
 	GetExtendedTcpTable(nullptr, &dword_size, TRUE, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0);
 
@@ -230,9 +235,6 @@ std::wostream& network() noexcept{
 	if(GetExtendedTcpTable(tcp_table_ptr.get(), &dword_size, TRUE, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0) != NO_ERROR)
 		return std::wcerr << L'\t' << i18n_system::ERROR_EXTENDED_TCP_TABLE << L"\n\n";
 
-	// Creates span over the table entries
-	std::span<MIB_TCPROW_OWNER_PID> tcp_table_ptr_span{tcp_table_ptr->table, tcp_table_ptr->dwNumEntries};
-
 	// Prints adapters with MACs and DNSs
 	std::wcout << i18n::NETWORK << L'\n' << network_devices(adapter_pointer, adapter_addresses_ptr.get());
 
@@ -241,27 +243,51 @@ std::wostream& network() noexcept{
 	if(!GetComputerNameW(host_name, &host_name_size))
 		return std::wcerr << L'\t' << i18n_system::ERROR_HOST_NAME << L"\n\n";
 
-	std::wcout << L'\t' << i18n::HOST_NAME << L"\n\t\t" << host_name
+	std::wcout << L'\t' << i18n::HOST_NAME << L"\n\t\t" << host_name;
 
 	// Prints UDP endpoints
-	<< L"\n\n\t" << i18n::UDP_ENDPOINTS << L'\n';
-	for(const std::wstring& udp_endpoint : udp_endpoints(udp_table_ptr_span))
-		std::wcout << L"\t\t" << udp_endpoint << L'\n';
+	if(udp_table_ptr->dwNumEntries){
+		std::wcout << L"\n\n\t" << i18n::UDP_ENDPOINTS << L'\n';
+
+		// Creates span over the table entries
+		std::span<MIB_UDPROW_OWNER_PID> udp_table_ptr_span{udp_table_ptr->table, udp_table_ptr->dwNumEntries};
+
+		for(const std::wstring& udp_endpoint : udp_endpoints(udp_table_ptr_span))
+			std::wcout << L"\t\t" << udp_endpoint << L'\n';
+	}
+
+	// Creates span over the table entries
+	std::span<MIB_TCPROW_OWNER_PID> tcp_table_ptr_span{tcp_table_ptr->table, tcp_table_ptr->dwNumEntries};
 
 	// Prints TCP endpoints
 	tcp_endpoints(tcp_table_ptr_span, tcp_closed_ordered, tcp_listening_ordered,
 		tcp_established_ordered, tcp_other_ordered);
-	std::wcout << L"\n\t" << i18n::TCP_ENDPOINTS << L"\n\t\tESTABLISHED:\n";
-	for(const std::wstring& tcp_endpoint : tcp_established_ordered) std::wcout << L"\t\t\t" << tcp_endpoint << L'\n';
 
-	std::wcout << L"\n\t\tLISTENING:\n";
-	for(const std::wstring& tcp_endpoint : tcp_listening_ordered) std::wcout << L"\t\t\t" << tcp_endpoint << L'\n';
+	if(tcp_established_ordered.empty() && tcp_listening_ordered.empty() && tcp_closed_ordered.empty() &&
+		tcp_other_ordered.empty()) return std::wcout << L'\n';
 
-	std::wcout << L"\n\t\tCLOSED:\n";
-	for(const std::wstring& tcp_endpoint : tcp_closed_ordered) std::wcout << L"\t\t\t" << tcp_endpoint << L'\n';
+	std::wcout << L"\n\t" << i18n::TCP_ENDPOINTS;
 
-	std::wcout << L"\n\t\tOTHER:\n";
-	for(const std::wstring& tcp_endpoint : tcp_other_ordered) std::wcout << L"\t\t\t" << tcp_endpoint << L'\n';
+	if(!tcp_established_ordered.empty()){
+		std::wcout << L"\n\t\tEstablished:\n";
+		for(const std::wstring& tcp_endpoint : tcp_established_ordered)
+			std::wcout << L"\t\t\t" << tcp_endpoint << L'\n';
+	}
+
+	if(!tcp_listening_ordered.empty()){
+		std::wcout << L"\n\t\tListening:\n";
+		for(const std::wstring& tcp_endpoint : tcp_listening_ordered) std::wcout << L"\t\t\t" << tcp_endpoint << L'\n';
+	}
+
+	if(!tcp_closed_ordered.empty()){
+		std::wcout << L"\n\t\tClosed:\n";
+		for(const std::wstring& tcp_endpoint : tcp_closed_ordered) std::wcout << L"\t\t\t" << tcp_endpoint << L'\n';
+	}
+
+	if(!tcp_other_ordered.empty()){
+		std::wcout << L"\n\t\tOther:\n";
+		for(const std::wstring& tcp_endpoint : tcp_other_ordered) std::wcout << L"\t\t\t" << tcp_endpoint << L'\n';
+	}
 
 	return std::wcout << L'\n';
 }

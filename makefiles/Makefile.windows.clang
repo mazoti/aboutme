@@ -13,7 +13,7 @@
 #ENABLE_HARD_DISKS =
 #ENABLE_INSTALLED =
 #ENABLE_MEMORY =
-#ENABLE_NETWORK =
+ENABLE_NETWORK =
 #ENABLE_OPERATING_SYSTEM =
 #ENABLE_PROCESSES =
 #ENABLE_RESTORE =
@@ -23,7 +23,7 @@
 #ENABLE_TASKS =
 #ENABLE_TRASH =
 #ENABLE_USB =
-ENABLE_WIFI =
+#ENABLE_WIFI =
 
 #============================================== Compiler and linker flags ==============================================
 
