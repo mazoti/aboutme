@@ -89,6 +89,11 @@ export namespace i18n_system{
 	inline constexpr wchar_t ERROR_RESTORE_WMI_INIT[]        = L"\U0000274C Failed to create IWbemLocator object";
 #endif
 
+// src/core/windows/scheduled_tasks.cpp
+#if defined(ENABLE_SCHEDULED_TASKS)
+	inline constexpr wchar_t ERROR_TASKS[]                   = L"\U0000274C Error on";
+#endif
+
 // src/core/windows/services.cpp
 #if defined(ENABLE_SERVICES)
 	inline constexpr wchar_t ERROR_SERVICES[]                = L"\U0000274C Failed to open Service "
@@ -100,11 +105,6 @@ export namespace i18n_system{
 // src/core/windows/startup.cpp
 #if defined(ENABLE_STARTUP)
 	inline constexpr wchar_t ERROR_REG_OPENKEYEX[]           = L"\U0000274C Error on RegOpenKeyEx";
-#endif
-
-// src/core/windows/tasks.cpp
-#if defined(ENABLE_TASKS)
-	inline constexpr wchar_t ERROR_TASKS[]                   = L"\U0000274C Error on";
 #endif
 
 // src/core/windows/trash.cpp

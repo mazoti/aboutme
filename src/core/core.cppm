@@ -64,8 +64,8 @@ export module core;
 	export std::wostream& startup() noexcept;
 #endif
 
-#if defined(ENABLE_TASKS)
-	export std::wostream& tasks() noexcept;
+#if defined(ENABLE_SCHEDULED_TASKS)
+	export std::wostream& scheduled_tasks() noexcept;
 #endif
 
 #if defined(ENABLE_TRASH)

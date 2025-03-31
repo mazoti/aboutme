@@ -135,6 +135,11 @@ export namespace i18n{
 	                                               L"\t(Requires admin privileges)";
 #endif
 
+// src/core/$(SYSTEM)/scheduled_tasks.cpp
+#if defined(ENABLE_SCHEDULED_TASKS)
+	inline constexpr wchar_t SCHEDULED_TASKS[] = L"\U00002705 Scheduled tasks:";
+#endif
+
 // src/core/$(SYSTEM)/services.cpp
 #if defined(ENABLE_SERVICES)
 	inline constexpr wchar_t SERVICES[] = L"\U0001F3E2 Services:";
@@ -143,11 +148,6 @@ export namespace i18n{
 // src/core/$(SYSTEM)/startup.cpp
 #if defined(ENABLE_STARTUP)
 	inline constexpr wchar_t STARTUP[] = L"\U0001F680 Startup programs:";
-#endif
-
-// src/core/$(SYSTEM)/tasks.cpp
-#if defined(ENABLE_TASKS)
-	inline constexpr wchar_t TASKS[] = L"\U00002705 Tasks:";
 #endif
 
 // src/core/windows/trash.cpp

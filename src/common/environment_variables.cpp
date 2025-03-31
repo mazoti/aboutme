@@ -101,38 +101,42 @@ static const std::unordered_set<std::wstring> environment_variable_paths = {
 };
 
 // Defines a function to process and display environment variables.
-void environment_variables(std::span<const char*>& env_vars, char path_separator) noexcept{
-	size_t position;
+void environment_variables(const char* envp[], char separator) noexcept{
+	size_t position, count = 0;
+
 	std::string temp;
 	std::wstring tmp;
 	std::wstring_view wdata_view, wvariable_name;
 
 	// Convert path separator to wide character
-	wchar_t wpath_separator = static_cast<wchar_t>(path_separator);
+	wchar_t wpath_separator = static_cast<wchar_t>(separator);
 
 	std::wcout << i18n::ENVIRONMENT_VARIABLES << L'\n';
 
+	while(envp[count] != nullptr) ++count;
+
 	// Iterates over each environment variable in the provided span
-	for(const char *environment : env_vars){
+	for(const char *environment : std::span<const char*>(envp, count)){
 		temp = std::string(environment);
-		tmp = std::wstring(temp.begin(), temp.end());
+		tmp = std::wstring(temp.begin(), temp.end()); // wstring_view uses it
 		wdata_view = tmp;
 
 		// Finds the position of the '=' character, which separates the variable name from its value
-		position = wdata_view.find('=');
+		position = wdata_view.find(L'=');
 		if(position == std::wstring::npos) continue;
 
 		// Extracts the variable name from the start of the string up to the '=' position
 		wvariable_name = wdata_view.substr(0, position);
 		if(wvariable_name.size() < 1) continue;
 
-		std::wcout << L'\t' << wvariable_name << L':' << L'\n';
+		std::wcout << L'\t' << wvariable_name << L":\n";
 
 		// Removes the variable name and '=' from the view, leaving only the value
 		wdata_view.remove_prefix(position + 1);
 
 		// Checks if the variable is in the set of path-containing variables
 		if(environment_variable_paths.contains(wvariable_name.data())){
+
 			// Iterates over the value, splitting it by the path separator
 			for(position = wdata_view.find(wpath_separator); position != std::wstring::npos;
 			position = wdata_view.find(wpath_separator)){
@@ -170,6 +174,7 @@ void environment_variables(std::span<const char*>& env_vars, char path_separator
 			wdata_view.remove_prefix(position + 1);
 		}
 
-		std::wcout << L"\t\t" << wdata_view << L"\n\n";
+		if(!wdata_view.empty())	std::wcout << L"\t\t" << wdata_view << L'\n';
+		std::wcout << L'\n';
 	}
 }

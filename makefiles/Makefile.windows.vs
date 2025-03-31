@@ -19,9 +19,9 @@ ENABLE_OPERATING_SYSTEM =
 ENABLE_PROCESSES =
 ENABLE_RESTORE =
 ENABLE_SERVICES =
+ENABLE_SCHEDULED_TASKS =
 ENABLE_SHARED =
 ENABLE_STARTUP =
-ENABLE_TASKS =
 ENABLE_TRASH =
 ENABLE_USB =
 ENABLE_WIFI =
@@ -142,9 +142,9 @@ CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\startup.obj
 CXXFLAGS  = $(CXXFLAGS) /DENABLE_STARTUP
 !ENDIF
 
-!IFDEF ENABLE_TASKS
-CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\tasks.obj
-CXXFLAGS  = $(CXXFLAGS) /DENABLE_TASKS
+!IFDEF ENABLE_SCHEDULED_TASKS
+CORE_OBJS = $(CORE_OBJS) $(OBJ_DIR)\scheduled_tasks.obj
+CXXFLAGS  = $(CXXFLAGS) /DENABLE_SCHEDULED_TASKS
 !ENDIF
 
 !IFDEF ENABLE_TRASH
@@ -177,109 +177,109 @@ $(TARGET): $(OBJ_DIR) $(ALL_OBJS)
     $(LINKER) $(ALL_OBJS) resources\aboutme.res $(LIBS) /OUT:$(TARGET) $(LINKERFLAGS)
 
 $(OBJ_DIR):
-    if not exist $(OBJ_DIR) mkdir $(OBJ_DIR)
+	if not exist $(OBJ_DIR) mkdir $(OBJ_DIR)
 
 #================================================ Common objects section ================================================
 
 $(OBJ_DIR)\common.obj: src\common\common.cppm
-    copy src\common\common.cppm $(OBJ_DIR)\common.ixx
-    $(CC) $(CXXFLAGS) /c $(OBJ_DIR)\common.ixx /Fo$(OBJ_DIR)\common.obj
+	copy src\common\common.cppm $(OBJ_DIR)\common.ixx
+	$(CC) $(CXXFLAGS) /c $(OBJ_DIR)\common.ixx /Fo$(OBJ_DIR)\common.obj
 
 $(OBJ_DIR)\environment_variables.obj: src\common\environment_variables.cpp $(OBJ_DIR)\common.obj $(OBJ_DIR)\i18n_system.obj $(OBJ_DIR)\i18n.obj
-    $(CC) $(CXXFLAGS) /c src\common\environment_variables.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\common\environment_variables.cpp /Fo$@
 
 $(OBJ_DIR)\system_clock.obj: src\common\system_clock.cpp $(OBJ_DIR)\common.obj $(OBJ_DIR)\i18n_system.obj $(OBJ_DIR)\i18n.obj
-    $(CC) $(CXXFLAGS) /c src\common\system_clock.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\common\system_clock.cpp /Fo$@
 
 #================================================ Core objects section =================================================
 
 $(OBJ_DIR)\core.obj: src\core\core.cppm
-    copy src\core\core.cppm $(OBJ_DIR)\core.ixx
-    $(CC) $(CXXFLAGS) /c $(OBJ_DIR)\core.ixx /Fo$@
+	copy src\core\core.cppm $(OBJ_DIR)\core.ixx
+	$(CC) $(CXXFLAGS) /c $(OBJ_DIR)\core.ixx /Fo$@
 
 $(OBJ_DIR)\battery.obj: src\core\windows\battery.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\battery.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\battery.cpp /Fo$@
 
 $(OBJ_DIR)\bluetooth.obj: src\core\windows\bluetooth.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\bluetooth.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\bluetooth.cpp /Fo$@
 
 $(OBJ_DIR)\cpu.obj: src\core\windows\cpu.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\cpu.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\cpu.cpp /Fo$@
 
 $(OBJ_DIR)\features.obj: src\core\windows\features.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\features.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\features.cpp /Fo$@
 
 $(OBJ_DIR)\gpu.obj: src\core\windows\gpu.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\gpu.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\gpu.cpp /Fo$@
 
 $(OBJ_DIR)\hard_disks.obj: src\core\windows\hard_disks.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\hard_disks.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\hard_disks.cpp /Fo$@
 
 $(OBJ_DIR)\installed.obj: src\core\windows\installed.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\installed.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\installed.cpp /Fo$@
 
 $(OBJ_DIR)\memory.obj: src\core\windows\memory.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\memory.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\memory.cpp /Fo$@
 
 $(OBJ_DIR)\network.obj: src\core\windows\network.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\network.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\network.cpp /Fo$@
 
 $(OBJ_DIR)\operating_system.obj: src\core\windows\operating_system.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\operating_system.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\operating_system.cpp /Fo$@
 
 $(OBJ_DIR)\processes.obj: src\core\windows\processes.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\processes.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\processes.cpp /Fo$@
 
 $(OBJ_DIR)\restore.obj: src\core\windows\restore.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\restore.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\restore.cpp /Fo$@
 
 $(OBJ_DIR)\services.obj: src\core\windows\services.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\services.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\services.cpp /Fo$@
 
 $(OBJ_DIR)\shared.obj: src\core\windows\shared.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\shared.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\shared.cpp /Fo$@
 
 $(OBJ_DIR)\startup.obj: src\core\windows\startup.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\startup.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\startup.cpp /Fo$@
 
-$(OBJ_DIR)\tasks.obj: src\core\windows\tasks.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\tasks.cpp /Fo$@
+$(OBJ_DIR)\scheduled_tasks.obj: src\core\windows\scheduled_tasks.cpp $(OBJ_DIR)\core.obj
+	$(CC) $(CXXFLAGS) /c src\core\windows\scheduled_tasks.cpp /Fo$@
 
 $(OBJ_DIR)\trash.obj: src\core\windows\trash.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\trash.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\trash.cpp /Fo$@
 
 $(OBJ_DIR)\usb.obj: src\core\windows\usb.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\usb.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\usb.cpp /Fo$@
 
 $(OBJ_DIR)\wifi.obj: src\core\windows\wifi.cpp $(OBJ_DIR)\core.obj
-    $(CC) $(CXXFLAGS) /c src\core\windows\wifi.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\windows\wifi.cpp /Fo$@
 
 #================================================= I18n objects section ================================================
 
 $(OBJ_DIR)\i18n.obj: src\i18n\$(TRANSLATION)\all.cppm
-    copy src\i18n\$(TRANSLATION)\all.cppm $(OBJ_DIR)\i18n.ixx
-    $(CC) $(CXXFLAGS) /c $(OBJ_DIR)\i18n.ixx /Fo$@
+	copy src\i18n\$(TRANSLATION)\all.cppm $(OBJ_DIR)\i18n.ixx
+	$(CC) $(CXXFLAGS) /c $(OBJ_DIR)\i18n.ixx /Fo$@
 
 $(OBJ_DIR)\i18n_system.obj: src\i18n\$(TRANSLATION)\windows.cppm
-    copy src\i18n\$(TRANSLATION)\windows.cppm $(OBJ_DIR)\i18n_system.ixx
-    $(CC) $(CXXFLAGS) /c $(OBJ_DIR)\i18n_system.ixx /Fo$@
+	copy src\i18n\$(TRANSLATION)\windows.cppm $(OBJ_DIR)\i18n_system.ixx
+	$(CC) $(CXXFLAGS) /c $(OBJ_DIR)\i18n_system.ixx /Fo$@
 
 #================================================= Main object section =================================================
 
 $(OBJ_DIR)\main.obj: src\core\main.cpp $(OBJ_DIR)\i18n_system.obj $(OBJ_DIR)\i18n.obj $(OBJ_DIR)\common.obj $(COMMON_OBJS) $(OBJ_DIR)\core.obj $(CORE_OBJS)
-    $(CC) $(CXXFLAGS) /c src\core\main.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\core\main.cpp /Fo$@
 
 $(OBJ_DIR)\main_windows.obj: src\main_windows.cpp $(OBJ_DIR)\main.obj
-    $(CC) $(CXXFLAGS) /c src\main_windows.cpp /Fo$@
+	$(CC) $(CXXFLAGS) /c src\main_windows.cpp /Fo$@
 
 #==================================================== Clean section ====================================================
 
 clean:
-    if exist $(TARGET) del $(TARGET)
-    if exist $(OBJ_DIR) rd /S /Q $(OBJ_DIR)
-    if exist *.ifc del *.ifc
-    if exist *.pdb del *.pdb
-    if exist releases\aboutme.pdb del releases\aboutme.pdb
-    if exist releases\aboutme.ilk del releases\aboutme.ilk
+	if exist $(TARGET) del $(TARGET)
+	if exist $(OBJ_DIR) rd /S /Q $(OBJ_DIR)
+	if exist *.ifc del *.ifc
+	if exist *.pdb del *.pdb
+	if exist releases\aboutme.pdb del releases\aboutme.pdb
+	if exist releases\aboutme.ilk del releases\aboutme.ilk
 
 .PHONY: clean

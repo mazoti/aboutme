@@ -2,7 +2,7 @@
 
 #TRANSLATION = portuguese
 
-#ENABLE_ENVIRONMENT_VARIABLES =
+ENABLE_ENVIRONMENT_VARIABLES =
 #ENABLE_SYSTEM_CLOCK =
 
 #ENABLE_BATTERY =
@@ -13,14 +13,14 @@
 #ENABLE_HARD_DISKS =
 #ENABLE_INSTALLED =
 #ENABLE_MEMORY =
-ENABLE_NETWORK =
+#ENABLE_NETWORK =
 #ENABLE_OPERATING_SYSTEM =
 #ENABLE_PROCESSES =
 #ENABLE_RESTORE =
+#ENABLE_SCHEDULED_TASKS =
 #ENABLE_SERVICES =
 #ENABLE_SHARED =
 #ENABLE_STARTUP =
-#ENABLE_TASKS =
 #ENABLE_TRASH =
 #ENABLE_USB =
 #ENABLE_WIFI =
@@ -137,9 +137,9 @@ CORE_OBJS = $(CORE_OBJS) objs\startup.obj
 CXXFLAGS  = $(CXXFLAGS) -DENABLE_STARTUP
 !ENDIF
 
-!IFDEF ENABLE_TASKS
-CORE_OBJS = $(CORE_OBJS) objs\tasks.obj
-CXXFLAGS  = $(CXXFLAGS) -DENABLE_TASKS
+!IFDEF ENABLE_SCHEDULED_TASKS
+CORE_OBJS = $(CORE_OBJS) objs\scheduled_tasks.obj
+CXXFLAGS  = $(CXXFLAGS) -DENABLE_SCHEDULED_TASKS
 !ENDIF
 
 !IFDEF ENABLE_TRASH
@@ -170,108 +170,108 @@ LINK_OBJS = objs\main.obj objs\main_windows.obj $(COMMON_OBJS) $(CORE_OBJS)
 
 # Links target
 $(TARGET): objs $(LINK_OBJS)
-    $(CC) $(CXXFLAGS) -o $(TARGET) $(LINK_OBJS) resources\aboutme.res
+	$(CC) $(CXXFLAGS) -o $(TARGET) $(LINK_OBJS) resources\aboutme.res
 
 objs:
-    if not exist objs mkdir objs
+	if not exist objs mkdir objs
 
 #================================================ Precompiled Modules ==================================================
 
 objs\common.pcm: src\common\common.cppm
-    $(CC) $(CXXFLAGS) --precompile src\common\common.cppm -o objs\common.pcm
+	$(CC) $(CXXFLAGS) --precompile src\common\common.cppm -o objs\common.pcm
 
 objs\i18n.pcm: src\i18n\$(TRANSLATION)\all.cppm
-    $(CC) $(CXXFLAGS) --precompile src\i18n\$(TRANSLATION)\all.cppm -o objs\i18n.pcm
+	$(CC) $(CXXFLAGS) --precompile src\i18n\$(TRANSLATION)\all.cppm -o objs\i18n.pcm
 
 objs\i18n_system.pcm: src\i18n\$(TRANSLATION)\windows.cppm
-    $(CC) $(CXXFLAGS) --precompile src\i18n\$(TRANSLATION)\windows.cppm -o objs\i18n_system.pcm
+	$(CC) $(CXXFLAGS) --precompile src\i18n\$(TRANSLATION)\windows.cppm -o objs\i18n_system.pcm
 
 objs\core.pcm: src\core\core.cppm objs\common.pcm
-    $(CC) $(CXXFLAGS) --precompile src\core\core.cppm -o objs\core.pcm -fmodule-file=common=objs/common.pcm
+	$(CC) $(CXXFLAGS) --precompile src\core\core.cppm -o objs\core.pcm -fmodule-file=common=objs/common.pcm
 
 #================================================ Common objects section ================================================
 
 objs\environment_variables.obj: src\common\environment_variables.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm
-    $(CC) $(CXXFLAGS) -c src\common\environment_variables.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\common\environment_variables.cpp -o $@ $(MODFLAGS)
 
 objs\system_clock.obj: src\common\system_clock.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm
-    $(CC) $(CXXFLAGS) -c src\common\system_clock.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\common\system_clock.cpp -o $@ $(MODFLAGS)
 
 #================================================ Core objects section =================================================
 
 objs\battery.obj: src\core\windows\battery.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\battery.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\battery.cpp -o $@ $(MODFLAGS)
 
 objs\bluetooth.obj: src\core\windows\bluetooth.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\bluetooth.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\bluetooth.cpp -o $@ $(MODFLAGS)
 
 objs\cpu.obj: src\core\windows\cpu.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\cpu.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\cpu.cpp -o $@ $(MODFLAGS)
 
 objs\features.obj: src\core\windows\features.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\features.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\features.cpp -o $@ $(MODFLAGS)
 
 objs\gpu.obj: src\core\windows\gpu.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\gpu.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\gpu.cpp -o $@ $(MODFLAGS)
 
 objs\hard_disks.obj: src\core\windows\hard_disks.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\hard_disks.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\hard_disks.cpp -o $@ $(MODFLAGS)
 
 objs\installed.obj: src\core\windows\installed.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\installed.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\installed.cpp -o $@ $(MODFLAGS)
 
 objs\memory.obj: src\core\windows\memory.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\memory.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\memory.cpp -o $@ $(MODFLAGS)
 
 objs\network.obj: src\core\windows\network.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\network.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\network.cpp -o $@ $(MODFLAGS)
 
 objs\operating_system.obj: src\core\windows\operating_system.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\operating_system.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\operating_system.cpp -o $@ $(MODFLAGS)
 
 objs\processes.obj: src\core\windows\processes.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\processes.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\processes.cpp -o $@ $(MODFLAGS)
 
 objs\restore.obj: src\core\windows\restore.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\restore.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\restore.cpp -o $@ $(MODFLAGS)
 
 objs\services.obj: src\core\windows\services.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\services.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\services.cpp -o $@ $(MODFLAGS)
 
 objs\shared.obj: src\core\windows\shared.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\shared.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\shared.cpp -o $@ $(MODFLAGS)
 
 objs\startup.obj: src\core\windows\startup.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\startup.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\startup.cpp -o $@ $(MODFLAGS)
 
-objs\tasks.obj: src\core\windows\tasks.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\tasks.cpp -o $@ $(MODFLAGS)
+objs\scheduled_tasks.obj: src\core\windows\scheduled_tasks.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
+	$(CC) $(CXXFLAGS) -c src\core\windows\scheduled_tasks.cpp -o $@ $(MODFLAGS)
 
 objs\trash.obj: src\core\windows\trash.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\trash.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\trash.cpp -o $@ $(MODFLAGS)
 
 objs\usb.obj: src\core\windows\usb.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\usb.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\usb.cpp -o $@ $(MODFLAGS)
 
 objs\wifi.obj: src\core\windows\wifi.cpp objs\common.pcm objs\i18n_system.pcm objs\i18n.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\core\windows\wifi.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\windows\wifi.cpp -o $@ $(MODFLAGS)
 
 #================================================= Main object section =================================================
 
 objs\main.obj: src\core\main.cpp objs\common.pcm objs\i18n.pcm objs\i18n_system.pcm objs\core.pcm $(COMMON_OBJS) $(CORE_OBJS)
-    $(CC) $(CXXFLAGS) -c src\core\main.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\core\main.cpp -o $@ $(MODFLAGS)
 
 objs\main_windows.obj: src\main_windows.cpp objs\main.obj objs\common.pcm objs\i18n.pcm objs\i18n_system.pcm objs\core.pcm
-    $(CC) $(CXXFLAGS) -c src\main_windows.cpp -o $@ $(MODFLAGS)
+	$(CC) $(CXXFLAGS) -c src\main_windows.cpp -o $@ $(MODFLAGS)
 
 #==================================================== Clean section ====================================================
 
 clean:
-    if exist $(TARGET) del $(TARGET)
-    if exist objs rd /S /Q objs
-    if exist *.ifc del *.ifc
-    if exist *.pdb del *.pdb
-    if exist releases\aboutme.pdb del releases\aboutme.pdb
-    if exist releases\aboutme.ilk del releases\aboutme.ilk
+	if exist $(TARGET) del $(TARGET)
+	if exist objs rd /S /Q objs
+	if exist *.ifc del *.ifc
+	if exist *.pdb del *.pdb
+	if exist releases\aboutme.pdb del releases\aboutme.pdb
+	if exist releases\aboutme.ilk del releases\aboutme.ilk
 
 .PHONY: clean

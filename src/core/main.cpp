@@ -81,8 +81,8 @@ void run(const char* envp[], char separator) noexcept{
 		services();
 	#endif
 
-	#if defined(ENABLE_TASKS)
-		tasks();
+	#if defined(ENABLE_SCHEDULED_TASKS)
+		scheduled_tasks();
 	#endif
 
 	#if defined(ENABLE_STARTUP)
@@ -90,11 +90,6 @@ void run(const char* envp[], char separator) noexcept{
 	#endif
 
 	#if defined(ENABLE_ENVIRONMENT_VARIABLES)
-		size_t count = 0;
-		if(envp){
-			while(envp[count] != nullptr) ++count;
-		}
-		std::span<const char*> envp_span(envp, count);
-		environment_variables(envp_span, separator);
+		environment_variables(envp, separator);
 	#endif
 }
