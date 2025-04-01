@@ -6,6 +6,7 @@ module;
 #include <span>
 #include <string>
 #include <string_view>
+#include <ranges>
 
 module common;
 
@@ -14,7 +15,6 @@ import i18n;
 // Defines a static constant set of environment variable names that are expected to contain paths.
 // This set is used to determine if a variable's value should be treated as a list of filesystem paths
 static const std::unordered_set<std::wstring> environment_variable_paths = {
-	L"XDG_CONFIG_DIRS",
 	L"__EGL_EXTERNAL_PLATFORM_CONFIG_DIRS",
 	L"__VSCMD_PREINIT_PATH",
 	L"ALLUSERSPROFILE",
@@ -88,6 +88,7 @@ static const std::unordered_set<std::wstring> environment_variable_paths = {
 	L"XAUTHORITY",
 	L"XCURSOR_PATH",
 	L"XDG_CACHE_HOME",
+	L"XDG_CONFIG_DIRS",
 	L"XDG_CONFIG_HOME",
 	L"XDG_DATA_DIRS",
 	L"XDG_DATA_HOME",
@@ -100,81 +101,53 @@ static const std::unordered_set<std::wstring> environment_variable_paths = {
 	L"ZYPAK_LIB"
 };
 
-// Defines a function to process and display environment variables.
+// Function to process and display environment variables
 void environment_variables(const char* envp[], char separator) noexcept{
-	size_t position, count = 0;
-
 	std::string temp;
 	std::wstring tmp;
-	std::wstring_view wdata_view, wvariable_name;
+	std::wstring_view wdata_view, wvariable_name, part;
 
-	// Convert path separator to wide character
+	size_t position, count = 0;
 	wchar_t wpath_separator = static_cast<wchar_t>(separator);
+
+	// Counts the number of environment variables
+	if(envp){
+		while(envp[count] != nullptr) ++count;
+	}
 
 	std::wcout << i18n::ENVIRONMENT_VARIABLES << L'\n';
 
-	while(envp[count] != nullptr) ++count;
-
-	// Iterates over each environment variable in the provided span
-	for(const char *environment : std::span<const char*>(envp, count)){
-		temp = std::string(environment);
-		tmp = std::wstring(temp.begin(), temp.end()); // wstring_view uses it
+	// Processes each environment variable
+	for(const char* environment : std::span<const char*>(envp, count)){
+		// Converts char* to wstring for wide-character output
+		temp = environment;
+		tmp = std::wstring(temp.begin(), temp.end());
 		wdata_view = tmp;
 
-		// Finds the position of the '=' character, which separates the variable name from its value
+		// Finds the '=' separator between name and value
 		position = wdata_view.find(L'=');
 		if(position == std::wstring::npos) continue;
 
-		// Extracts the variable name from the start of the string up to the '=' position
+		// Extracts the variable name
 		wvariable_name = wdata_view.substr(0, position);
-		if(wvariable_name.size() < 1) continue;
+		if(wvariable_name.empty()) continue;
 
+		// Prints the variable name
 		std::wcout << L'\t' << wvariable_name << L":\n";
 
-		// Removes the variable name and '=' from the view, leaving only the value
+		// Extracts the value
 		wdata_view.remove_prefix(position + 1);
 
-		// Checks if the variable is in the set of path-containing variables
-		if(environment_variable_paths.contains(wvariable_name.data())){
+		// Splits the value by the separator and processes each part
+		for(auto part_range : std::ranges::split_view(wdata_view, wpath_separator)){
+			part = std::wstring_view(part_range.begin(), part_range.end());
+			if(part.empty()) continue;
 
-			// Iterates over the value, splitting it by the path separator
-			for(position = wdata_view.find(wpath_separator); position != std::wstring::npos;
-			position = wdata_view.find(wpath_separator)){
-				wvariable_name = wdata_view.substr(0, position);
-
-				if(!wvariable_name.size()) continue;
-				std::wcout << L"\t\t" << wvariable_name << L'\n';
-
-				// Checks if the path exists using the filesystem library
-				if(!std::filesystem::exists(std::filesystem::path(wvariable_name)))
-					std::wcout << L"\t\t\t" << i18n::ENVIRONMENT_VARIABLES_WARNING << L'\n';
-
-				wdata_view.remove_prefix(position + 1);
-			}
-
-			// Handles the last path segment after the final separator
-			if(!wdata_view.size()){
-				std::wcout << L'\n';
-				continue;
-			}
-
-			if(!std::filesystem::exists(std::filesystem::path(wdata_view))){
-				std::wcout << L"\t\t" << wdata_view << L'\n'
-					<< L"\t\t\t" << i18n::ENVIRONMENT_VARIABLES_WARNING << L"\n\n";
-				continue;
-			}
-
-			std::wcout << L"\t\t" << wdata_view << L"\n\n";
-			continue;
+			std::wcout << L"\t\t" << part << L'\n';
+			if(environment_variable_paths.contains(wvariable_name.data()) &&
+			!std::filesystem::exists(std::filesystem::path(part)))
+				std::wcout << L"\t\t\t" << i18n::ENVIRONMENT_VARIABLES_WARNING << L'\n';
 		}
-
-		for(position = wdata_view.find(wpath_separator); position != std::wstring::npos;
-		position = wdata_view.find(wpath_separator)){
-			std::wcout << L"\t\t" << wdata_view.substr(0, position) << L'\n';
-			wdata_view.remove_prefix(position + 1);
-		}
-
-		if(!wdata_view.empty())	std::wcout << L"\t\t" << wdata_view << L'\n';
 		std::wcout << L'\n';
 	}
 }

@@ -123,6 +123,9 @@ export namespace i18n{
 
 // src/core/$(SYSTEM)/processes.cpp
 #if defined(ENABLE_PROCESSES)
+	inline constexpr wchar_t CPU_HEADER[]        = L"CPU";
+	inline constexpr wchar_t PID_HEADER[]        = L"PID";
+	inline constexpr wchar_t RAM_HEADER[]        = L"RAM";
 	inline constexpr wchar_t RUNNING_PROCESSES[] = L"\U0001F3C3 Processes:";
 	inline constexpr wchar_t TOTAL_PROCESSES[]   = L"Total:";
 #endif
