@@ -30,10 +30,10 @@ public:
 
 // Retrieves and displays installed Windows optional features using WMI
 std::wostream& features() noexcept{
-	IWbemLocator* locator_pointer = nullptr;
-	IWbemServices* svc_pointer = nullptr;
-	IEnumWbemClassObject* enumerator_pointer = nullptr;
-	IWbemClassObject* clsobj_pointer = nullptr;
+	IWbemLocator         *locator_pointer    = nullptr;
+	IWbemServices        *svc_pointer        = nullptr;
+	IEnumWbemClassObject *enumerator_pointer = nullptr;
+	IWbemClassObject     *clsobj_pointer     = nullptr;
 	ULONG return_result = 0;
 
 	std::set<std::wstring> features_ordered;

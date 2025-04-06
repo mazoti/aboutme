@@ -18,11 +18,11 @@ Currently, it supports the following system details:
 - Operating system
 - Processes
 - Restore points
+- Scheduled tasks
 - Services
 - Shared resources
 - Startup applications
 - System clock
-- Tasks
 - Trash
 - USB devices
 - Wi-Fi

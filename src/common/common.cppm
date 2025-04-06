@@ -79,7 +79,7 @@ export module common;
 #endif
 
 #if defined(ENABLE_BLUETOOTH) || defined(ENABLE_NETWORK) || defined(ENABLE_USB) || defined(ENABLE_WIFI) \
-	|| defined(ENABLE_STARTUP)
+	|| defined(ENABLE_STARTUP) || defined(ENABLE_SHARED)
 	// Overloads the output operator for std::multimap to print key-value pairs hierarchically
 	export template<typename KEY, typename VALUE>
 	std::wostream& operator<<(std::wostream& wos, const std::multimap<KEY, VALUE>& string_multimap){

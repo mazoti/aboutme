@@ -6,7 +6,7 @@ export namespace i18n{
 
 	// src/main_$(SYSTEM).cpp
 	inline constexpr wchar_t ANY_KEY_TO_CLOSE[] = L"Press any key to close...";
-	inline constexpr wchar_t HEADER[]           = L"\U00002699 AboutMe v0.7:\n"
+	inline constexpr wchar_t HEADER[]           = L"\U00002699 AboutMe v0.8:\n"
 	                                              L"\thttps://github.com/mazoti/aboutme\n"
 	                                              L"\tby Marcos Mazoti";
 
@@ -146,6 +146,12 @@ export namespace i18n{
 // src/core/$(SYSTEM)/services.cpp
 #if defined(ENABLE_SERVICES)
 	inline constexpr wchar_t SERVICES[] = L"\U0001F3E2 Services:";
+#endif
+
+// src/core/$(SYSTEM)/shared.cpp
+#if defined(ENABLE_SHARED)
+	inline constexpr wchar_t SHARED[]       = L"\U0001F517 Shared:";
+	inline constexpr wchar_t SHARED_EMPTY[] = L"\U0000274C No resources shared";
 #endif
 
 // src/core/$(SYSTEM)/startup.cpp

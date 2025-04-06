@@ -60,7 +60,7 @@ inline static std::wstring arch(WORD code){
 
 // Displays CPU details
 std::wostream& cpu() noexcept{
-	int* cpu_info;
+	int *cpu_info;
 	size_t start;
 
 	SYSTEM_INFO sys_info{};

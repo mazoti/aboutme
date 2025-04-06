@@ -116,6 +116,12 @@ export namespace i18n_system{
 	                                                           "alocar mem\U000000F3ria";
 #endif
 
+// src/core/windows/shared.cpp
+#if defined(ENABLE_SHARED)
+	inline constexpr wchar_t ERROR_HOSTNAME[]                = L"\U0000274C Erro lendo nome do host";
+	inline constexpr wchar_t ERROR_ENUM_SHARES[]             = L"\U0000274C	Erro listando recursos";
+#endif
+
 // src/core/windows/startup.cpp
 #if defined(ENABLE_STARTUP)
 	inline constexpr wchar_t ERROR_REG_OPENKEYEX[]           = L"\U0000274C Erro na fun\U000000E7\U000000E3o "

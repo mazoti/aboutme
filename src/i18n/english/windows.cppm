@@ -102,6 +102,12 @@ export namespace i18n_system{
 	inline constexpr wchar_t ERROR_SERVICES_MALLOC[]         = L"\U0000274C Failed to allocate memory";
 #endif
 
+// src/core/windows/shared.cpp
+#if defined(ENABLE_SHARED)
+	inline constexpr wchar_t ERROR_HOSTNAME[]                = L"\U0000274C Error reading host name";
+	inline constexpr wchar_t ERROR_ENUM_SHARES[]             = L"\U0000274C	Error enumerating shares";
+#endif
+
 // src/core/windows/startup.cpp
 #if defined(ENABLE_STARTUP)
 	inline constexpr wchar_t ERROR_REG_OPENKEYEX[]           = L"\U0000274C Error on RegOpenKeyEx";

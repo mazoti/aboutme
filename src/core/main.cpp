@@ -1,7 +1,6 @@
 module;
 
 #include <iostream>
-#include <span>
 
 import common;
 
