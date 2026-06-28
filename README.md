@@ -1,5 +1,3 @@
-<div align="center"><img src="resources/logo.webp" alt="AboutMe Logo"></div>
-
 **AboutMe** is a lightweight, open-source command-line tool that quickly and securely displays detailed information about your hardware and software.
 With no installation required and a tiny footprint, it provides a comprehensive system overview in just a few seconds.
 
