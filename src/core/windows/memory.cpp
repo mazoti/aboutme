@@ -9,6 +9,8 @@ module;
 #include <WbemIdl.h>
 #include <comdef.h>
 
+#include "shared/VariantWrapper.h"
+
 #pragma comment(lib, "wbemuuid.lib")
 
 module core;
@@ -20,15 +22,6 @@ import i18n_system;
 
 // Defines a custom deleter for smart pointers managing COM-like objects
 template <typename T> struct releaser{ void operator()(T* ptr) const{if(ptr){ptr->Release();}}};
-
-// Helper class to manage Variant objects
-class VariantWrapper{
-public:
-	VariantWrapper()     { VariantInit(&var);  }
-	~VariantWrapper()    { VariantClear(&var); }
-	VARIANT* operator&() { return &var;        }
-	VARIANT var;
-};
 
 // Function to display memory information
 std::wostream& memory() noexcept{
