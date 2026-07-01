@@ -16,11 +16,11 @@ module core;
 import i18n;
 import i18n_system;
 
-struct process_data{ uint32_t pid; size_t ram_usage, cpu_time; };
+struct process_data{ uint32_t pid; size_t ram_usage; uint64_t cpu_time; };
 
 // Formats CPU time into appropriate units
-static std::wstring format_cpu_time(size_t cpu_time){
-	const size_t ms = cpu_time / 10000; // Converts from 100-ns to milliseconds
+static std::wstring format_cpu_time(uint64_t cpu_time){
+	const uint64_t ms = cpu_time / 10000; // Converts from 100-ns to milliseconds
 
 	if(ms < 1000 ) return std::to_wstring(ms) + L" ms";
 	if(ms < 60000) return std::to_wstring(ms / 1000) + L" s";
@@ -40,7 +40,8 @@ static std::wstring format_ram_usage(size_t ram_bytes){
 
 // Lists running processes with PID, CPU, and RAM usage
 std::wostream& processes() noexcept{
-	size_t max_pid_width, max_cpu_width, max_ram_width, total_ram, total_cpu;
+	size_t max_pid_width, max_cpu_width, max_ram_width, total_ram;
+	uint64_t total_cpu;
 
 	HANDLE process_handle;
 	HMODULE module_handle;
