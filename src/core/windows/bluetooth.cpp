@@ -46,7 +46,7 @@ std::wostream& bluetooth() noexcept{
 	})> device_find_handle_ptr(device_find_handle);
 
 	if(device_find_handle == nullptr)
-		return std::wcerr << i18n_system::ERROR_NO_BLUETOOTH_ADAPTERS << L"\n\n";
+		return std::wcout << i18n_system::ERROR_NO_BLUETOOTH_ADAPTERS << L"\n\n";
 
 	// Enumerates all Bluetooth devices
 	do{
@@ -63,9 +63,10 @@ std::wostream& bluetooth() noexcept{
 			(device_info.fAuthenticated ? i18n::AUTHENTICATED : L""),
 			(device_info.fConnected     ? i18n::CONNECTED     : L"")
 		));
-	}while(BluetoothFindNextDevice(device_find_handle, &device_info));
+	} while(BluetoothFindNextDevice(device_find_handle, &device_info));
 
 	std::wcout << i18n::BLUETOOTH << L'\n';
 	for(const std::wstring& data : bluetooth_devices_set) std::wcout << L'\t' << data << L'\n';
+
 	return std::wcout << L'\n';
 }

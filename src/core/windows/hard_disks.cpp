@@ -30,14 +30,14 @@ std::wostream& hard_disks() noexcept{
 	char drive_letter[4] = {'A', ':', '\\', 0}, drive = 'A';
 	DWORD drives = GetLogicalDrives();
 
-	if(!drives)	return std::wcerr << i18n_system::ERROR_HARD_DISK << GetLastError() << L"\n\n";
+	if(!drives)	return std::wcout << i18n_system::ERROR_HARD_DISK << GetLastError() << L"\n\n";
 
 	// Finds the largest line size and iterates again to print
 	for(all_total = all_used = all_available = 0; drive <= 'Z'; ++drive){
 		if(drives & 1){
 			drive_letter[0] = drive;
 			if(!GetDiskFreeSpaceEx(drive_letter, &free_bytes, &total_bytes, &total_free_bytes)){
-				std::wcerr << L"\t\t" << i18n_system::ERROR_HARD_DISK_SPACE << drive << ": "
+				std::wcout << L"\t\t" << i18n_system::ERROR_HARD_DISK_SPACE << drive << ": "
 				<< GetLastError() << L"\n\n";
 				drives >>= 1;
 				continue;
@@ -75,7 +75,7 @@ std::wostream& hard_disks() noexcept{
 		if(drives & 1){
 			drive_letter[0] = drive;
 			if(!GetDiskFreeSpaceEx(drive_letter, &free_bytes, &total_bytes, &total_free_bytes)){
-				std::wcerr << L"\t\t" << i18n_system::ERROR_HARD_DISK_SPACE << drive << ": "
+				std::wcout << L"\t\t" << i18n_system::ERROR_HARD_DISK_SPACE << drive << ": "
 				<< GetLastError() << L"\n\n";
 				drives >>= 1;
 				continue;

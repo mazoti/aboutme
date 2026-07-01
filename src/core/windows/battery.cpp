@@ -27,11 +27,11 @@ std::wostream& battery() noexcept{
 
 	// Retrieves the system power status using the Windows API
 	if(!GetSystemPowerStatus(&power_status))
-		return std::wcerr << i18n_system::ERROR_POWER_STATUS << L"\n\n";
+		return std::wcout << i18n_system::ERROR_POWER_STATUS << L"\n\n";
 
 	// System does not have a battery
 	status_percent = static_cast<int>(power_status.BatteryLifePercent);
-	if(status_percent > 100) return std::wcerr << i18n_system::ERROR_BATTERY << L"\n\n";
+	if(status_percent > 100) return std::wcout << i18n_system::ERROR_BATTERY << L"\n\n";
 
 	// Gets the remaining battery life time in seconds from the power status
 	duration = std::chrono::seconds(power_status.BatteryLifeTime);

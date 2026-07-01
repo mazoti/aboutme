@@ -6,14 +6,14 @@ export namespace i18n{
 
 	// src/main_$(SYSTEM).cpp
 	inline constexpr wchar_t ANY_KEY_TO_CLOSE[] = L"Press any key to close...";
-	inline constexpr wchar_t HEADER[]           = L"\U00002699 AboutMe v0.8:\n"
-	                                              L"\thttps://github.com/mazoti/aboutme\n"
+	inline constexpr wchar_t HEADER[]           = L"\U00002699 AboutMe v0.9:\n"
+	                                              L"\thttps://mazoti.github.io/aboutme\n"
 	                                              L"\tby Marcos Mazoti";
 
 	// src/common/environment_variables.cpp
 #if defined(ENABLE_ENVIRONMENT_VARIABLES)
-	inline constexpr wchar_t ENVIRONMENT_VARIABLES[]         = L"\U0001F333 Environment variables:";
-	inline constexpr wchar_t ENVIRONMENT_VARIABLES_WARNING[] = L"\U000026A0 Warning: check if this path is correct";
+	inline constexpr wchar_t ENVIRONMENT_VARIABLES[]         = L"\u2618 Environment variables:";
+	inline constexpr wchar_t ENVIRONMENT_VARIABLES_WARNING[] = L"\u26A0 Warning: check if this path is correct";
 #endif
 
 	// src/common/system_clock.cpp
@@ -23,7 +23,7 @@ export namespace i18n{
 	inline constexpr wchar_t GMT[]                  = L"Timezone:";
 	inline constexpr wchar_t HOUR[]                 = L"hour";
 	inline constexpr wchar_t HOURS[]                = L"hours";
-	inline constexpr wchar_t SYSTEM_CLOCK[]         = L"\U0001F556 System clock:";
+	inline constexpr wchar_t SYSTEM_CLOCK[]         = L"\u25D0 System clock:";
 	inline constexpr wchar_t TIME[]                 = L"Time (HH:MM:SS):";
 #endif
 
@@ -43,7 +43,7 @@ export namespace i18n{
 // src/core/$(SYSTEM)/bluetooth.cpp
 #if defined(ENABLE_BLUETOOTH)
 	inline constexpr wchar_t AUTHENTICATED[] = L" (authenticated)";
-	inline constexpr wchar_t BLUETOOTH[]     = L"\U0001F91D Bluetooth:";
+	inline constexpr wchar_t BLUETOOTH[]     = L"\u27BF Bluetooth:";
 	inline constexpr wchar_t CONNECTED[]     = L" (connected)";
 #endif
 
@@ -52,17 +52,17 @@ export namespace i18n{
 	inline constexpr wchar_t ARCHITECTURE[]           = L"Architecture:";
 	inline constexpr wchar_t INSTRUCTIONS_SUPPORTED[] = L"Supported instructions:";
 	inline constexpr wchar_t THREADS[]                = L"Threads:";
-	inline constexpr wchar_t CPU[]                    = L"\U0001F9EE CPU:";
+	inline constexpr wchar_t CPU[]                    = L"\u2699 CPU:";
 #endif
 
 // src/core/$(SYSTEM)/features.cpp
 #if defined(ENABLE_FEATURES)
-	inline constexpr wchar_t FEATURES[] = L"\U0001F527 Features:";
+	inline constexpr wchar_t FEATURES[] = L"\u25A3 Features:";
 #endif
 
 // src/core/$(SYSTEM)/gpu.cpp
 #if defined(ENABLE_GPU)
-	inline constexpr wchar_t GPU[]              = L"\U0001F31F GPU:";
+	inline constexpr wchar_t GPU[]              = L"\u2605 GPU:";
 	inline constexpr wchar_t GPU_MEMORY[]       = L"Memory:";
 	inline constexpr wchar_t VIDEO_RESOLUTION[] = L"Resolution:";
 #endif
@@ -71,20 +71,20 @@ export namespace i18n{
 #if defined(ENABLE_HARD_DISKS)
 	inline constexpr wchar_t ALL[]        = L"All:";
 	inline constexpr wchar_t AVAILABLE[]  = L"Available:";
-	inline constexpr wchar_t HARD_DISKS[] = L"\U0001F4BF Hard disks:";
+	inline constexpr wchar_t HARD_DISKS[] = L"\u25A4 Hard disks:";
 	inline constexpr wchar_t TOTAL[]      = L"Total:";
 	inline constexpr wchar_t USED[]       = L"Used:";
 #endif
 
 // src/core/$(SYSTEM)/installed.cpp
 #if defined(ENABLE_INSTALLED)
-	inline constexpr wchar_t INSTALLED_PROGRAMS[] = L"\U0001F4BE Installed:";
+	inline constexpr wchar_t INSTALLED_PROGRAMS[] = L"\u25B2 Installed:";
 #endif
 
 // src/core/$(SYSTEM)/memory.cpp
 #if defined(ENABLE_MEMORY)
 	inline constexpr wchar_t ERROR_MEMORY[]        = L"\U0000274C Failed to retrieve memory information";
-	inline constexpr wchar_t MEMORY[]              = L"\U0001F418 Memory (RAM):";
+	inline constexpr wchar_t MEMORY[]              = L"\u25A6 Memory (RAM):";
 	inline constexpr wchar_t MEMORY_AVAILABLE[]    = L"Available:";
 	inline constexpr wchar_t MEMORY_CAPACITY[]     = L"Capacity:";
 	inline constexpr wchar_t MEMORY_MANUFACTURER[] = L"Manufacturer:";
@@ -99,7 +99,7 @@ export namespace i18n{
 	inline constexpr wchar_t DESCRIPTION[]   = L"Description:";
 	inline constexpr wchar_t GATEWAY[]       = L"Gateway:";
 	inline constexpr wchar_t HOST_NAME[]     = L"Hostname:";
-	inline constexpr wchar_t NETWORK[]       = L"\U0001F310 Network:";
+	inline constexpr wchar_t NETWORK[]       = L"\u25A7 Network:";
 	inline constexpr wchar_t TCP_ENDPOINTS[] = L"TCP endpoints:";
 	inline constexpr wchar_t UDP_ENDPOINTS[] = L"UDP endpoints:";
 #endif
@@ -115,7 +115,7 @@ export namespace i18n{
 	inline constexpr wchar_t MINUTE[]           = L"minute";
 	inline constexpr wchar_t MINUTES[]          = L"minutes";
 	inline constexpr wchar_t NAME[]             = L"Name:";
-	inline constexpr wchar_t OPERATING_SYSTEM[] = L"\U0001F5A5 Operating system:";
+	inline constexpr wchar_t OPERATING_SYSTEM[] = L"\u25CF Operating system:";
 	inline constexpr wchar_t SECOND[]           = L"second";
 	inline constexpr wchar_t SECONDS[]          = L"seconds";
 	inline constexpr wchar_t UPTIME[]           = L"Uptime:";
@@ -126,14 +126,14 @@ export namespace i18n{
 	inline constexpr wchar_t CPU_HEADER[]        = L"CPU";
 	inline constexpr wchar_t PID_HEADER[]        = L"PID";
 	inline constexpr wchar_t RAM_HEADER[]        = L"RAM";
-	inline constexpr wchar_t RUNNING_PROCESSES[] = L"\U0001F3C3 Processes:";
+	inline constexpr wchar_t RUNNING_PROCESSES[] = L"\u25D0 Processes:";
 	inline constexpr wchar_t TOTAL_PROCESSES[]   = L"Total:";
 #endif
 
 // src/core/$(SYSTEM)/restore.cpp
 #if defined(ENABLE_RESTORE)
-	inline constexpr wchar_t RESTORE_POINT[]     = L"\U0001F504 Restore point:";
-	inline constexpr wchar_t RESTORE_POINTS[]    = L"\U0001F504 Restore points:";
+	inline constexpr wchar_t RESTORE_POINT[]     = L"\u25CB Restore point:";
+	inline constexpr wchar_t RESTORE_POINTS[]    = L"\u25CB Restore points:";
 	inline constexpr wchar_t NO_RESTORE_POINTS[] = L"\U0000274C No restore points found\n"
 	                                               L"\t(Requires admin privileges)";
 #endif
@@ -145,35 +145,35 @@ export namespace i18n{
 
 // src/core/$(SYSTEM)/services.cpp
 #if defined(ENABLE_SERVICES)
-	inline constexpr wchar_t SERVICES[] = L"\U0001F3E2 Services:";
+	inline constexpr wchar_t SERVICES[] = L"\u25C6 Services:";
 #endif
 
 // src/core/$(SYSTEM)/shared.cpp
 #if defined(ENABLE_SHARED)
-	inline constexpr wchar_t SHARED[]       = L"\U0001F517 Shared:";
+	inline constexpr wchar_t SHARED[]       = L"\u25CF Shared:";
 	inline constexpr wchar_t SHARED_EMPTY[] = L"\U0000274C No resources shared";
 #endif
 
 // src/core/$(SYSTEM)/startup.cpp
 #if defined(ENABLE_STARTUP)
-	inline constexpr wchar_t STARTUP[] = L"\U0001F680 Startup programs:";
+	inline constexpr wchar_t STARTUP[] = L"\u221A Startup programs:";
 #endif
 
 // src/core/windows/trash.cpp
 #if defined(ENABLE_TRASH)
-	inline constexpr wchar_t TRASH[]       = L"\U0001F5D1 Trash:";
+	inline constexpr wchar_t TRASH[]       = L"\u25B2 Trash:";
 	inline constexpr wchar_t TRASH_EMPTY[] = L"\U00002705 Trash is empty";
 #endif
 
 // src/core/$(SYSTEM)/usb.cpp
 #if defined(ENABLE_USB)
-	inline constexpr wchar_t USB[]       = L"\U0001F50C USB devices:";
+	inline constexpr wchar_t USB[]       = L"\u25CF USB devices:";
 	inline constexpr wchar_t USB_EMPTY[] = L"\U0000274C No USB devices found";
 #endif
 
 // src/core/$(SYSTEM)/wifi.cpp
 #if defined(ENABLE_WIFI)
-	inline constexpr wchar_t WIFI[] = L"\U0001F4F6 Wi-Fi:";
+	inline constexpr wchar_t WIFI[] = L"\u221A Wi-Fi:";
 #endif
 
 }

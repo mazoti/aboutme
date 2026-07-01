@@ -173,12 +173,12 @@ std::wostream& network() noexcept{
 		(std::malloc(buffer_length)), std::free);
 
 	if(!adapter_pointer_info)
-		return std::wcerr << L'\t' << i18n_system::ERROR_MEMORY_ALLOCATION << L"\n\n";
+		return std::wcout << L'\t' << i18n_system::ERROR_MEMORY_ALLOCATION << L"\n\n";
 
 	// Gets adapter informations
 	adapter_pointer = adapter_pointer_info.get();
 	if(GetAdaptersInfo(adapter_pointer, &buffer_length) != NO_ERROR)
-		return std::wcerr << L'\t' << i18n_system::ERROR_ADAPTERS_INFO << L"\n\n";
+		return std::wcout << L'\t' << i18n_system::ERROR_ADAPTERS_INFO << L"\n\n";
 
 	// Gets Ethernet adapters and MAC addresses
 	output_buffer_length = sizeof(IP_ADAPTER_ADDRESSES);
@@ -187,7 +187,7 @@ std::wostream& network() noexcept{
 		(malloc(output_buffer_length)), std::free);
 
 	if(!adapter_addresses_ptr)
-		return std::wcerr << L'\t' << i18n_system::ERROR_MEMORY_ALLOCATION << L"\n\n";
+		return std::wcout << L'\t' << i18n_system::ERROR_MEMORY_ALLOCATION << L"\n\n";
 
 	// Gets adapter addresses
 	return_value = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_ALL_COMPARTMENTS, nullptr,
@@ -196,18 +196,18 @@ std::wostream& network() noexcept{
 	if(return_value == ERROR_BUFFER_OVERFLOW){
 		adapter_addresses_ptr.reset(static_cast<IP_ADAPTER_ADDRESSES*>(malloc(output_buffer_length)));
 
-		if(!adapter_addresses_ptr) return std::wcerr << i18n_system::ERROR_MEMORY_ALLOCATION << L"\n\n";
+		if(!adapter_addresses_ptr) return std::wcout << i18n_system::ERROR_MEMORY_ALLOCATION << L"\n\n";
 
 		return_value = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_ALL_COMPARTMENTS, nullptr,
 			adapter_addresses_ptr.get(), &output_buffer_length);
 	}
 
 	if(return_value != ERROR_SUCCESS)
-		return std::wcerr << L'\t' << i18n_system::ERROR_ADAPTERS_ADDRESS << L"\n\n";
+		return std::wcout << L'\t' << i18n_system::ERROR_ADAPTERS_ADDRESS << L"\n\n";
 
 	// Initializes Winsock with RAII
 	if(WSAStartup(MAKEWORD(2, 2), &wsa_data))
-		return std::wcerr << L'\t'<< i18n_system::ERROR_WSA_STARTUP << L"\n\n";
+		return std::wcout << L'\t'<< i18n_system::ERROR_WSA_STARTUP << L"\n\n";
 
 	std::unique_ptr<void, decltype([](void*){ WSACleanup(); })> wsa_cleanup_ptr(reinterpret_cast<void*>(1));
 
@@ -217,11 +217,11 @@ std::wostream& network() noexcept{
 	std::unique_ptr<MIB_UDPTABLE_OWNER_PID, void(*)(void*)> udp_table_ptr(static_cast<PMIB_UDPTABLE_OWNER_PID>
 		(malloc(dword_size)), std::free);
 
-	if(!udp_table_ptr) return std::wcerr << L'\t' << i18n_system::ERROR_UDP_MALLOC << L"\n\n";
+	if(!udp_table_ptr) return std::wcout << L'\t' << i18n_system::ERROR_UDP_MALLOC << L"\n\n";
 
 	// Gets the UDP table
 	if(GetExtendedUdpTable(udp_table_ptr.get(), &dword_size, TRUE, AF_INET, UDP_TABLE_OWNER_PID, 0) != NO_ERROR)
-		return std::wcerr << L'\t' << i18n_system::ERROR_EXTENDED_UDP_TABLE << L"\n\n";
+		return std::wcout << L'\t' << i18n_system::ERROR_EXTENDED_UDP_TABLE << L"\n\n";
 
 	// First call to get required size for TCP table
 	GetExtendedTcpTable(nullptr, &dword_size, TRUE, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0);
@@ -229,11 +229,11 @@ std::wostream& network() noexcept{
 	std::unique_ptr<MIB_TCPTABLE_OWNER_PID, void(*)(void*)> tcp_table_ptr(static_cast<PMIB_TCPTABLE_OWNER_PID>
 		(malloc(dword_size)), std::free);
 
-	if(!tcp_table_ptr) return std::wcerr << L'\t' << i18n_system::ERROR_TCP_MALLOC << L"\n\n";
+	if(!tcp_table_ptr) return std::wcout << L'\t' << i18n_system::ERROR_TCP_MALLOC << L"\n\n";
 
 	// Gets the TCP table
 	if(GetExtendedTcpTable(tcp_table_ptr.get(), &dword_size, TRUE, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0) != NO_ERROR)
-		return std::wcerr << L'\t' << i18n_system::ERROR_EXTENDED_TCP_TABLE << L"\n\n";
+		return std::wcout << L'\t' << i18n_system::ERROR_EXTENDED_TCP_TABLE << L"\n\n";
 
 	// Prints adapters with MACs and DNSs
 	std::wcout << i18n::NETWORK << L'\n' << network_devices(adapter_pointer, adapter_addresses_ptr.get());
@@ -241,7 +241,7 @@ std::wostream& network() noexcept{
 	// Prints host name
 	host_name_size = sizeof(host_name) / sizeof(host_name[0]);
 	if(!GetComputerNameW(host_name, &host_name_size))
-		return std::wcerr << L'\t' << i18n_system::ERROR_HOST_NAME << L"\n\n";
+		return std::wcout << L'\t' << i18n_system::ERROR_HOST_NAME << L"\n\n";
 
 	std::wcout << L'\t' << i18n::HOST_NAME << L"\n\t\t" << host_name;
 

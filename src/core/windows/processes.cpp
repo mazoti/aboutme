@@ -65,7 +65,7 @@ std::wostream& processes() noexcept{
 
 	// Enumerates processes
 	if(!EnumProcesses(processes, sizeof(processes), &needed))
-		return std::wcerr << i18n_system::ERROR_PROCESSES_ENUM << L'\n';
+		return std::wcout << i18n_system::ERROR_PROCESSES_ENUM << L'\n';
 
 	// Collects process data
 	for(const DWORD& process : std::span<DWORD>(processes, needed / sizeof(DWORD))){

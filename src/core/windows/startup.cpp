@@ -27,7 +27,7 @@ static void startup_apps(HKEY root_key, const wchar_t* subkey_path,
 	std::vector<BYTE> value_data(1024); // Initial buffer size for value data
 
 	if(RegOpenKeyExW(root_key, subkey_path, 0, KEY_READ, &app_key) != ERROR_SUCCESS){
-		std::wcerr << i18n_system::ERROR_REG_OPENKEYEX << L'\n';
+		std::wcout << i18n_system::ERROR_REG_OPENKEYEX << L'\n';
 		return;
 	}
 

@@ -67,7 +67,7 @@ std::wostream& cpu() noexcept{
 
 	std::string brand_str;
 	std::array<char, 64> cpu_brand{};
-	std::array<int,  4> cpu_information{}, cpu_information_extended{};
+	std::array<int, 4> cpu_information{}, cpu_information_extended{};
 
 	// Retrieves CPU brand string using CPUID leaves 0x80000002 to 0x80000004
 	cpu_info = reinterpret_cast<int*>(&cpu_brand[0]);
@@ -80,7 +80,9 @@ std::wostream& cpu() noexcept{
 	// Converts CPU brand to std::string and trim leading spaces
 	brand_str = cpu_brand.data();
 	start = brand_str.find_first_not_of(' ');
+
 	if(start == std::string::npos) start = 0;
+
 	brand_str = brand_str.substr(start);
 
 	// Populates system information

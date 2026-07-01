@@ -25,7 +25,7 @@ std::wostream& services() noexcept {
 
 	// Opens a handle to the SCM with enumeration privileges
 	scm_handle = OpenSCManagerW(nullptr, nullptr, SC_MANAGER_ENUMERATE_SERVICE);
-	if(scm_handle == nullptr) return std::wcerr << i18n_system::ERROR_SERVICES << L"\n\n";
+	if(scm_handle == nullptr) return std::wcout << i18n_system::ERROR_SERVICES << L"\n\n";
 
 	std::unique_ptr<SC_HANDLE__, decltype([](SC_HANDLE handle){ CloseServiceHandle(handle); })>
 		scm_handle_ptr(scm_handle);
@@ -33,7 +33,7 @@ std::wostream& services() noexcept {
 	// Determines the required buffer size
 	if((EnumServicesStatusW(scm_handle, SERVICE_WIN32, SERVICE_ACTIVE, nullptr, 0, &bytes_needed,
 	&services_returned, &resume_handle)) || (GetLastError() != ERROR_MORE_DATA))
-		return std::wcerr << i18n_system::ERROR_SERVICES_ENUM << L"\n\n";
+		return std::wcout << i18n_system::ERROR_SERVICES_ENUM << L"\n\n";
 
 	// Allocates buffer and enumerates services
 	buffer.resize(bytes_needed);
@@ -41,7 +41,7 @@ std::wostream& services() noexcept {
 
 	if(!EnumServicesStatusW(scm_handle, SERVICE_WIN32, SERVICE_ACTIVE, service_status,
 	static_cast<DWORD>(buffer.size()), &bytes_needed, &services_returned, &resume_handle))
-		return std::wcerr << i18n_system::ERROR_SERVICES_ENUM << L"\n\n";
+		return std::wcout << i18n_system::ERROR_SERVICES_ENUM << L"\n\n";
 
 	// Collects running services into an ordered set
 	for(const ENUM_SERVICE_STATUSW& service : std::span<ENUM_SERVICE_STATUSW>(service_status, services_returned)){

@@ -29,7 +29,7 @@ std::wostream& shared() noexcept{
 
 	// Gets the local computer's DNS hostname
 	if(!GetComputerNameExW(ComputerNameDnsHostname, buffer, &buffer_size))
-		return std::wcerr << i18n_system::ERROR_HOSTNAME << L"\n\n";
+		return std::wcout << i18n_system::ERROR_HOSTNAME << L"\n\n";
 	domain = std::wstring(buffer);
 
 	// Enumerates shared resources
@@ -43,7 +43,7 @@ std::wostream& shared() noexcept{
 			NetApiBufferFree(share_info_pointer); })> share_info_ptr(share_info);
 
 		if((status != NERR_Success) && (status != ERROR_MORE_DATA))
-			return std::wcerr << i18n_system::ERROR_ENUM_SHARES << L"\n\n";
+			return std::wcout << i18n_system::ERROR_ENUM_SHARES << L"\n\n";
 
 		// Iterates over the retrieved SHARE_INFO_2 structures using a span for safe access
 		for(SHARE_INFO_2& sh : std::span<SHARE_INFO_2>(share_info, entries_read)){

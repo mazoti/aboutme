@@ -36,36 +36,36 @@ std::wostream& memory() noexcept{
 
 	// Initializes memory status structure
 	memory_state.dwLength = sizeof(memory_state);
-	if(!GlobalMemoryStatusEx(&memory_state)) return std::wcerr << i18n::ERROR_MEMORY << L"\n\n";
+	if(!GlobalMemoryStatusEx(&memory_state)) return std::wcout << i18n::ERROR_MEMORY << L"\n\n";
 
 	// Initializes COM and creates a smart pointer to CoUninitialize
 	if(FAILED(CoInitializeEx(nullptr, COINIT_MULTITHREADED)))
-		return std::wcerr << i18n_system::ERROR_MEMORY_COM_INIT << L"\n\n";
+		return std::wcout << i18n_system::ERROR_MEMORY_COM_INIT << L"\n\n";
 
 	std::unique_ptr<void, decltype([](void*){ CoUninitialize(); })> result_handle_ptr(reinterpret_cast<void*>(1));
 
 	// Initializes WMI and creates a smart pointer to Release
 	if(FAILED(CoCreateInstance(CLSID_WbemLocator, nullptr, CLSCTX_INPROC_SERVER, IID_IWbemLocator,
 		reinterpret_cast<LPVOID*>(&locator_pointer))))
-			return std::wcerr << i18n_system::ERROR_MEMORY_WMI_INIT << L"\n\n";
+			return std::wcout << i18n_system::ERROR_MEMORY_WMI_INIT << L"\n\n";
 
 	std::unique_ptr<IWbemLocator, releaser<IWbemLocator>> locator_pointer_ptr(locator_pointer);
 
 	// Connects to WMI and creates a smart pointer to Release
 	if(FAILED(locator_pointer->ConnectServer(_bstr_t(L"ROOT\\CIMV2"), nullptr, nullptr, nullptr, 0, nullptr, nullptr,
-		&svc_pointer))) return std::wcerr << i18n_system::ERROR_MEMORY_WMI_CONNECT << L"\n\n";
+		&svc_pointer))) return std::wcout << i18n_system::ERROR_MEMORY_WMI_CONNECT << L"\n\n";
 
 	std::unique_ptr<IWbemServices, releaser<IWbemServices>> svc_pointer_ptr(svc_pointer);
 
 	// Configures security settings for WMI connection
 	if(FAILED(CoSetProxyBlanket(svc_pointer, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, nullptr, RPC_C_AUTHN_LEVEL_CALL,
 		RPC_C_IMP_LEVEL_IMPERSONATE, nullptr, EOAC_NONE)))
-			return std::wcerr << i18n_system::ERROR_MEMORY_SECURITY_LEVEL << L"\n\n";
+			return std::wcout << i18n_system::ERROR_MEMORY_SECURITY_LEVEL << L"\n\n";
 
 	// Queries data and creates a smart pointer to Release
 	if(FAILED(svc_pointer->ExecQuery(bstr_t("WQL"), bstr_t(L"SELECT * FROM Win32_PhysicalMemory"),
 		WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, nullptr, &enumerator_pointer)))
-			return std::wcerr << i18n_system::ERROR_MEMORY_QUERY << L"\n\n";
+			return std::wcout << i18n_system::ERROR_MEMORY_QUERY << L"\n\n";
 
 	std::unique_ptr<IEnumWbemClassObject, releaser<IEnumWbemClassObject>> enumerator_pointer_ptr(enumerator_pointer);
 

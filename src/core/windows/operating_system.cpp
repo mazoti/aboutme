@@ -53,7 +53,7 @@ std::wostream& operating_system() noexcept{
 	// Gets and processes user's locale information
 	user_locale = GetUserDefaultLCID();
 	if(!LCIDToLocaleName(user_locale, locale_name, LOCALE_NAME_MAX_LENGTH, 0)){
-		std::wcerr << L"\n\t" << i18n_system::ERROR_LOCALE_NAME << L'\n';
+		std::wcout << L"\n\t" << i18n_system::ERROR_LOCALE_NAME << L'\n';
 	}
 	else{
 		// Gets country/region

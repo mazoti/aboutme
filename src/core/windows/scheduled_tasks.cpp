@@ -31,27 +31,27 @@ std::wostream& scheduled_tasks() noexcept{
 	LONG tasks_count = 0, i = 1;
 
 	// Initializes COM library in multithreaded mode
-	if(FAILED(CoInitializeEx(nullptr, COINIT_MULTITHREADED))) return std::wcerr << i18n_system::ERROR_TASKS
+	if(FAILED(CoInitializeEx(nullptr, COINIT_MULTITHREADED))) return std::wcout << i18n_system::ERROR_TASKS
 		<< L" COINITIALIZEEX\n\n";
 	std::unique_ptr<void, decltype([](void*){ CoUninitialize(); })> couninit_ptr(reinterpret_cast<void*>(1));
 
 	// Creates an instance of the Task Scheduler service
 	if(FAILED(CoCreateInstance(CLSID_TaskScheduler, nullptr, CLSCTX_INPROC_SERVER, IID_ITaskService,
-		reinterpret_cast<void**>(&service_pointer)))) return std::wcerr << i18n_system::ERROR_TASKS
+		reinterpret_cast<void**>(&service_pointer)))) return std::wcout << i18n_system::ERROR_TASKS
 			<< L" COCREATEINSTANCE\n\n";
 	std::unique_ptr<ITaskService, releaser<ITaskService>> service_ptr_releaser(service_pointer);
 
 	// Connects to the Task Scheduler service
 	if(FAILED(service_pointer->Connect(_variant_t(), _variant_t(), _variant_t(), _variant_t())))
-		return std::wcerr << i18n_system::ERROR_TASKS << L" ITASKSERVICE\n\n";
+		return std::wcout << i18n_system::ERROR_TASKS << L" ITASKSERVICE\n\n";
 
 	if(FAILED(service_pointer->GetFolder(_bstr_t(L"\\"), &root_folder_pointer)))
-		return std::wcerr << i18n_system::ERROR_TASKS << L" GetFolder\n\n";
+		return std::wcout << i18n_system::ERROR_TASKS << L" GetFolder\n\n";
 	std::unique_ptr<ITaskFolder, releaser<ITaskFolder>> root_folder_ptr_releaser(root_folder_pointer);
 
 	// Gets all tasks in the root folder, including hidden ones
 	if(FAILED(root_folder_pointer->GetTasks(TASK_ENUM_HIDDEN, &tasks_pointer)))
-		return std::wcerr << i18n_system::ERROR_TASKS << L" GetTasks\n\n";
+		return std::wcout << i18n_system::ERROR_TASKS << L" GetTasks\n\n";
 
 	std::unique_ptr<IRegisteredTaskCollection, releaser<IRegisteredTaskCollection>> tasks_ptr_releaser(tasks_pointer);
 

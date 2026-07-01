@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 project(aboutme
 	VERSION 54.0.0
 	DESCRIPTION "AboutMe by Marcos Mazoti"
-	HOMEPAGE_URL "https://github.com/mazoti/aboutme"
+	HOMEPAGE_URL "https://mazoti.github.io/aboutme"
 	LANGUAGES CXX
 )
 

@@ -25,7 +25,7 @@ std::wostream& installed() noexcept{
 
 	// Opens the Uninstall registry key under HKEY_LOCAL_MACHINE
 	if(RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", 0, KEY_READ,
-	&uninstall_key) != ERROR_SUCCESS) return std::wcerr << i18n_system::ERROR_INSTALLED_REG_OPENKEYEX << L"\n\n";
+	&uninstall_key) != ERROR_SUCCESS) return std::wcout << i18n_system::ERROR_INSTALLED_REG_OPENKEYEX << L"\n\n";
 
 	// Manages the uninstall_key handle
 	std::unique_ptr<std::remove_pointer_t<HKEY>, decltype([](HKEY h){ if(h) RegCloseKey(h); })>

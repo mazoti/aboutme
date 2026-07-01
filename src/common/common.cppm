@@ -123,7 +123,7 @@ export module common;
 
 // Inserts a key-value pair into a multimap only if the value is unique for that key.
 // Prevents duplicate values under the same key
-#if defined(ENABLE_NETWORK)
+#if defined(ENABLE_NETWORK) || defined(ENABLE_WIFI)
 	export template<typename KEY, typename VALUE>
 	void insert_if_unique(std::multimap<KEY, VALUE>& mm, const KEY& key, const VALUE& value){
 		typename std::multimap<KEY, VALUE>::iterator it = mm.lower_bound(key);
