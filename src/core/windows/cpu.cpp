@@ -12,6 +12,8 @@ module core;
 
 import i18n;
 
+// TODO: support ARM64
+
 // Displays all CPU supported instructions
 inline static std::wstring instructions(std::uint32_t features_ebx, std::uint32_t features_ecx,
                                         std::uint32_t features_edx){
